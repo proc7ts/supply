@@ -217,7 +217,7 @@ describe('Supply', () => {
     it('logs abort reason by default', () => {
       new Supply().off('reason');
 
-      expect(errorSpy).toHaveBeenCalledWith('Supply aborted unexpectedly', 'reason');
+      expect(errorSpy).toHaveBeenCalledWith('Supply aborted unexpectedly.', 'reason');
       expect(errorSpy).toHaveBeenCalledTimes(1);
     });
     it('replaces unexpected abort handler', () => {

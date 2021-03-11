@@ -11,5 +11,5 @@ export function Supply$unexpectedAbort$handle(handler = Supply$unexpectedAbort$b
 }
 
 function Supply$unexpectedAbort$byDefault(reason: unknown): void {
-  console.error('Supply aborted unexpectedly', reason);
+  console.error('Supply aborted unexpectedly.', reason);
 }
