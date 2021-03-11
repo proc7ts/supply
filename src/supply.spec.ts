@@ -48,6 +48,16 @@ describe('Supply', () => {
       expect(onAbort).toHaveBeenCalledWith('reason');
       expect(onAbort).toHaveBeenCalledTimes(1);
     });
+    it('(without callback and reason) does not call unexpected abort handler', () => {
+
+      const onAbort = jest.fn();
+
+      supply = new Supply();
+      Supply.onUnexpectedAbort(onAbort);
+      supply.off();
+
+      expect(onAbort).not.toHaveBeenCalledWith();
+    });
   });
 
   describe('isOff', () => {
@@ -211,6 +221,7 @@ describe('Supply', () => {
       expect(errorSpy).toHaveBeenCalledTimes(1);
     });
     it('replaces unexpected abort handler', () => {
+
       const onAbort = jest.fn();
 
       Supply.onUnexpectedAbort(onAbort);

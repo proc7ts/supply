@@ -19,10 +19,12 @@ export function Supply$off$start(): boolean {
  * @internal
  */
 export function Supply$off$unexpected(reason: unknown): void {
-  if (!Supply$off$unexpected$reasons) {
-    Supply$off$unexpected$reasons = new Set<unknown>();
+  if (reason !== undefined) {
+    if (!Supply$off$unexpected$reasons) {
+      Supply$off$unexpected$reasons = new Set<unknown>();
+    }
+    Supply$off$unexpected$reasons.add(reason);
   }
-  Supply$off$unexpected$reasons.add(reason);
 }
 
 /**
