@@ -23,7 +23,7 @@ When the supply is no longer needed, it can be cut off. Cutting off the supply i
 Example
 =======
 
-The supply may represent the of registration of event listener:
+The supply may represent the registration of event listener:
 
 ```typescript
 import { Supply } from '@proc7ts/supply';
