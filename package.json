@@ -1,0 +1,61 @@
+{
+  "name": "@proc7ts/supply",
+  "version": "1.0.0-dev.0",
+  "description": "The supply of something",
+  "keywords": [
+    "subscription"
+  ],
+  "homepage": "https://github.com/proc7ts/supply",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:proc7ts/supply.git"
+  },
+  "license": "MIT",
+  "author": "Ruslan Lopatin <ruslan.lopatin@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/proc7ts/supply/issues"
+  },
+  "type": "module",
+  "main": "./dist/supply.cjs",
+  "module": "./dist/supply.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "import": "./dist/supply.js",
+    "require": "./dist/supply.cjs"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "@run-z/eslint-config": "^1.2.1",
+    "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^4.17.0",
+    "@typescript-eslint/parser": "^4.17.0",
+    "eslint": "^7.21.0",
+    "eslint-plugin-jest": "^24.1.9",
+    "gh-pages": "^3.1.0",
+    "jest": "^26.6.3",
+    "jest-junit": "^12.0.0",
+    "rollup": "^2.40.0",
+    "rollup-plugin-flat-dts": "^1.0.3",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "run-z": "=1.6.1-bootstrap",
+    "shx": "^0.3.3",
+    "ts-jest": "^26.5.3",
+    "tslib": "^2.1.0",
+    "typedoc": "^0.20.30",
+    "typescript": "^4.2.3"
+  },
+  "scripts": {
+    "all": "run-z build,lint,test",
+    "bootstrap": "rollup --config ./rollup.config.js",
+    "build": "run-z +z bootstrap",
+    "ci:all": "run-z all +test/--ci/--runInBand",
+    "clean": "run-z +z --then shx rm -rf index.d.ts dist target",
+    "doc": "run-z +z --then typedoc",
+    "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
+    "lint": "run-z +z --then eslint .",
+    "test": "run-z +z --then jest",
+    "z": "run-z +bootstrap,+doc,+lint,+test"
+  }
+}
