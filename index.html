@@ -1,0 +1,227 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Supply</title>
+	<meta name="description" content="Documentation for Supply">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">Supply</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>Supply</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#the-supply-of-something" id="the-supply-of-something" style="color: inherit; text-decoration: none;">
+					<h1>The Supply Of Something</h1>
+				</a>
+				<p><a href="https://www.npmjs.com/package/@proc7ts/supply"><img src="https://img.shields.io/npm/v/@proc7ts/supply.svg?logo=npm" alt="NPM"></a>
+					<a href="https://github.com/proc7ts/supply/actions?query=workflow%3ABuild"><img src="https://github.com/proc7ts/supply/workflows/Build/badge.svg" alt="Build Status"></a>
+					<a href="https://github.com/proc7ts/supply"><img src="https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational" alt="GitHub Project"></a>
+				<a href="https://proc7ts.github.io/supply/"><img src="https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational" alt="API Documentation"></a></p>
+				<p>The <code>Supply</code> class represents a supply of something. E.g. some subscription.</p>
+				<p>When the supply is no longer needed, it can be cut off. Cutting off the supply informs the interested parties. </p>
+				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+					<h1>Example</h1>
+				</a>
+				<p>The supply may represent the of registration of event listener:</p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">Supply</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@proc7ts/supply&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #008000">/**</span>
+<span style="color: #008000"> * Registers event listener and returns a supply that unregisters it once cut off.</span>
+<span style="color: #008000"> */</span>
+<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">registerListener</span><span style="color: #000000">(</span><span style="color: #001080">target</span><span style="color: #000000">: </span><span style="color: #267F99">EventTarget</span><span style="color: #000000">, </span><span style="color: #001080">eventType</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">, </span><span style="color: #795E26">listener</span><span style="color: #000000">: (</span><span style="color: #001080">event</span><span style="color: #000000">: </span><span style="color: #267F99">Event</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">void</span><span style="color: #000000">): </span><span style="color: #267F99">Supply</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">target</span><span style="color: #000000">.</span><span style="color: #795E26">addEventListener</span><span style="color: #000000">(</span><span style="color: #001080">eventType</span><span style="color: #000000">, </span><span style="color: #001080">listener</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Supply</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">target</span><span style="color: #000000">.</span><span style="color: #795E26">removeEventListener</span><span style="color: #000000">(</span><span style="color: #001080">eventType</span><span style="color: #000000">, </span><span style="color: #001080">listener</span><span style="color: #000000">);</span>
+<span style="color: #000000">  });</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #008000">// Add a button click listener.</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">supply</span><span style="color: #000000"> = </span><span style="color: #795E26">registerListener</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #795E26">getElementById</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;button&#039;</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;click&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">event</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">debug</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Button clicked&#039;</span><span style="color: #000000">, </span><span style="color: #001080">event</span><span style="color: #000000">),</span>
+<span style="color: #000000">).</span><span style="color: #795E26">whenOff</span><span style="color: #000000">(</span><span style="color: #001080">reason</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #008000">// Additional callback to call when the listener removed.</span>
+<span style="color: #000000">  </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">debug</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;No longer handling clicks&#039;</span><span style="color: #000000">, </span><span style="color: #001080">reason</span><span style="color: #000000">);</span>
+<span style="color: #000000">});</span>
+
+<span style="color: #008000">// ...now listening for clicks...</span>
+
+<span style="color: #008000">// Remove the listener.</span>
+<span style="color: #001080">supply</span><span style="color: #000000">.</span><span style="color: #795E26">off</span><span style="color: #000000">();</span>
+</code></pre>
+				<a href="#supply" id="supply" style="color: inherit; text-decoration: none;">
+					<h1><code>Supply</code></h1>
+				</a>
+				<p>A <code>Supply</code> is a class. Its constructor accepts optional callback instance. The latter will be called once the supply
+				is cut off.</p>
+				<a href="#offreason-unknown" id="offreason-unknown" style="color: inherit; text-decoration: none;">
+					<h3><code>off(reason?: unknown)</code></h3>
+				</a>
+				<p>Calling this method cuts off the supply.</p>
+				<p>Accepts an optional reason. By convention <code>undefined</code> or absent reason means the supply is done successfully.
+				Everything else means the supply is aborted abnormally because of that reason.</p>
+				<p>When called, all registered cut off callbacks are called with the given reason and <a href="#isoff">isOff</a> property value becomes
+				<code>true</code>.</p>
+				<a href="#isoff" id="isoff" style="color: inherit; text-decoration: none;">
+					<h3><code>isOff</code></h3>
+				</a>
+				<p>This is flag indicating whether the supply is cut off.</p>
+				<p>Equals to <code>false</code> initially. Becomes <code>true</code> after calling the <a href="#offreason-unknown">off()</a> method.</p>
+				<a href="#whenoffcallback-reason-unknown-gt-void" id="whenoffcallback-reason-unknown-gt-void" style="color: inherit; text-decoration: none;">
+					<h3><code>whenOff(callback: (reason?: unknown) =&gt; void)</code></h3>
+				</a>
+				<p>Registers a callback function that will be called when the supply is <a href="#offreason-unknown">cut off</a>. If the supply is cut off already when
+				calling this method, the callback will be called immediately.</p>
+				<p>The registered callback receives a cut off reason as its only parameter.</p>
+				<p>The callback will be called at most once.</p>
+				<a href="#whendone" id="whendone" style="color: inherit; text-decoration: none;">
+					<h3><code>whenDone()</code></h3>
+				</a>
+				<p>Returns a promise that will be resolved once the supply is <a href="#offreason-unknown">cut off</a>.</p>
+				<p>The returned promise will be successfully resolved once the supply is cut off without a reason, or rejected once the
+				supply is cut off with any reason except <code>undefined</code>.</p>
+				<a href="#supply-1" id="supply-1" style="color: inherit; text-decoration: none;">
+					<h3><code>supply</code></h3>
+				</a>
+				<p>This property contains the supply itself.</p>
+				<p>Implementing this property makes the supply implement a <code>SupplyPeer</code> interface. Any instance implementing the latter
+				can be passed to supporting methods like <code>cuts()</code>, <code>needs()</code>, or <code>as()</code>.</p>
+				<a href="#cutsother-supplypeer" id="cutsother-supplypeer" style="color: inherit; text-decoration: none;">
+					<h3><code>cuts(other: SupplyPeer)</code></h3>
+				</a>
+				<p>Makes another supply depend on this one.</p>
+				<p>Once the supply is <a href="#offreason-unknown">cut off</a>, <code>another</code> one will be cut off with the same reason.</p>
+				<p>Calling this method has the same effect as calling <code>another.supply.needs(this)</code>.</p>
+				<a href="#needsother-supplypeer" id="needsother-supplypeer" style="color: inherit; text-decoration: none;">
+					<h3><code>needs(other: SupplyPeer)</code></h3>
+				</a>
+				<p>Makes the supply depend on another one.</p>
+				<p>Once <code>another</code> supply is <a href="#offreason-unknown">cut off</a>, this one will be cut off with the same reason.</p>
+				<a href="#asanother-supplypeer" id="asanother-supplypeer" style="color: inherit; text-decoration: none;">
+					<h3><code>as(another: SupplyPeer)</code></h3>
+				</a>
+				<p>Makes this and another supply depend on each other.</p>
+				<p>Calling this method is the same as calling <code>.needs(another).cuts(another)</code>.</p>
+				<a href="#neversupply" id="neversupply" style="color: inherit; text-decoration: none;">
+					<h1><code>neverSupply()</code></h1>
+				</a>
+				<p>Builds a never-supply instance.</p>
+				<p>Returns a supply instance that is already cut off without any particular reason.</p>
+				<a href="#alwayssupply" id="alwayssupply" style="color: inherit; text-decoration: none;">
+					<h1><code>alwaysSupply()</code></h1>
+				</a>
+				<p>Builds an always-supply instance.</p>
+				<p>The <code>off()</code> method of the returned supply does nothing.</p>
+				<p>Returns a supply instance that can not be cut off.</p>
+				<a href="#unexpected-aborts" id="unexpected-aborts" style="color: inherit; text-decoration: none;">
+					<h1>Unexpected Aborts</h1>
+				</a>
+				<p>An unexpected abort happens when any supply is <a href="#offreason-unknown">cut off</a> with some reason, but there is no cut off callback registered.</p>
+				<p>By default, an unexpected abort reason is logged to console. This behavior can be changed by assigning another
+				unexpected abort handler with <code>Supply.onUnexpectedAbort()</code> static method.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/supply.html" class="tsd-kind-icon">Supply</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/supplypeer.html" class="tsd-kind-icon">Supply<wbr>Peer</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#alwayssupply" class="tsd-kind-icon">always<wbr>Supply</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#isalwayssupply" class="tsd-kind-icon">is<wbr>Always<wbr>Supply</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#neversupply" class="tsd-kind-icon">never<wbr>Supply</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
