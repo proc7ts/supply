@@ -38,16 +38,19 @@ function registerListener(target: EventTarget, eventType: string, listener: (eve
   });
 }
 
-// Register a button click listener.
+// Add a button click listener.
 const supply = registerListener(
     document.getElementById('button'),
     'click',
     event => console.debug('Button clicked', event),
-);
+).whenOff(reason => {
+  // Additional callback to call when the listener removed.
+  console.debug('No longer handling clicks', reason);
+});
 
 // ...now listening for clicks...
 
-// Unregister event listener.
+// Remove the listener.
 supply.off();
 ```
 
