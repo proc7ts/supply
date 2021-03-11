@@ -1,6 +1,11 @@
+import type { SupplyState } from './impl';
+import {
+  Supply$unexpectedAbort$handle,
+  SupplyState$noCallback,
+  SupplyState$withCallback,
+  SupplyState__symbol,
+} from './impl';
 import type { SupplyPeer } from './supply-peer';
-import type { SupplyState } from './supply-state.impl';
-import { initialSupplyState, newSupplyState, SupplyState__symbol } from './supply-state.impl';
 
 /**
  * Supply handle.
@@ -10,6 +15,20 @@ import { initialSupplyState, newSupplyState, SupplyState__symbol } from './suppl
  * The supply can be {@link off cut off}, and can {@link whenOff inform} on cutting off.
  */
 export class Supply implements SupplyPeer {
+
+  /**
+   * Assigns unexpected abort handler.
+   *
+   * When a supply {@link off aborted}, and there is no {@link whenOff cut off callback} registered, the given handler
+   * will be called with the abort reason.
+   *
+   * By default, the unexpected abort reason will be logged to console.
+   *
+   * @param handler - A handler to call on unexpected abort, or `undefined` to reset to default one.
+   */
+  static onUnexpectedAbort(handler?: (this: void, reason: unknown) => void): void {
+    Supply$unexpectedAbort$handle(handler);
+  }
 
   /**
    * @internal
@@ -23,7 +42,7 @@ export class Supply implements SupplyPeer {
    * as its only parameter. No-op by default.
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
-    this[SupplyState__symbol] = off ? newSupplyState(off) : initialSupplyState;
+    this[SupplyState__symbol] = off ? SupplyState$withCallback(off) : SupplyState$noCallback;
   }
 
   /**

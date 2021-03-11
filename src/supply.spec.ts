@@ -10,6 +10,9 @@ describe('Supply', () => {
     mockOff = jest.fn();
     supply = new Supply(mockOff);
   });
+  afterEach(() => {
+    Supply.onUnexpectedAbort();
+  });
 
   describe('supply', () => {
     it('returns the supply itself', () => {
@@ -24,6 +27,26 @@ describe('Supply', () => {
 
       expect(supply.off(reason)).toBe(supply);
       expect(mockOff).toHaveBeenCalledWith(reason);
+    });
+    it('(with callback) does not call unexpected abort handler', () => {
+
+      const onAbort = jest.fn();
+
+      Supply.onUnexpectedAbort(onAbort);
+      supply.off('reason');
+
+      expect(onAbort).not.toHaveBeenCalled();
+    });
+    it('(without callback) calls unexpected abort handler', () => {
+
+      const onAbort = jest.fn();
+
+      supply = new Supply();
+      Supply.onUnexpectedAbort(onAbort);
+      supply.off('reason');
+
+      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(onAbort).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -167,6 +190,47 @@ describe('Supply', () => {
 
       supply.off(reason);
       expect(whenAnotherOff).toHaveBeenCalledWith(reason);
+    });
+  });
+
+  describe('onUnexpectedAbort', () => {
+
+    let errorSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {/* noop */});
+    });
+    afterEach(() => {
+      errorSpy.mockRestore();
+    });
+
+    it('logs abort reason by default', () => {
+      new Supply().off('reason');
+
+      expect(errorSpy).toHaveBeenCalledWith('Supply aborted unexpectedly', 'reason');
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+    });
+    it('replaces unexpected abort handler', () => {
+      const onAbort = jest.fn();
+
+      Supply.onUnexpectedAbort(onAbort);
+
+      new Supply().off('reason');
+
+      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(onAbort).toHaveBeenCalledTimes(1);
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+    it('reports abort reason only once', () => {
+
+      const supply = new Supply().cuts(new Supply()).cuts(new Supply());
+      const onAbort = jest.fn();
+
+      Supply.onUnexpectedAbort(onAbort);
+      supply.off('reason');
+
+      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(onAbort).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -3,6 +3,10 @@ import { neverSupply } from './never-supply';
 import { Supply } from './supply';
 
 describe('alwaysSupply', () => {
+  afterEach(() => {
+    Supply.onUnexpectedAbort();
+  });
+
   describe('isOff', () => {
     it('is always `false`', () => {
       expect(alwaysSupply().isOff).toBe(false);
@@ -50,6 +54,10 @@ describe('alwaysSupply', () => {
   describe('needs', () => {
     it('never cuts off the always-supply', () => {
 
+      const onAbort = jest.fn();
+
+      Supply.onUnexpectedAbort(onAbort);
+
       const supply = alwaysSupply();
       const otherSupply = new Supply();
 
@@ -57,6 +65,8 @@ describe('alwaysSupply', () => {
 
       otherSupply.off('reason');
       expect(supply.isOff).toBe(false);
+      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(onAbort).toHaveBeenCalledTimes(1);
     });
   });
 });

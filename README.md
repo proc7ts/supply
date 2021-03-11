@@ -67,10 +67,11 @@ is cut off.
 
 Calling this method cuts off the supply.
 
-Accepts an optional reason. By convention `undefined` or absent reason means the supply is completed normally.
-Everything else means the supply is aborted abnormally because of this reason.
+Accepts an optional reason. By convention `undefined` or absent reason means the supply is done successfully.
+Everything else means the supply is aborted abnormally because of that reason.
 
-When called, all registered cut off callbacks are called with the given reason and [isOff] property value becomes `true`.
+When called, all registered cut off callbacks are called with the given reason and [isOff] property value becomes
+`true`.
 
 
 ### `isOff`
@@ -147,3 +148,12 @@ Builds an always-supply instance.
 The `off()` method of the returned supply does nothing.
 
 Returns a supply instance that can not be cut off.
+
+
+Unexpected Aborts
+=================
+
+An unexpected abort happens when any supply is [cut off] with some reason, but there is no cut off callback registered.
+
+By default, an unexpected abort reason is logged to console. This behavior can be changed by assigning another
+unexpected abort handler with `Supply.onUnexpectedAbort()` static method.
