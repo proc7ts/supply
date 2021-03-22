@@ -1,4 +1,3 @@
-import { asis, noop } from '@proc7ts/primitives';
 import { Supply } from './supply';
 
 describe('Supply', () => {
@@ -72,7 +71,7 @@ describe('Supply', () => {
 
   describe('whenOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.whenOff(noop)).toBe(supply);
+      expect(supply.whenOff(() => {/* noop */})).toBe(supply);
     });
     it('calls registered callback', () => {
 
@@ -125,10 +124,10 @@ describe('Supply', () => {
 
       const reason = 'test';
 
-      expect(await supply.off(reason).whenDone().then(() => 'resolved', asis)).toBe(reason);
+      expect(await supply.off(reason).whenDone().then(() => 'resolved', e => e)).toBe(reason);
     });
     it('rejects when supply is cut off with `null` reason', async () => {
-      expect(await supply.off(null).whenDone().then(() => 'resolved', asis)).toBeNull();
+      expect(await supply.off(null).whenDone().then(() => 'resolved', e => e)).toBeNull();
     });
   });
 
