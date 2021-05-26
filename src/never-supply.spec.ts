@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import { neverSupply } from './never-supply';
 import { Supply } from './supply';
 
