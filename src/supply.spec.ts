@@ -1,8 +1,10 @@
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { Mock, SpyInstance } from 'jest-mock';
 import { Supply } from './supply';
 
 describe('Supply', () => {
 
-  let mockOff: jest.Mock<void, [reason?: unknown]>;
+  let mockOff: Mock<void, [reason?: unknown]>;
   let supply: Supply;
 
   beforeEach(() => {
@@ -204,7 +206,7 @@ describe('Supply', () => {
 
   describe('onUnexpectedAbort', () => {
 
-    let errorSpy: jest.SpyInstance;
+    let errorSpy: SpyInstance<void, any[]>;
 
     beforeEach(() => {
       errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {/* noop */});
