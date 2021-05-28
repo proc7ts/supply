@@ -1,4 +1,3 @@
-import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import flatDts from 'rollup-plugin-flat-dts';
 import sourcemaps from 'rollup-plugin-sourcemaps';
@@ -10,7 +9,6 @@ export default {
     supply: './src/index.ts',
   },
   plugins: [
-    commonjs(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
