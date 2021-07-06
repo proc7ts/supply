@@ -134,7 +134,7 @@ describe('Supply', () => {
   });
 
   describe('needs', () => {
-    it('is cut off when required supply is cut off', () => {
+    it('is cut off when required supply cut off', () => {
 
       const whenOff = jest.fn();
       const anotherSupply = new Supply();
@@ -145,6 +145,35 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       anotherSupply.off(reason);
+      expect(whenOff).toHaveBeenCalledWith(reason);
+    });
+  });
+
+  describe('require', () => {
+    it('cuts off original supply when required one cut off', () => {
+
+      const whenOff = jest.fn();
+      const requiredSupply = new Supply();
+
+      expect(supply.require(requiredSupply)).toBe(requiredSupply);
+      supply.whenOff(whenOff);
+
+      const reason = 'some reason';
+
+      requiredSupply.off(reason);
+      expect(whenOff).toHaveBeenCalledWith(reason);
+    });
+    it('creates new required supply when omitted', () => {
+
+      const whenOff = jest.fn();
+      const requiredSupply = supply.require();
+
+      expect(supply.require(requiredSupply)).toBe(requiredSupply);
+      supply.whenOff(whenOff);
+
+      const reason = 'some reason';
+
+      requiredSupply.off(reason);
       expect(whenOff).toHaveBeenCalledWith(reason);
     });
   });
@@ -173,6 +202,33 @@ describe('Supply', () => {
 
       expect(supply.cuts(anotherSupply)).toBe(supply);
       expect(whenAnotherOff).toHaveBeenCalledWith(reason);
+    });
+  });
+
+  describe('derive', () => {
+    it('cuts off another supply when cutting this one off', () => {
+
+      const whenDerivedOff = jest.fn();
+      const derivedSupply = new Supply(whenDerivedOff);
+
+      expect(supply.derive(derivedSupply)).toBe(derivedSupply);
+
+      const reason = 'some reason';
+
+      supply.off(reason);
+      expect(whenDerivedOff).toHaveBeenCalledWith(reason);
+    });
+    it('creates new derived supply when omitted', () => {
+
+      const whenDerivedOff = jest.fn();
+      const derivedSupply = supply.derive().whenOff(whenDerivedOff);
+
+      expect(derivedSupply).not.toBe(supply);
+
+      const reason = 'some reason';
+
+      supply.off(reason);
+      expect(whenDerivedOff).toHaveBeenCalledWith(reason);
     });
   });
 

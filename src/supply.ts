@@ -121,6 +121,21 @@ export class Supply implements SupplyPeer {
   }
 
   /**
+   * Creates derived supply depending on this one.
+   *
+   * If derived supply peer specified, makes it depend on this one.
+   *
+   * In contrast to {@link cuts} method, this one returns derived supply.
+   *
+   * @param derived - Optional derived supply peer to make dependent on this one.
+   *
+   * @returns Derived supply.
+   */
+  derive(derived?: SupplyPeer): Supply {
+    return (derived ? derived.supply : new Supply()).needs(this);
+  }
+
+  /**
    * Makes this supply depend on another one.
    *
    * Once `another` supply is {@link off cut off}, this one will be cut off with the same reason.
@@ -132,6 +147,21 @@ export class Supply implements SupplyPeer {
   needs(another: SupplyPeer): this {
     another.supply.whenOff(reason => this.off(reason));
     return this;
+  }
+
+  /**
+   * Creates required supply this one depends on.
+   *
+   * If required supply peer specified, makes this one depend on it.
+   *
+   * In contrast to {@link needs} method, this one returns required supply.
+   *
+   * @param required - Optional required supply peer to make this one depend on.
+   *
+   * @returns Required supply.
+   */
+  require(required?: SupplyPeer): Supply {
+    return (required ? required.supply : new Supply()).cuts(this);
   }
 
   /**
