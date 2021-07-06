@@ -116,8 +116,10 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#as" class="tsd-kind-icon">as</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#cuts" class="tsd-kind-icon">cuts</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#derive" class="tsd-kind-icon">derive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#needs" class="tsd-kind-icon">needs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#off" class="tsd-kind-icon">off</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#require" class="tsd-kind-icon">require</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#whendone" class="tsd-kind-icon">when<wbr>Done</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="supply.html#whenoff" class="tsd-kind-icon">when<wbr>Off</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="supply.html#onunexpectedabort" class="tsd-kind-icon">on<wbr>Unexpected<wbr>Abort</a></li>
@@ -138,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L36">supply.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L36">supply.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -187,7 +189,7 @@
 					<div class="tsd-signature tsd-kind-icon">[<wbr>Supply<wbr>State__symbol]<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupplyState</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L36">supply.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L36">supply.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -210,7 +212,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L60">supply.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L60">supply.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -234,7 +236,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/supplypeer.html">SupplyPeer</a>.<a href="../interfaces/supplypeer.html#supply">supply</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L51">supply.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L51">supply.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -259,7 +261,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L146">supply.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L176">supply.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -292,7 +294,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L118">supply.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L118">supply.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -317,6 +319,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="derive" class="tsd-anchor"></a>
+					<h3>derive</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">derive<span class="tsd-signature-symbol">(</span>derived<span class="tsd-signature-symbol">?: </span><a href="../interfaces/supplypeer.html" class="tsd-signature-type" data-tsd-kind="Interface">SupplyPeer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="supply.html" class="tsd-signature-type" data-tsd-kind="Class">Supply</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L134">supply.ts:134</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates derived supply depending on this one.</p>
+								</div>
+								<p>If derived supply peer specified, makes it depend on this one.</p>
+								<p>In contrast to <a href="supply.html#cuts">cuts</a> method, this one returns derived supply.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> derived: <a href="../interfaces/supplypeer.html" class="tsd-signature-type" data-tsd-kind="Interface">SupplyPeer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Optional derived supply peer to make dependent on this one.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="supply.html" class="tsd-signature-type" data-tsd-kind="Class">Supply</a></h4>
+							<p>Derived supply.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="needs" class="tsd-anchor"></a>
 					<h3>needs</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -326,7 +362,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L132">supply.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L147">supply.ts:147</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -359,7 +395,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L76">supply.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L76">supply.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -385,6 +421,40 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="require" class="tsd-anchor"></a>
+					<h3>require</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">require<span class="tsd-signature-symbol">(</span>required<span class="tsd-signature-symbol">?: </span><a href="../interfaces/supplypeer.html" class="tsd-signature-type" data-tsd-kind="Interface">SupplyPeer</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="supply.html" class="tsd-signature-type" data-tsd-kind="Class">Supply</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L163">supply.ts:163</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates required supply this one depends on.</p>
+								</div>
+								<p>If required supply peer specified, makes this one depend on it.</p>
+								<p>In contrast to <a href="supply.html#needs">needs</a> method, this one returns required supply.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> required: <a href="../interfaces/supplypeer.html" class="tsd-signature-type" data-tsd-kind="Interface">SupplyPeer</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Optional required supply peer to make this one depend on.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="supply.html" class="tsd-signature-type" data-tsd-kind="Class">Supply</a></h4>
+							<p>Required supply.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="whendone" class="tsd-anchor"></a>
 					<h3>when<wbr>Done</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -394,7 +464,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L101">supply.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L101">supply.ts:101</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -418,7 +488,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L90">supply.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L90">supply.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -470,7 +540,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/fefe941/src/supply.ts#L29">supply.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/proc7ts/supply/blob/c84e8da/src/supply.ts#L29">supply.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -548,10 +618,16 @@
 								<a href="supply.html#cuts" class="tsd-kind-icon">cuts</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="supply.html#derive" class="tsd-kind-icon">derive</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="supply.html#needs" class="tsd-kind-icon">needs</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="supply.html#off" class="tsd-kind-icon">off</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="supply.html#require" class="tsd-kind-icon">require</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="supply.html#whendone" class="tsd-kind-icon">when<wbr>Done</a>
