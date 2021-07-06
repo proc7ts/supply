@@ -1,9 +1,6 @@
 import { Supply } from './supply';
 import type { SupplyPeer } from './supply-peer';
 
-/**
- * @internal
- */
 class AlwaysSupply extends Supply {
 
   get isOff(): false {
@@ -28,9 +25,6 @@ class AlwaysSupply extends Supply {
 
 }
 
-/**
- * @internal
- */
 const alwaysSupply$ = (/*#__PURE__*/ new AlwaysSupply());
 
 /**
