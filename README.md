@@ -64,7 +64,7 @@ supply.off();
 ========
 
 A `Supply` is a class. Its constructor accepts optional callback instance. The latter will be called once the supply
-is cut off.
+cut off.
 
 ### `off(reason?: unknown)`
 
@@ -124,11 +124,29 @@ Once the supply is [cut off], `another` one will be cut off with the same reason
 Calling this method has the same effect as calling `another.supply.needs(this)`.
 
 
+### `derive(derived?: SupplyPeer)`
+
+Creates derived supply depending on this one.
+
+If derived supply peer specified, makes it depend on this one.
+
+In contrast to `.cuts()` method, this one returns derived supply.
+
+
 ### `needs(other: SupplyPeer)`
 
 Makes the supply depend on another one.
 
 Once `another` supply is [cut off], this one will be cut off with the same reason.
+
+
+### `require(required?: SupplyPeer)`
+
+Creates required supply this one depends on.
+
+If required supply peer specified, makes this one depend on it.
+
+In contrast to `.needs()` method, this one returns required supply.
 
 
 ### `as(another: SupplyPeer)`
