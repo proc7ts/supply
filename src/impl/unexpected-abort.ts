@@ -1,11 +1,5 @@
-/**
- * @internal
- */
 export let Supply$unexpectedAbort: (reason: unknown) => void = Supply$unexpectedAbort$byDefault;
 
-/**
- * @internal
- */
 export function Supply$unexpectedAbort$handle(handler = Supply$unexpectedAbort$byDefault): void {
   Supply$unexpectedAbort = handler;
 }

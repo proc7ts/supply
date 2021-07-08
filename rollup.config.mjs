@@ -30,6 +30,7 @@ export default defineConfig({
         compilerOptions: {
           declarationMap: true,
         },
+        internal: ['**/impl/**', '**/*.impl'],
       }),
     ],
   },
