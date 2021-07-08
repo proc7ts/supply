@@ -1,13 +1,12 @@
 import type { Supply } from '../supply';
-import { SupplyState } from './state';
+import type { SupplyState } from './state';
 
-class SupplyState$Off extends SupplyState {
+class SupplyState$Off implements SupplyState {
 
-  constructor(private readonly _reason: unknown) {
-    super();
+  constructor(private readonly reason: unknown) {
   }
 
-  override get isOff(): true {
+  get isOff(): true {
     return true;
   }
 
@@ -15,8 +14,8 @@ class SupplyState$Off extends SupplyState {
     // Already off.
   }
 
-  override whenOff(_supply: Supply, callback: (reason?: unknown) => void): void {
-    callback(this._reason);
+  whenOff(_supply: Supply, callback: (reason?: unknown) => void): void {
+    callback(this.reason);
   }
 
 }

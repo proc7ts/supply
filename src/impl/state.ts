@@ -2,14 +2,12 @@ import type { Supply } from '../supply';
 
 export const SupplyState__symbol = (/*#__PURE__*/ Symbol('SupplyState'));
 
-export abstract class SupplyState {
+export interface SupplyState {
 
-  get isOff(): boolean {
-    return false;
-  }
+  readonly isOff: boolean;
 
-  abstract off(supply: Supply, reason?: unknown): void;
+  off(supply: Supply, reason?: unknown): void;
 
-  abstract whenOff(supply: Supply, callback: (reason?: unknown) => void): void;
+  whenOff(supply: Supply, callback: (reason?: unknown) => void): void;
 
 }
