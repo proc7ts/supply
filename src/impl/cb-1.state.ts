@@ -1,26 +1,29 @@
 import type { Supply } from '../supply';
-import { SupplyState$cbN } from './cb-n.state';
+import { SupplyState$CbN } from './cb-n.state';
 import { Supply$off$end, Supply$off$start } from './off';
 import { SupplyState$off } from './off.state';
-import type { SupplyState } from './state';
-import { SupplyState__symbol } from './state';
+import { SupplyState, SupplyState__symbol } from './state';
 
-export function SupplyState$cb1(off: (this: void, reason?: unknown) => void): SupplyState {
-  return {
-    isOff: false,
-    off(supply: Supply, reason?: unknown): void {
+export class SupplyState$Cb1 extends SupplyState {
 
-      const prevOff = Supply$off$start();
+  constructor(private readonly cb: (this: void, reason?: unknown) => void) {
+    super();
+  }
 
-      try {
-        supply[SupplyState__symbol] = SupplyState$off(reason);
-        off(reason);
-      } finally {
-        Supply$off$end(prevOff);
-      }
-    },
-    whenOff(supply: Supply, callback: (reason?: unknown) => void): void {
-      supply[SupplyState__symbol] = SupplyState$cbN([off, callback]);
-    },
-  };
+  off(supply: Supply, reason?: unknown): void {
+
+    const prevOff = Supply$off$start();
+
+    try {
+      supply[SupplyState__symbol] = SupplyState$off(reason);
+      this.cb(reason);
+    } finally {
+      Supply$off$end(prevOff);
+    }
+  }
+
+  whenOff(supply: Supply, callback: (reason?: unknown) => void): void {
+    supply[SupplyState__symbol] = new SupplyState$CbN([this.cb, callback]);
+  }
+
 }

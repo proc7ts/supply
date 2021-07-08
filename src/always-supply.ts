@@ -3,23 +3,23 @@ import type { SupplyPeer } from './supply-peer';
 
 class AlwaysSupply extends Supply {
 
-  get isOff(): false {
+  override get isOff(): false {
     return false;
   }
 
-  off(_reason?: unknown): Supply {
+  override off(_reason?: unknown): Supply {
     return this;
   }
 
-  whenOff(_callback: (this: void, reason?: unknown) => void): this {
+  override whenOff(_callback: (this: void, reason?: unknown) => void): this {
     return this;
   }
 
-  cuts(_another: SupplyPeer): this {
+  override cuts(_another: SupplyPeer): this {
     return this;
   }
 
-  needs(_another: SupplyPeer): this {
+  override needs(_another: SupplyPeer): this {
     return this;
   }
 

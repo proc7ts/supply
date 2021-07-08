@@ -1,12 +1,11 @@
 import type { Supply } from '../supply';
-import { SupplyState$cb1 } from './cb-1.state';
+import { SupplyState$Cb1 } from './cb-1.state';
 import { Supply$off$end, Supply$off$start, Supply$off$unexpected } from './off';
 import { SupplyState$off } from './off.state';
-import type { SupplyState } from './state';
-import { SupplyState__symbol } from './state';
+import { SupplyState, SupplyState__symbol } from './state';
 
-export const SupplyState$cb0: SupplyState = {
-  isOff: false,
+class SupplyState$Cb0 extends SupplyState {
+
   off(supply: Supply, reason?: unknown): void {
 
     const prevOff = Supply$off$start();
@@ -17,8 +16,12 @@ export const SupplyState$cb0: SupplyState = {
     } finally {
       Supply$off$end(prevOff);
     }
-  },
+  }
+
   whenOff(supply: Supply, callback: (reason?: unknown) => void): void {
-    supply[SupplyState__symbol] = SupplyState$cb1(callback);
-  },
-};
+    supply[SupplyState__symbol] = new SupplyState$Cb1(callback);
+  }
+
+}
+
+export const SupplyState$cb0 = new SupplyState$Cb0;
