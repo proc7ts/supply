@@ -4,7 +4,9 @@ import { SupplyState$off } from './off.state';
 import type { SupplyState } from './state';
 import { SupplyState__symbol } from './state';
 
-export function SupplyState$withCallback(off: (this: void, reason?: unknown) => void): SupplyState {
+export function SupplyState$cbN(
+    offs: ((this: void, reason?: unknown) => void)[],
+): SupplyState {
   return {
     isOff: false,
     off(supply: Supply, reason?: unknown): void {
@@ -13,19 +15,15 @@ export function SupplyState$withCallback(off: (this: void, reason?: unknown) => 
 
       try {
         supply[SupplyState__symbol] = SupplyState$off(reason);
-        off(reason);
+        for (const off of offs) {
+          off(reason);
+        }
       } finally {
         Supply$off$end(prevOff);
       }
     },
     whenOff(_supply: Supply, callback: (reason?: unknown) => void): void {
-
-      const prev = off;
-
-      off = reason => {
-        prev(reason);
-        callback(reason);
-      };
+      offs.push(callback);
     },
   };
 }
