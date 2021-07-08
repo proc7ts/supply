@@ -104,7 +104,7 @@
 					<h1><code>Supply</code></h1>
 				</a>
 				<p>A <code>Supply</code> is a class. Its constructor accepts optional callback instance. The latter will be called once the supply
-				is cut off.</p>
+				cut off.</p>
 				<a href="#offreason-unknown" id="offreason-unknown" style="color: inherit; text-decoration: none;">
 					<h3><code>off(reason?: unknown)</code></h3>
 				</a>
@@ -143,11 +143,23 @@
 				<p>Makes another supply depend on this one.</p>
 				<p>Once the supply is <a href="#offreason-unknown">cut off</a>, <code>another</code> one will be cut off with the same reason.</p>
 				<p>Calling this method has the same effect as calling <code>another.supply.needs(this)</code>.</p>
+				<a href="#derivederived-supplypeer" id="derivederived-supplypeer" style="color: inherit; text-decoration: none;">
+					<h3><code>derive(derived?: SupplyPeer)</code></h3>
+				</a>
+				<p>Creates derived supply depending on this one.</p>
+				<p>If derived supply peer specified, makes it depend on this one.</p>
+				<p>In contrast to <code>.cuts()</code> method, this one returns derived supply.</p>
 				<a href="#needsother-supplypeer" id="needsother-supplypeer" style="color: inherit; text-decoration: none;">
 					<h3><code>needs(other: SupplyPeer)</code></h3>
 				</a>
 				<p>Makes the supply depend on another one.</p>
 				<p>Once <code>another</code> supply is <a href="#offreason-unknown">cut off</a>, this one will be cut off with the same reason.</p>
+				<a href="#requirerequired-supplypeer" id="requirerequired-supplypeer" style="color: inherit; text-decoration: none;">
+					<h3><code>require(required?: SupplyPeer)</code></h3>
+				</a>
+				<p>Creates required supply this one depends on.</p>
+				<p>If required supply peer specified, makes this one depend on it.</p>
+				<p>In contrast to <code>.needs()</code> method, this one returns required supply.</p>
 				<a href="#asanother-supplypeer" id="asanother-supplypeer" style="color: inherit; text-decoration: none;">
 					<h3><code>as(another: SupplyPeer)</code></h3>
 				</a>
