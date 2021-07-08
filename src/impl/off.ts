@@ -3,9 +3,6 @@ import { Supply$unexpectedAbort } from './unexpected-abort';
 let Supply$off = false;
 let Supply$off$unexpected$reasons: Set<unknown> | undefined;
 
-/**
- * @internal
- */
 export function Supply$off$start(): boolean {
 
   const prevOff = Supply$off;
@@ -15,9 +12,6 @@ export function Supply$off$start(): boolean {
   return prevOff;
 }
 
-/**
- * @internal
- */
 export function Supply$off$unexpected(reason: unknown): void {
   if (reason !== undefined) {
     if (!Supply$off$unexpected$reasons) {
@@ -27,9 +21,6 @@ export function Supply$off$unexpected(reason: unknown): void {
   }
 }
 
-/**
- * @internal
- */
 export function Supply$off$end(prevOff: boolean): void {
   Supply$off = prevOff;
   if (!prevOff) {
