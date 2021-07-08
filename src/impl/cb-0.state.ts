@@ -24,4 +24,4 @@ class SupplyState$Cb0 extends SupplyState {
 
 }
 
-export const SupplyState$cb0 = new SupplyState$Cb0;
+export const SupplyState$cb0 = (/*#__PURE__*/ new SupplyState$Cb0);
