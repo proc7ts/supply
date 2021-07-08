@@ -1,5 +1,5 @@
 import type { SupplyState } from './impl';
-import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$cb1, SupplyState__symbol } from './impl';
+import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1, SupplyState__symbol } from './impl';
 import type { SupplyPeer } from './supply-peer';
 
 /**
@@ -37,7 +37,7 @@ export class Supply implements SupplyPeer {
    * as its only parameter. No-op by default.
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
-    this[SupplyState__symbol] = off ? SupplyState$cb1(off) : SupplyState$cb0;
+    this[SupplyState__symbol] = off ? new SupplyState$Cb1(off) : SupplyState$cb0;
   }
 
   /**

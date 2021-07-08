@@ -1,38 +1,32 @@
 import { Supply } from './supply';
 import type { SupplyPeer } from './supply-peer';
 
-/**
- * @internal
- */
 class NeverSupply extends Supply {
 
-  get isOff(): true {
+  override get isOff(): true {
     return true;
   }
 
-  off(): this {
+  override off(): this {
     return this;
   }
 
-  whenOff(callback: (reason?: any) => void): this {
+  override whenOff(callback: (reason?: any) => void): this {
     callback();
     return this;
   }
 
-  cuts(another: SupplyPeer): this {
+  override cuts(another: SupplyPeer): this {
     another.supply.off();
     return this;
   }
 
-  needs(_another: SupplyPeer): this {
+  override needs(_another: SupplyPeer): this {
     return this;
   }
 
 }
 
-/**
- * @internal
- */
 const neverSupply$ = (/*#__PURE__*/ new NeverSupply());
 
 /**
