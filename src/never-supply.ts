@@ -13,11 +13,13 @@ class NeverSupply extends Supply {
 
   override whenOff(callback: (reason?: any) => void): this {
     callback();
+
     return this;
   }
 
   override cuts(another: SupplyPeer): this {
     another.supply.off();
+
     return this;
   }
 

@@ -70,6 +70,7 @@ export class Supply implements SupplyPeer {
    */
   off(reason?: unknown): Supply {
     this[SupplyState__symbol].off(this, reason);
+
     return this;
   }
 
@@ -84,6 +85,7 @@ export class Supply implements SupplyPeer {
    */
   whenOff(callback: (this: void, reason?: unknown) => void): this {
     this[SupplyState__symbol].whenOff(this, callback);
+
     return this;
   }
 
@@ -112,6 +114,7 @@ export class Supply implements SupplyPeer {
    */
   cuts(another: SupplyPeer): this {
     another.supply.needs(this);
+
     return this;
   }
 
@@ -141,6 +144,7 @@ export class Supply implements SupplyPeer {
    */
   needs(another: SupplyPeer): this {
     another.supply.whenOff(reason => this.off(reason));
+
     return this;
   }
 
