@@ -94,7 +94,7 @@ Equals to `false` initially. Becomes `true` after calling the [off()] method.
 Registers a callback function that will be called when the supply is [cut off]. If the supply is cut off already when
 calling this method, the callback will be called immediately.
 
-The registered callback receives a cut off reason as its only parameter.
+The registered callback receives a cutoff reason as its only parameter.
 
 The callback will be called at most once.
 

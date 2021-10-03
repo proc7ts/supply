@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module Module @proc7ts/supply
+ * @module @proc7ts/supply
  */
 export * from './always-supply';
 export * from './never-supply';
