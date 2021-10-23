@@ -21,7 +21,8 @@ describe('neverSupply', () => {
       const whenOff = jest.fn();
 
       expect(neverSupply().whenOff(whenOff)).toBe(neverSupply());
-      expect(whenOff).toHaveBeenCalledWith();
+      expect(whenOff).toHaveBeenCalledWith(...([] as unknown[] as [unknown, ...unknown[]]));
+      expect(whenOff).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -35,6 +36,7 @@ describe('neverSupply', () => {
       expect(neverSupply().cuts(supply)).toBe(neverSupply());
       expect(supply.isOff).toBe(true);
       expect(whenOff).toHaveBeenCalledWith(undefined);
+      expect(whenOff).toHaveBeenCalledTimes(1);
     });
   });
 

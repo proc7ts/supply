@@ -57,7 +57,7 @@ describe('Supply', () => {
       Supply.onUnexpectedAbort(onAbort);
       supply.off();
 
-      expect(onAbort).not.toHaveBeenCalledWith();
+      expect(onAbort).not.toHaveBeenCalled();
     });
   });
 
