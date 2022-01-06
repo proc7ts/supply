@@ -1,4 +1,3 @@
-import nodeResolve from '@rollup/plugin-node-resolve';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
 import sourcemaps from 'rollup-plugin-sourcemaps';
@@ -15,7 +14,6 @@ export default defineConfig({
       tsconfig: 'tsconfig.main.json',
       cacheRoot: 'target/.rts2_cache',
     }),
-    nodeResolve(),
     sourcemaps(),
   ],
   output: {
