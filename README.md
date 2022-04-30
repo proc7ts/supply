@@ -1,16 +1,15 @@
-The Supply Of Something
-=======================
+# The Supply Of Something
 
 [![NPM][npm-image]][npm-url]
 [![Build Status][build-status-img]][build-status-link]
 [![Code Quality][quality-img]][quality-link]
 [![Coverage][coverage-img]][coverage-link]
 [![GitHub Project][github-image]][github-url]
-[![API Documentation][api-docs-image]][API documentation]
+[![API Documentation][api-docs-image]][api documentation]
 
 The `Supply` class represents a supply of something. E.g. some subscription.
 
-When the supply is no longer needed, it can be cut off. Cutting off the supply informs the interested parties. 
+When the supply is no longer needed, it can be cut off. Cutting off the supply informs the interested parties.
 
 [npm-image]: https://img.shields.io/npm/v/@proc7ts/supply.svg?logo=npm
 [npm-url]: https://www.npmjs.com/package/@proc7ts/supply
@@ -23,11 +22,9 @@ When the supply is no longer needed, it can be cut off. Cutting off the supply i
 [github-image]: https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational
 [github-url]: https://github.com/proc7ts/supply
 [api-docs-image]: https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational
-[API documentation]: https://proc7ts.github.io/supply/ 
+[api documentation]: https://proc7ts.github.io/supply/
 
-
-Example
-=======
+# Example
 
 The supply may represent the registration of event listener:
 
@@ -45,10 +42,8 @@ function registerListener(target: EventTarget, eventType: string, listener: (eve
 }
 
 // Add a button click listener.
-const supply = registerListener(
-    document.getElementById('button'),
-    'click',
-    event => console.debug('Button clicked', event),
+const supply = registerListener(document.getElementById('button'), 'click', event =>
+  console.debug('Button clicked', event),
 ).whenOff(reason => {
   // Additional callback to call when the listener removed.
   console.debug('No longer handling clicks', reason);
@@ -60,8 +55,7 @@ const supply = registerListener(
 supply.off();
 ```
 
-`Supply`
-========
+# `Supply`
 
 A `Supply` is a class. Its constructor accepts optional callback instance. The latter will be called once the supply
 cut off.
@@ -79,15 +73,13 @@ Everything else means the supply is aborted abnormally because of that reason.
 When called, all registered cut off callbacks are called with the given reason and [isOff] property value becomes
 `true`.
 
-
 ### `isOff`
 
-[isOff]: #isoff
+[isoff]: #isoff
 
 This is flag indicating whether the supply is cut off.
 
 Equals to `false` initially. Becomes `true` after calling the [off()] method.
-
 
 ### `whenOff(callback: (reason?: unknown) => void)`
 
@@ -98,7 +90,6 @@ The registered callback receives a cutoff reason as its only parameter.
 
 The callback will be called at most once.
 
-
 ### `whenDone()`
 
 Returns a promise that will be resolved once the supply is [cut off].
@@ -106,14 +97,12 @@ Returns a promise that will be resolved once the supply is [cut off].
 The returned promise will be successfully resolved once the supply is cut off without a reason, or rejected once the
 supply is cut off with any reason except `undefined`.
 
-
 ### `supply`
 
 This property contains the supply itself.
 
 Implementing this property makes the supply implement a `SupplyPeer` interface. Any instance implementing the latter
 can be passed to supporting methods like `cuts()`, `needs()`, or `as()`.
-
 
 ### `cuts(other: SupplyPeer)`
 
@@ -123,7 +112,6 @@ Once the supply is [cut off], `another` one will be cut off with the same reason
 
 Calling this method has the same effect as calling `another.supply.needs(this)`.
 
-
 ### `derive(derived?: SupplyPeer)`
 
 Creates derived supply depending on this one.
@@ -132,13 +120,11 @@ If derived supply peer specified, makes it depend on this one.
 
 In contrast to `.cuts()` method, this one returns derived supply.
 
-
 ### `needs(other: SupplyPeer)`
 
 Makes the supply depend on another one.
 
 Once `another` supply is [cut off], this one will be cut off with the same reason.
-
 
 ### `require(required?: SupplyPeer)`
 
@@ -148,24 +134,19 @@ If required supply peer specified, makes this one depend on it.
 
 In contrast to `.needs()` method, this one returns required supply.
 
-
 ### `as(another: SupplyPeer)`
 
 Makes this and another supply depend on each other.
 
 Calling this method is the same as calling `.needs(another).cuts(another)`.
 
-
-`neverSupply()`
-===============
+# `neverSupply()`
 
 Builds a never-supply instance.
 
 Returns a supply instance that is already cut off without any particular reason.
-                                                                                
 
-`alwaysSupply()`
-================
+# `alwaysSupply()`
 
 Builds an always-supply instance.
 
@@ -173,9 +154,7 @@ The `off()` method of the returned supply does nothing.
 
 Returns a supply instance that can not be cut off.
 
-
-Unexpected Aborts
-=================
+# Unexpected Aborts
 
 An unexpected abort happens when any supply is [cut off] with some reason, but there is no cut off callback registered.
 
