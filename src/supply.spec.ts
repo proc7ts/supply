@@ -4,7 +4,7 @@ import { Supply } from './supply';
 
 describe('Supply', () => {
 
-  let mockOff: Mock<void, [reason?: unknown]>;
+  let mockOff: Mock<(reason?: unknown) => void>;
   let supply: Supply;
 
   beforeEach(() => {
@@ -262,7 +262,7 @@ describe('Supply', () => {
 
   describe('onUnexpectedAbort', () => {
 
-    let errorSpy: SpyInstance<void, any[]>;
+    let errorSpy: SpyInstance<(...args: unknown[]) => void>;
 
     beforeEach(() => {
       errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {/* noop */});
