@@ -1,4 +1,4 @@
-import type { Supply } from './supply';
+import type { Supply } from './supply.js';
 
 /**
  * A peer of supply, i.e. a supply participant. E.g. supplier or consumer.
