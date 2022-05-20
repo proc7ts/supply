@@ -1,8 +1,8 @@
-import type { Supply } from '../supply';
-import { SupplyState$off } from './off.state';
-import type { SupplyState } from './state';
-import { SupplyState__symbol } from './state';
-import { Supply$unexpectedAbort } from './unexpected-abort';
+import type { Supply } from '../supply.js';
+import { SupplyState$off } from './off.state.js';
+import type { SupplyState } from './state.js';
+import { SupplyState__symbol } from './state.js';
+import { Supply$unexpectedAbort } from './unexpected-abort.js';
 
 let Supply$off: 0 | 1 = 0;
 let Supply$off$unexpected$reasons: Set<unknown> | undefined;

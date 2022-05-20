@@ -6,7 +6,7 @@ import typescript from 'typescript';
 
 export default defineConfig({
   input: {
-    supply: './src/index.ts',
+    supply: './src/mod.ts',
   },
   plugins: [
     ts({

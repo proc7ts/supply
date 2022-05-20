@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Mock, SpyInstance } from 'jest-mock';
-import { Supply } from './supply';
+import { Supply } from './supply.js';
 
 describe('Supply', () => {
 

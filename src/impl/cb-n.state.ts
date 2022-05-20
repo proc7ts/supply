@@ -1,5 +1,5 @@
-import type { Supply } from '../supply';
-import { SupplyState$On } from './on.state';
+import type { Supply } from '../supply.js';
+import { SupplyState$On } from './on.state.js';
 
 export class SupplyState$CbN extends SupplyState$On {
 

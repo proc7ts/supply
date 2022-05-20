@@ -1,5 +1,5 @@
-import type { SupplyState } from './impl';
-import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1, SupplyState__symbol } from './impl';
+import type { SupplyState } from './impl/mod.js';
+import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1, SupplyState__symbol } from './impl/mod.js';
 import type { SupplyPeer } from './supply-peer';
 
 /**

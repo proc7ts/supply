@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { alwaysSupply, isAlwaysSupply } from './always-supply';
-import { neverSupply } from './never-supply';
-import { Supply } from './supply';
+import { alwaysSupply, isAlwaysSupply } from './always-supply.js';
+import { neverSupply } from './never-supply.js';
+import { Supply } from './supply.js';
 
 describe('alwaysSupply', () => {
   afterEach(() => {

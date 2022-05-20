@@ -1,6 +1,6 @@
-import type { Supply } from '../supply';
+import type { Supply } from '../supply.js';
 
-export const SupplyState__symbol = (/*#__PURE__*/ Symbol('SupplyState'));
+export const SupplyState__symbol = (/* #__PUR E__ */ Symbol('SupplyState'));
 
 export interface SupplyState {
 

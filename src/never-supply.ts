@@ -1,5 +1,5 @@
-import { Supply } from './supply';
-import type { SupplyPeer } from './supply-peer';
+import type { SupplyPeer } from './supply-peer.js';
+import { Supply } from './supply.js';
 
 class NeverSupply extends Supply {
 

@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { neverSupply } from './never-supply';
-import { Supply } from './supply';
+import { neverSupply } from './never-supply.js';
+import { Supply } from './supply.js';
 
 describe('neverSupply', () => {
   describe('isOff', () => {

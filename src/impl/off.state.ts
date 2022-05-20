@@ -1,5 +1,5 @@
-import type { Supply } from '../supply';
-import type { SupplyState } from './state';
+import type { Supply } from '../supply.js';
+import type { SupplyState } from './state.js';
 
 class SupplyState$Off implements SupplyState {
 
