@@ -1,13 +1,9 @@
-import type { Supply } from '../supply.js';
-
-export const SupplyState__symbol = (/* #__PUR E__ */ Symbol('SupplyState'));
-
 export interface SupplyState {
 
   readonly isOff: boolean;
 
-  off(supply: Supply, reason?: unknown): void;
+  off(update: (supply: SupplyState) => void, reason?: unknown): void;
 
-  whenOff(supply: Supply, callback: (reason?: unknown) => void): void;
+  whenOff(update: (supply: SupplyState) => void, callback: (reason?: unknown) => void): void;
 
 }

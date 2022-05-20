@@ -1,21 +1,23 @@
-import type { Supply } from '../supply.js';
 import type { SupplyState } from './state.js';
 
 class SupplyState$Off implements SupplyState {
 
-  constructor(private readonly reason: unknown) {
+  readonly #reason: unknown;
+
+  constructor(reason: unknown) {
+    this.#reason = reason;
   }
 
   get isOff(): true {
     return true;
   }
 
-  off(_supply: Supply, _reason?: unknown): void {
+  off(_update: unknown, _reason?: unknown): void {
     // Already off.
   }
 
-  whenOff(_supply: Supply, callback: (reason?: unknown) => void): void {
-    callback(this.reason);
+  whenOff(_update: unknown, callback: (reason?: unknown) => void): void {
+    callback(this.#reason);
   }
 
 }

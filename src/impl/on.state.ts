@@ -1,7 +1,5 @@
-import type { Supply } from '../supply.js';
 import { SupplyState$off } from './off.state.js';
 import type { SupplyState } from './state.js';
-import { SupplyState__symbol } from './state.js';
 import { Supply$unexpectedAbort } from './unexpected-abort.js';
 
 let Supply$off: 0 | 1 = 0;
@@ -13,8 +11,8 @@ export abstract class SupplyState$On implements SupplyState {
     return false;
   }
 
-  off(supply: Supply, reason?: unknown): void {
-    supply[SupplyState__symbol] = SupplyState$off(reason);
+  off(update: (supply: SupplyState) => void, reason?: unknown): void {
+    update(SupplyState$off(reason));
     if (Supply$off) {
       this.cb(reason);
     } else {
@@ -28,7 +26,7 @@ export abstract class SupplyState$On implements SupplyState {
     }
   }
 
-  abstract whenOff(supply: Supply, callback: (reason?: unknown) => void): void;
+  abstract whenOff(update: (supply: SupplyState) => void, callback: (reason?: unknown) => void): void;
 
   protected abstract cb(reason: unknown): void;
 

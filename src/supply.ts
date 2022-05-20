@@ -1,5 +1,5 @@
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1, SupplyState__symbol } from './impl/mod.js';
+import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1 } from './impl/mod.js';
 import type { SupplyPeer } from './supply-peer';
 
 /**
@@ -25,10 +25,8 @@ export class Supply implements SupplyPeer {
     Supply$unexpectedAbort$handle(handler);
   }
 
-  /**
-   * @internal
-   */
-  [SupplyState__symbol]: SupplyState;
+  #state: SupplyState;
+  readonly #update = (state: SupplyState): void => { this.#state = state; };
 
   /**
    * Constructs new supply instance.
@@ -37,7 +35,7 @@ export class Supply implements SupplyPeer {
    * as its only parameter. No-op by default.
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
-    this[SupplyState__symbol] = off ? new SupplyState$Cb1(off) : SupplyState$cb0;
+    this.#state = off ? new SupplyState$Cb1(off) : SupplyState$cb0;
   }
 
   /**
@@ -50,16 +48,16 @@ export class Supply implements SupplyPeer {
   /**
    * Whether this supply is {@link off cut off} already.
    *
-   * `true` means nothing would be supplied any more.
+   * `true` means nothing would be supplied anymore.
    */
   get isOff(): boolean {
-    return this[SupplyState__symbol].isOff;
+    return this.#state.isOff;
   }
 
   /**
    * Cuts off this supply.
    *
-   * After this method call nothing would be supplied any more.
+   * After this method call nothing would be supplied anymore.
    *
    * Calling this method for the second time has no effect.
    *
@@ -69,7 +67,7 @@ export class Supply implements SupplyPeer {
    * @returns The cut off supply instance.
    */
   off(reason?: unknown): Supply {
-    this[SupplyState__symbol].off(this, reason);
+    this.#state.off(this.#update, reason);
 
     return this;
   }
@@ -84,7 +82,7 @@ export class Supply implements SupplyPeer {
    * @returns `this` instance.
    */
   whenOff(callback: (this: void, reason?: unknown) => void): this {
-    this[SupplyState__symbol].whenOff(this, callback);
+    this.#state.whenOff(this.#update, callback);
 
     return this;
   }
