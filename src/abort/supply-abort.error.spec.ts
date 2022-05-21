@@ -8,7 +8,7 @@ describe('SupplyAbortError', () => {
     });
   });
 
-  describe('abortReasonOf', () => {
+  describe('reasonOf', () => {
 
     let abortCtl: AbortController;
     let signal: AbortSignal;
@@ -19,19 +19,19 @@ describe('SupplyAbortError', () => {
     });
 
     it('returns `undefined` for not yet aborted signal', () => {
-      expect(SupplyAbortError.abortReasonOf(signal)).toBeUndefined();
+      expect(SupplyAbortError.reasonOf(signal)).toBeUndefined();
     });
     it('returns explicit abort reason', () => {
       const reason = new Error('Aborted by test');
 
       abortCtl.abort(reason);
 
-      expect(SupplyAbortError.abortReasonOf(signal)).toBe(reason);
+      expect(SupplyAbortError.reasonOf(signal)).toBe(reason);
     });
     it('returns default abort reason', () => {
       abortCtl.abort();
 
-      expect(SupplyAbortError.abortReasonOf(signal)).toEqual(new SupplyAbortError());
+      expect(SupplyAbortError.reasonOf(signal)).toEqual(new SupplyAbortError());
     });
   });
 });

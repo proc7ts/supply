@@ -11,7 +11,7 @@ export class SupplyAbortError extends Error {
    * @returns An abort reason when present, new {@link SupplyAbortError} instance when the one is absent, or `undefined`
    * if the source `signal` is not aborted.
    */
-  static abortReasonOf(signal: AbortSignal): unknown | undefined {
+  static reasonOf(signal: AbortSignal): unknown | undefined {
     if (!signal.aborted) {
       return;
     }

@@ -19,12 +19,12 @@ export function abortSupplyBy(signal: AbortSignal, target?: SupplyPeer): Supply 
   const supply = target?.supply ?? new Supply();
 
   if (signal.aborted) {
-    supply.off(SupplyAbortError.abortReasonOf(signal));
+    supply.off(SupplyAbortError.reasonOf(signal));
   } else {
 
     const onAbort = (): void => {
       signal.removeEventListener('abort', onAbort);
-      supply.off(SupplyAbortError.abortReasonOf(signal));
+      supply.off(SupplyAbortError.reasonOf(signal));
     };
 
     signal.addEventListener('abort', onAbort);
