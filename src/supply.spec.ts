@@ -4,12 +4,12 @@ import { Supply } from './supply.js';
 
 describe('Supply', () => {
 
-  let mockOff: Mock<(reason?: unknown) => void>;
+  let whenOff: Mock<(reason?: unknown) => void>;
   let supply: Supply;
 
   beforeEach(() => {
-    mockOff = jest.fn();
-    supply = new Supply(mockOff);
+    whenOff = jest.fn();
+    supply = new Supply(whenOff);
   });
   afterEach(() => {
     Supply.onUnexpectedAbort();
@@ -27,7 +27,8 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       expect(supply.off(reason)).toBe(supply);
-      expect(mockOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(supply.reason).toBe(reason);
     });
     it('(with callback) does not call unexpected abort handler', () => {
 
@@ -62,12 +63,29 @@ describe('Supply', () => {
   });
 
   describe('isOff', () => {
-    it('is set to `false` initially', () => {
+    it('is `false` initially', () => {
       expect(supply.isOff).toBe(false);
     });
-    it('is set to `true` when supply is cut off', () => {
+    it('is `true` when supply cut off', () => {
       supply.off();
       expect(supply.isOff).toBe(true);
+    });
+  });
+
+  describe('reason', () => {
+    it('is `undefined` initially', () => {
+      expect(supply.reason).toBeUndefined();
+    });
+    it('is `undefined` when supply cut off without reason', () => {
+      supply.off();
+      expect(supply.reason).toBeUndefined();
+    });
+    it('is set to reason when supply cut off', () => {
+
+      const reason = 'reason';
+
+      supply.off(reason);
+      expect(supply.reason).toBe(reason);
     });
   });
 

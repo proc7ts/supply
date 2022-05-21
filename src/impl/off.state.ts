@@ -2,10 +2,7 @@ import type { SupplyState } from './state.js';
 
 class SupplyState$Off implements SupplyState {
 
-  readonly #reason: unknown;
-
-  constructor(reason: unknown) {
-    this.#reason = reason;
+  constructor(readonly reason: unknown) {
   }
 
   get isOff(): true {
@@ -17,7 +14,7 @@ class SupplyState$Off implements SupplyState {
   }
 
   whenOff(_update: unknown, callback: (reason?: unknown) => void): void {
-    callback(this.#reason);
+    callback(this.reason);
   }
 
 }

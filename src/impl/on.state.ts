@@ -11,6 +11,10 @@ export abstract class SupplyState$On implements SupplyState {
     return false;
   }
 
+  get reason(): undefined {
+    return;
+  }
+
   off(update: (supply: SupplyState) => void, reason?: unknown): void {
     update(SupplyState$off(reason));
     if (Supply$off) {
