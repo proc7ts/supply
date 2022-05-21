@@ -1,5 +1,6 @@
 import { SupplyPeer } from '../supply-peer.js';
 import { Supply } from '../supply.js';
+import { SupplyAbortError } from './supply-abort.error.js';
 
 /**
  * Aborts supply by given signal.
@@ -18,12 +19,12 @@ export function abortSupplyBy(signal: AbortSignal, target?: SupplyPeer): Supply 
   const supply = target?.supply ?? new Supply();
 
   if (signal.aborted) {
-    supply.off(signal.reason);
+    supply.off(SupplyAbortError.abortReasonOf(signal));
   } else {
 
     const onAbort = (): void => {
       signal.removeEventListener('abort', onAbort);
-      supply.off(signal.reason);
+      supply.off(SupplyAbortError.abortReasonOf(signal));
     };
 
     signal.addEventListener('abort', onAbort);

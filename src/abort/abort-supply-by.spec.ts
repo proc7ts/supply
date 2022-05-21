@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Supply } from '../supply.js';
 import { abortSupplyBy } from './abort-supply-by.js';
+import { SupplyAbortError } from './supply-abort.error.js';
 
 describe('abortSupplyBy', () => {
 
@@ -24,6 +25,15 @@ describe('abortSupplyBy', () => {
     expect(abortSupplyBy(signal, supply)).toBe(supply);
     expect(whenOff).toHaveBeenCalledWith(reason);
   });
+  it('cuts off supply immediately by signal aborted without explicit reason', () => {
+    abortCtl.abort();
+
+    const whenOff = jest.fn();
+    const supply = new Supply(whenOff);
+
+    expect(abortSupplyBy(signal, supply)).toBe(supply);
+    expect(whenOff).toHaveBeenCalledWith(new SupplyAbortError());
+  });
   it('cuts off supply when abort signal received', () => {
 
     const supply = abortSupplyBy(signal);
@@ -37,5 +47,17 @@ describe('abortSupplyBy', () => {
     abortCtl.abort(reason);
     expect(supply.isOff).toBe(true);
     expect(whenOff).toHaveBeenCalledWith(reason);
+  });
+  it('cuts off supply when abort signal without explicit reason received', () => {
+
+    const supply = abortSupplyBy(signal);
+    const whenOff = jest.fn();
+
+    supply.whenOff(whenOff);
+    expect(supply.isOff).toBe(false);
+
+    abortCtl.abort();
+    expect(supply.isOff).toBe(true);
+    expect(whenOff).toHaveBeenCalledWith(new SupplyAbortError());
   });
 });
