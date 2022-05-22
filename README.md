@@ -77,9 +77,15 @@ When called, all registered cut off callbacks are called with the given reason a
 
 [isoff]: #isoff
 
-This is flag indicating whether the supply is cut off.
+This is a flag indicating whether the supply is cut off.
 
 Equals to `false` initially. Becomes `true` after calling the [off()] method.
+
+### `reason`
+
+[reason]: #reason
+
+The reason why supply is cut off. `undefined` when the supply is not cut off.
 
 ### `whenOff(callback: (reason?: unknown) => void)`
 
