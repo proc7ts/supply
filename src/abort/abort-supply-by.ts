@@ -32,13 +32,3 @@ export function abortSupplyBy(signal: AbortSignal, target?: SupplyPeer): Supply 
 
   return supply;
 }
-
-declare global {
-  export interface AbortSignal {
-    readonly reason?: unknown;
-  }
-
-  export interface AbortController {
-    abort(reason?: unknown): void;
-  }
-}
