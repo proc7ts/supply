@@ -3,6 +3,16 @@ import { SupplyReceiver } from '../supply-receiver.js';
 import { Supply } from '../supply.js';
 import { SupplyAbortError } from './supply-abort.error.js';
 
+export function abortSupplyBy(signal: AbortSignal, receiver?: undefined): Supply;
+export function abortSupplyBy<TReceiver extends SupplyReceiver>(
+    signal: AbortSignal,
+    receiver: SupplyPeer<TReceiver>,
+): TReceiver;
+export function abortSupplyBy<TReceiver extends SupplyReceiver>(
+    signal: AbortSignal,
+    receiver?: SupplyPeer<TReceiver>,
+): TReceiver | Supply;
+
 /**
  * Aborts supply by given signal.
  *
@@ -16,9 +26,12 @@ import { SupplyAbortError } from './supply-abort.error.js';
  *
  * @returns Either existing `receiver` supply, or a new one.
  */
-export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyPeer<SupplyReceiver>): Supply {
+export function abortSupplyBy<TReceiver extends SupplyReceiver>(
+    signal: AbortSignal,
+    receiver: SupplyPeer<TReceiver> | Supply = new Supply(),
+): SupplyReceiver | Supply {
 
-  const supply = receiver ? Supply.receiving(receiver) : new Supply();
+  const supply = receiver.supply;
 
   if (signal.aborted) {
     supply.off(SupplyAbortError.reasonOf(signal));

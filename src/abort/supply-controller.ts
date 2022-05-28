@@ -17,7 +17,7 @@ export class SupplyController extends AbortController implements SupplyPeer {
    *
    * @param supply - Supply peer. When omitted, a new supply will be created.
    */
-  constructor(supply?: SupplyPeer) {
+  constructor(supply: SupplyPeer = new Supply()) {
     super();
     this.#supply = abortSupplyBy(this.signal, supply)
         .whenOff((reason = new SupplyAbortError) => this.abort(reason));

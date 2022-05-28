@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Mock, SpyInstance } from 'jest-mock';
-import { Supplier } from './supplier.js';
-import { SupplyReceiver } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 describe('Supply', () => {
@@ -90,55 +88,6 @@ describe('Supply', () => {
       supply.off(reason);
 
       expect(supply.reason).toBe(reason);
-    });
-  });
-
-  describe('supplying', () => {
-    it('returns the supplying supply', () => {
-
-      const supplier = new Supply();
-
-      expect(Supply.supplying(supplier)).toBe(supplier);
-    });
-    it('constructs supplying supply', () => {
-
-      let receiver: SupplyReceiver | undefined;
-      const supplier: Supplier = {
-        isOff: true,
-        reason: undefined,
-        to(newReceiver: SupplyReceiver): void {
-          receiver = newReceiver;
-        },
-      };
-      const supply = Supply.supplying({ supply: supplier });
-      const whenOff = jest.fn();
-
-      supply.whenOff(whenOff);
-
-      receiver?.off('test reason');
-
-      expect(whenOff).toHaveBeenCalledWith('test reason');
-    });
-  });
-
-  describe('receiving', () => {
-    it('returns receiving supply', () => {
-
-      const receiver = new Supply();
-
-      expect(Supply.receiving(receiver)).toBe(receiver);
-    });
-    it('constructs receiving supply', () => {
-
-      const receiver = {
-        isOff: false,
-        off: jest.fn(),
-      };
-      const supply = Supply.receiving({ supply: receiver });
-
-      supply.off('test reason');
-
-      expect(receiver.off).toHaveBeenCalledWith('test reason');
     });
   });
 

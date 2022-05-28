@@ -27,34 +27,6 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
     Supply$unexpectedAbort$handle(handler);
   }
 
-  /**
-   * Extracts or creates a supply of the given `supplier`.
-   *
-   * @param supplier - Supplier peer.
-   *
-   * @returns Supply instance.
-   */
-  static supplying(this: void, supplier: SupplyPeer<Supplier>): Supply {
-
-    const { supply } = supplier;
-
-    return supply instanceof Supply ? supply : new Supply().needs(supplier);
-  }
-
-  /**
-   * Extracts or creates a supply to the given `receiver`.
-   *
-   * @param receiver - Supply receiver.
-   *
-   * @returns Supply instance.
-   */
-  static receiving(this: void, receiver: SupplyPeer<SupplyReceiver>): Supply {
-
-    const { supply } = receiver;
-
-    return supply instanceof Supply ? supply : new Supply().to(supply);
-  }
-
   #state: SupplyState;
   readonly #update = (state: SupplyState): void => { this.#state = state; };
 
@@ -176,6 +148,10 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
     return this.to(receiver.supply);
   }
 
+  derive(derived?: undefined): Supply;
+  derive<TReceiver extends SupplyReceiver>(derived: SupplyPeer<TReceiver>): TReceiver;
+  derive<TReceiver extends SupplyReceiver>(derived?: SupplyPeer<TReceiver>): TReceiver | Supply;
+
   /**
    * Creates derived supply depending on this one.
    *
@@ -187,8 +163,13 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * @returns Derived supply.
    */
-  derive(derived?: SupplyPeer<SupplyReceiver>): Supply {
-    return (derived ? Supply.receiving(derived) : new Supply()).needs(this);
+  derive<TReceiver extends SupplyReceiver>(derived: SupplyPeer<TReceiver> | Supply = new Supply()): TReceiver | Supply {
+
+    const supply = derived.supply;
+
+    this.to(supply);
+
+    return supply;
   }
 
   /**
@@ -208,6 +189,10 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
     return this;
   }
 
+  require(required?: undefined): Supply;
+  require<TSupplier extends Supplier>(required: SupplyPeer<TSupplier>): TSupplier;
+  require<TSupplier extends Supplier>(required?: SupplyPeer<TSupplier>): TSupplier | Supply;
+
   /**
    * Creates required supply this one depends on.
    *
@@ -219,8 +204,13 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * @returns Required supply.
    */
-  require(required?: SupplyPeer<Supplier>): Supply {
-    return (required ? Supply.supplying(required) : new Supply()).to(this);
+  require<TSupplier extends Supplier>(required: SupplyPeer<TSupplier> | Supply = new Supply()): TSupplier | Supply {
+
+    const supply = required.supply;
+
+    supply.to(this);
+
+    return supply;
   }
 
   /**
