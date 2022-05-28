@@ -27,6 +27,34 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
     Supply$unexpectedAbort$handle(handler);
   }
 
+  /**
+   * Extracts or creates a supply of the given `supplier`.
+   *
+   * @param supplier - Supplier peer.
+   *
+   * @returns Supply instance.
+   */
+  static supplying(this: void, supplier: SupplyPeer<Supplier>): Supply {
+
+    const { supply } = supplier;
+
+    return supply instanceof Supply ? supply : new Supply().needs(supplier);
+  }
+
+  /**
+   * Extracts or creates a supply to the given `receiver`.
+   *
+   * @param receiver - Supply receiver.
+   *
+   * @returns Supply instance.
+   */
+  static receiving(this: void, receiver: SupplyPeer<SupplyReceiver>): Supply {
+
+    const { supply } = receiver;
+
+    return supply instanceof Supply ? supply : new Supply().to(supply);
+  }
+
   #state: SupplyState;
   readonly #update = (state: SupplyState): void => { this.#state = state; };
 
@@ -155,12 +183,12 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * In contrast to {@link cuts} method, this one returns derived supply.
    *
-   * @param derived - Optional derived supply peer to make dependent on this one.
+   * @param derived - Optional derived supply consumer peer to make dependent on this one.
    *
    * @returns Derived supply.
    */
-  derive(derived?: SupplyPeer): Supply {
-    return (derived ? derived.supply : new Supply()).needs(this);
+  derive(derived?: SupplyPeer<SupplyReceiver>): Supply {
+    return (derived ? Supply.receiving(derived) : new Supply()).needs(this);
   }
 
   /**
@@ -187,12 +215,12 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * In contrast to {@link needs} method, this one returns required supply.
    *
-   * @param required - Optional required supply peer to make this one depend on.
+   * @param required - Optional supplier peer to make this one depend on.
    *
    * @returns Required supply.
    */
-  require(required?: SupplyPeer): Supply {
-    return (required ? required.supply : new Supply()).cuts(this);
+  require(required?: SupplyPeer<Supplier>): Supply {
+    return (required ? Supply.supplying(required) : new Supply()).to(this);
   }
 
   /**
