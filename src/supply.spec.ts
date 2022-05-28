@@ -68,6 +68,7 @@ describe('Supply', () => {
     });
     it('is `true` when supply cut off', () => {
       supply.off();
+
       expect(supply.isOff).toBe(true);
     });
   });
@@ -85,7 +86,148 @@ describe('Supply', () => {
       const reason = 'reason';
 
       supply.off(reason);
+
       expect(supply.reason).toBe(reason);
+    });
+  });
+
+  describe('to', () => {
+    it('returns `this` instance', () => {
+      expect(supply.to({ isOff: false, off: () => {/* noop */} })).toBe(supply);
+    });
+    it('calls target', () => {
+
+      const target = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.to(target);
+      supply.off(reason);
+
+      expect(target.off).toHaveBeenCalledWith(reason);
+    });
+    it('calls the only target', () => {
+      supply = new Supply();
+
+      const target = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.to(target);
+      supply.off(reason);
+
+      expect(target.off).toHaveBeenCalledWith(reason);
+    });
+    it('does not call initially unavailable target', () => {
+
+      const target = {
+        isOff: true,
+        off: jest.fn(),
+      };
+
+      supply.to(target);
+      supply.off();
+
+      expect(target.off).not.toHaveBeenCalled();
+    });
+    it('does not call the target the became unavailable', () => {
+      const target = {
+        isOff: false,
+        off: jest.fn(),
+      };
+
+      supply.to(target);
+      target.isOff = true;
+      supply.off();
+
+      expect(target.off).not.toHaveBeenCalled();
+    });
+    it('does not call the only target if it became unavailable', () => {
+      supply = new Supply();
+
+      const target = {
+        isOff: false,
+        off: jest.fn(),
+      };
+
+      supply.to(target);
+      target.isOff = true;
+      supply.off();
+
+      expect(target.off).not.toHaveBeenCalled();
+    });
+    it('does not call preceding target that became unavailable', () => {
+
+      const target1 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const target2 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.to(target1);
+      supply.to(target2);
+      target1.isOff = true;
+      supply.off(reason);
+
+      expect(target1.off).not.toHaveBeenCalled();
+      expect(target2.off).toHaveBeenCalledWith(reason);
+    });
+    it('does not call the only target that became unavailable before another one added', () => {
+      supply = new Supply();
+
+      const target1 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const target2 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.to(target1);
+      target1.isOff = true;
+      supply.to(target2);
+      supply.off(reason);
+
+      expect(target1.off).not.toHaveBeenCalled();
+      expect(target2.off).toHaveBeenCalledWith(reason);
+    });
+    it('does not call all preceding targets that became unavailable before another one added', () => {
+      supply = new Supply();
+
+      const target1 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const target2 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const target3 = {
+        isOff: false,
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.to(target1);
+      supply.to(target2);
+      target1.isOff = true;
+      target2.isOff = true;
+      supply.to(target3);
+      supply.off(reason);
+
+      expect(target1.off).not.toHaveBeenCalled();
+      expect(target2.off).not.toHaveBeenCalled();
+      expect(target3.off).toHaveBeenCalledWith(reason);
     });
   });
 
@@ -111,6 +253,7 @@ describe('Supply', () => {
       supply.whenOff(whenOff);
       supply.off(reason1);
       supply.off(reason2);
+
       expect(whenOff).toHaveBeenCalledWith(reason1);
       expect(whenOff).not.toHaveBeenCalledWith(reason2);
       expect(whenOff).toHaveBeenCalledTimes(1);
@@ -121,6 +264,7 @@ describe('Supply', () => {
 
       supply.whenOff(whenOff);
       supply.off();
+
       expect(whenOff).toHaveBeenCalledWith(undefined);
     });
     it('calls registered callback immediately if supply is cut off already', () => {
@@ -132,6 +276,7 @@ describe('Supply', () => {
       const mockCallback = jest.fn();
 
       supply.whenOff(mockCallback);
+
       expect(mockCallback).toHaveBeenCalledWith(reason);
     });
   });

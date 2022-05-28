@@ -1,3 +1,5 @@
+import { SupplyTarget } from '../supply-target.js';
+
 export interface SupplyState {
 
   readonly isOff: boolean;
@@ -5,6 +7,6 @@ export interface SupplyState {
 
   off(update: (supply: SupplyState) => void, reason?: unknown): void;
 
-  whenOff(update: (supply: SupplyState) => void, callback: (reason?: unknown) => void): void;
+  to(update: (supply: SupplyState) => void, target: SupplyTarget): void;
 
 }

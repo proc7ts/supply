@@ -1,4 +1,5 @@
-import type { SupplyState } from './state.js';
+import { SupplyTarget } from '../supply-target.js';
+import type { SupplyState } from './supply-state.js';
 
 class SupplyState$Off implements SupplyState {
 
@@ -13,8 +14,8 @@ class SupplyState$Off implements SupplyState {
     // Already off.
   }
 
-  whenOff(_update: unknown, callback: (reason?: unknown) => void): void {
-    callback(this.reason);
+  to(_update: unknown, target: SupplyTarget): void {
+    target.off(this.reason);
   }
 
 }

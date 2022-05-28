@@ -96,6 +96,18 @@ The registered callback receives a cutoff reason as its only parameter.
 
 The callback will be called at most once.
 
+### `to(target: { isOff: false, off: (reason?: unknown) => void })`
+
+Registers a target of the supply.
+
+Once this supply is cut off, the `target` will be informed on that, unless it become unavailable at that time.
+
+The target `become` unavailable once its `isOff` flag set to true.
+
+Supply targets may be used as a passive alternative to `removeEventListener` approach. While the latter can be used
+to remove the listener in order to stop receiving events, the supply target may set itself unavailable, so that the
+source supply would be able to remove it occasionally.
+
 ### `whenDone()`
 
 Returns a promise that will be resolved once the supply is [cut off].
