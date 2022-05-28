@@ -162,18 +162,18 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
   }
 
   /**
-   * Makes a receiver depend on this supply.
+   * Makes `receiver` depend on this supply.
    *
    * Once this supply {@link off cut off}, the `receiver` will be informed on that with the same reason.
    *
-   * Calling this method has the same effect as calling `this.to(consumer.supply)`.
+   * Calling this method has the same effect as calling `this.to(receiver.supply)`.
    *
-   * @param consumer - A supply consumer peer to make dependent on this supply.
+   * @param receiver - A supply receiver peer to make dependent on this supply.
    *
    * @returns `this` instance.
    */
-  cuts(consumer: SupplyPeer<SupplyReceiver>): this {
-    return this.to(consumer.supply);
+  cuts(receiver: SupplyPeer<SupplyReceiver>): this {
+    return this.to(receiver.supply);
   }
 
   /**
@@ -192,7 +192,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
   }
 
   /**
-   * Makes thi supply depend on another supplier.
+   * Makes this supply depend on another supplier.
    *
    * Once the `supplier` {@link Supplier.isOff cuts off} the supply, this supply will be cut off with the same reason.
    *
