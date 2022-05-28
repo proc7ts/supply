@@ -122,15 +122,15 @@ This property contains the supply itself.
 Implementing this property makes the supply implement a `SupplyPeer` interface. Any instance implementing the latter
 can be passed to supporting methods like `cuts()`, `needs()`, or `as()`.
 
-### `cuts(other: SupplyPeer)`
+### `cuts(receiver: SupplyPeer<SupplyReceiver>)`
 
-Makes another supply depend on this one.
+Makes receiver depend on this supply.
 
-Once the supply is [cut off], `another` one will be cut off with the same reason.
+Once this supply [cut off], the `receiver` will be informed on that with the same reason.
 
-Calling this method has the same effect as calling `another.supply.needs(this)`.
+Calling this method has the same effect as calling `this.to(receiver.supply)`.
 
-### `derive(derived?: SupplyPeer)`
+### `derive(derived?: SupplyPeer<SupplyReceiver>)`
 
 Creates derived supply depending on this one.
 
@@ -138,13 +138,15 @@ If derived supply peer specified, makes it depend on this one.
 
 In contrast to `.cuts()` method, this one returns derived supply.
 
-### `needs(other: SupplyPeer)`
+### `needs(supplier: SupplyPeer<Supplier>)`
 
-Makes the supply depend on another one.
+Makes this supply depend on another supplier.
 
-Once `another` supply is [cut off], this one will be cut off with the same reason.
+Once the `supplier` cuts off the supply, this supply will be cut off with the same reason.
 
-### `require(required?: SupplyPeer)`
+Calling this method has the same effect as calling `supplier.supply.to(this)`.
+
+### `require(required?: SupplyPeer<Supplier>)`
 
 Creates required supply this one depends on.
 
@@ -154,9 +156,9 @@ In contrast to `.needs()` method, this one returns required supply.
 
 ### `as(another: SupplyPeer)`
 
-Makes this and another supply depend on each other.
+Makes this and another supply peer depend on each other.
 
-Calling this method is the same as calling `.needs(another).cuts(another)`.
+Calling this method is the same as calling `this.needs(another).cuts(another)`.
 
 # `neverSupply()`
 
@@ -174,7 +176,7 @@ Returns a supply instance that can not be cut off.
 
 # Unexpected Aborts
 
-An unexpected abort happens when any supply is [cut off] with some reason, but there is no cut off callback registered.
+An unexpected abort happens when any supply [cut off] with some reason, but there is no cut off callback registered.
 
 By default, an unexpected abort reason is logged to console. This behavior can be changed by assigning another
 unexpected abort handler with `Supply.onUnexpectedAbort()` static method.

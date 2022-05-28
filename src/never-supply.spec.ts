@@ -1,5 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { neverSupply } from './never-supply.js';
+import { Supplier } from './supplier.js';
+import { SupplyReceiver } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 describe('neverSupply', () => {
@@ -21,8 +23,29 @@ describe('neverSupply', () => {
       const whenOff = jest.fn();
 
       expect(neverSupply().whenOff(whenOff)).toBe(neverSupply());
-      expect(whenOff).toHaveBeenCalledWith(...([] as unknown[] as [unknown, ...unknown[]]));
+      expect(whenOff).toHaveBeenCalledWith();
       expect(whenOff).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('to', () => {
+    it('informs the receiver immediately', () => {
+
+      const receiver = { isOff: false, off: jest.fn() };
+      const supply = neverSupply();
+
+      expect(supply.to(receiver)).toBe(neverSupply());
+      supply.off('reason');
+      expect(receiver.off).toHaveBeenCalledWith();
+    });
+    it('does not inform the unavailable receiver', () => {
+
+      const receiver = { isOff: true, off: jest.fn() };
+      const supply = neverSupply();
+
+      expect(supply.to(receiver)).toBe(neverSupply());
+      supply.off('reason');
+      expect(receiver.off).not.toHaveBeenCalled();
     });
   });
 
@@ -37,6 +60,39 @@ describe('neverSupply', () => {
       expect(supply.isOff).toBe(true);
       expect(whenOff).toHaveBeenCalledWith(undefined);
       expect(whenOff).toHaveBeenCalledTimes(1);
+    });
+    it('does not cut the unavailable receiver', () => {
+
+      const receiver = { isOff: true, off: jest.fn() };
+      const supply = neverSupply();
+
+      expect(supply.cuts({ supply: receiver })).toBe(neverSupply());
+      supply.off('reason');
+      expect(receiver.off).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('as', () => {
+    it('cuts off another supply immediately', () => {
+
+      const supply = new Supply();
+      const whenOff = jest.fn();
+
+      supply.whenOff(whenOff);
+      expect(neverSupply().as(supply)).toBe(neverSupply());
+      expect(supply.isOff).toBe(true);
+      expect(whenOff).toHaveBeenCalledWith(undefined);
+      expect(whenOff).toHaveBeenCalledTimes(1);
+    });
+    it('does not cut the unavailable receiver', () => {
+
+      const receiver: Supplier & SupplyReceiver = { isOff: true, off: jest.fn(), to: jest.fn() };
+      const supply = neverSupply();
+
+      expect(supply.as({ supply: receiver })).toBe(neverSupply());
+      supply.off('reason');
+      expect(receiver.off).not.toHaveBeenCalled();
+      expect(receiver.to).not.toHaveBeenCalled();
     });
   });
 

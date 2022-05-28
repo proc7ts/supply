@@ -1,4 +1,6 @@
+import { Supplier } from './supplier.js';
 import type { SupplyPeer } from './supply-peer.js';
+import { SupplyReceiver } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 class AlwaysSupply extends Supply {
@@ -15,11 +17,19 @@ class AlwaysSupply extends Supply {
     return this;
   }
 
-  override cuts(_another: SupplyPeer): this {
+  override to(_receiver: SupplyReceiver): this {
     return this;
   }
 
-  override needs(_another: SupplyPeer): this {
+  override cuts(_receiver: SupplyPeer<SupplyReceiver>): this {
+    return this;
+  }
+
+  override needs(_supplier: SupplyPeer<Supplier>): this {
+    return this;
+  }
+
+  override as(_another: SupplyPeer<SupplyReceiver & Supplier>): this {
     return this;
   }
 
