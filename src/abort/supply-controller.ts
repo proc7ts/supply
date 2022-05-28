@@ -6,7 +6,7 @@ import { SupplyAbortError } from './supply-abort.error.js';
 /**
  * Supply controller is an `AbortController` that acts as a supply peer.
  *
- * Cuts off the { @link #supply} once aborted and aborts once {@link supply} cut off.
+ * Cuts off the {@link Supply} once aborted and aborts once {@link Supply} cut off.
  */
 export class SupplyController extends AbortController implements SupplyPeer {
 
@@ -15,11 +15,11 @@ export class SupplyController extends AbortController implements SupplyPeer {
   /**
    * Constructs supply controller.
    *
-   * @param target - Target {@link supply} peer. When omitted, a new supply will be created.
+   * @param supply - Supply peer. When omitted, a new supply will be created.
    */
-  constructor(target?: SupplyPeer) {
+  constructor(supply?: SupplyPeer) {
     super();
-    this.#supply = abortSupplyBy(this.signal, target)
+    this.#supply = abortSupplyBy(this.signal, supply)
         .whenOff((reason = new SupplyAbortError) => this.abort(reason));
   }
 

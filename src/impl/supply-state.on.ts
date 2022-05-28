@@ -1,4 +1,4 @@
-import { SupplyTarget } from '../supply-target.js';
+import { SupplyReceiver } from '../supply-receiver.js';
 import type { SupplyState } from './supply-state.js';
 import { SupplyState$off } from './supply-state.off.js';
 import { Supply$unexpectedAbort } from './unexpected-abort.js';
@@ -31,7 +31,7 @@ export abstract class SupplyState$On implements SupplyState {
     }
   }
 
-  abstract to(update: (state: SupplyState) => void, target: SupplyTarget): void;
+  abstract to(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
 
   protected abstract _off(reason: unknown): void;
 

@@ -1,4 +1,4 @@
-import { SupplyTarget } from '../supply-target.js';
+import { SupplyReceiver } from '../supply-receiver.js';
 
 export interface SupplyState {
 
@@ -7,6 +7,6 @@ export interface SupplyState {
 
   off(update: (supply: SupplyState) => void, reason?: unknown): void;
 
-  to(update: (supply: SupplyState) => void, target: SupplyTarget): void;
+  to(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
 
 }
