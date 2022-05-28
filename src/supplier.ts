@@ -1,32 +1,34 @@
-import { SupplyTarget } from './supply-target.js';
+import { SupplyReceiver } from './supply-receiver.js';
 
 /**
- * Supplier informs when supply is cut off.
+ * Supplier informs the receivers when supply is cut off.
+ *
+ * Note that any {@link Supply} may act as a supplier.
  */
 export interface Supplier {
 
   /**
-   * Whether this supply is {@link Supply.off cut off} already.
+   * Whether the supply is {@link Supply.off cut off} already.
    *
    * `true` means nothing will be supplied anymore.
    */
   readonly isOff: boolean;
 
   /**
-   * The reason why supply is cut off. `undefined` while the supply is not cut off.
+   * The reason why the supply is cut off. `undefined` while the supply is not cut off.
    */
   reason: unknown | undefined;
 
   /**
-   * Registers a target of the supply.
+   * Registers a receiver of the supply.
    *
-   * Once the supply is {@link Supply.off cut off}, the `target` will be {@link SupplyTarget.off informed} on that,
-   * unless it is {@link SupplyTarget.isOff unavailable} already.
+   * Once the supply {@link Supply.off cut off}, the `receiver` will be {@link SupplyReceiver.off informed} on that,
+   * unless it is {@link SupplyReceiver.isOff unavailable} already.
    *
-   * Does nothing if the given `target` is {@link SupplyTarget.isOff} is unavailable already.
+   * Does nothing if the given `receiver` is {@link SupplyReceiver.isOff unavailable} already.
    *
-   * @param target - Supply target to register.
+   * @param receiver - Supply receiver to register.
    */
-  to(target: SupplyTarget): void;
+  to(receiver: SupplyReceiver): void;
 
 }

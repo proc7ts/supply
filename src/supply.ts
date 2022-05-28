@@ -1,8 +1,8 @@
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedAbort$handle, SupplyState$0t, SupplyState$Nt } from './impl/mod.js';
+import { Supply$unexpectedAbort$handle, SupplyState$NonReceiving, SupplyState$WithReceivers } from './impl/mod.js';
 import { Supplier } from './supplier.js';
 import type { SupplyPeer } from './supply-peer.js';
-import { SupplyTarget } from './supply-target.js';
+import { SupplyReceiver } from './supply-receiver.js';
 
 /**
  * Supply handle.
@@ -11,7 +11,7 @@ import { SupplyTarget } from './supply-target.js';
  *
  * The supply can be {@link off cut off}, and can {@link whenOff inform} on cutting off.
  */
-export class Supply implements Supplier, SupplyTarget, SupplyPeer {
+export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
 
   /**
    * Assigns unexpected abort handler.
@@ -37,7 +37,7 @@ export class Supply implements Supplier, SupplyTarget, SupplyPeer {
    * as its only parameter. No-op by default.
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
-    this.#state = off ? new SupplyState$Nt({ isOff: false, off }) : SupplyState$0t;
+    this.#state = off ? new SupplyState$WithReceivers({ isOff: false, off }) : SupplyState$NonReceiving;
   }
 
   /**
@@ -112,39 +112,39 @@ export class Supply implements Supplier, SupplyTarget, SupplyPeer {
   }
 
   /**
-   * Registers a target of this supply.
+   * Registers a receiver of this supply.
    *
-   * Once this supply is {@link off cut off}, the `target` will be {@link SupplyTarget.off informed} on that, unless it
-   * is {@link SupplyTarget.isOff unavailable} already.
+   * Once this supply {@link off cut off}, the `receiver` will be {@link SupplyReceiver.off informed} on that,
+   * unless it is {@link SupplyReceiver.isOff unavailable} already.
    *
-   * Does nothing if the given `target` is {@link SupplyTarget.isOff} is unavailable already.
+   * Does nothing if the given `receiver` is {@link SupplyReceiver.isOff unavailable} already.
    *
    * Note that {@link whenOff} and {@link cuts} methods call this one by default.
    *
-   * @param target - Supply target to register.
+   * @param receiver - Supply receiver to register.
    *
    * @returns `this` instance.
    */
-  to(target: SupplyTarget): this {
-    if (!target.isOff) {
-      this.#state.to(this.#update, target);
+  to(receiver: SupplyReceiver): this {
+    if (!receiver.isOff) {
+      this.#state.to(this.#update, receiver);
     }
 
     return this;
   }
 
   /**
-   * Makes another supply depend on this one.
+   * Makes a receiver depend on this supply.
    *
-   * Once this supply is {@link off cut off}, `another` one will be cut off with the same reason.
+   * Once this supply {@link off cut off}, the `receiver` will be informed on that with the same reason.
    *
-   * Calling this method has the same effect as calling `this.to(another.supply)`.
+   * Calling this method has the same effect as calling `this.to(consumer.supply)`.
    *
-   * @param consumer - A supply consumer peer to make dependent on this one.
+   * @param consumer - A supply consumer peer to make dependent on this supply.
    *
    * @returns `this` instance.
    */
-  cuts(consumer: SupplyPeer<SupplyTarget>): this {
+  cuts(consumer: SupplyPeer<SupplyReceiver>): this {
     return this.to(consumer.supply);
   }
 
@@ -164,13 +164,13 @@ export class Supply implements Supplier, SupplyTarget, SupplyPeer {
   }
 
   /**
-   * Makes this supply depend on another one.
+   * Makes thi supply depend on another supplier.
    *
-   * Once `another` supply is {@link off cut off}, this one will be cut off with the same reason.
+   * Once the `supplier` {@link Supplier.isOff cuts off} the supply, this supply will be cut off with the same reason.
    *
-   * Calling this method has the same effect as calling `another.supply.to(this)`.
+   * Calling this method has the same effect as calling `supplier.supply.to(this)`.
    *
-   * @param supplier - A supplier peer to make this one depend on.
+   * @param supplier - A supplier peer to make this supply depend on.
    *
    * @returns `this` instance.
    */
@@ -196,15 +196,15 @@ export class Supply implements Supplier, SupplyTarget, SupplyPeer {
   }
 
   /**
-   * Makes this and another supply depend on each other.
+   * Makes this and another supply peer depend on each other.
    *
-   * Calling this method is the same as calling `.needs(another).cuts(another)`.
+   * Calling this method is the same as calling `this.needs(another).cuts(another)`.
    *
    * @param another - A supply peer to make this one to mutually depend on.
    *
    * @returns `this` instance.
    */
-  as(another: SupplyPeer<SupplyTarget & Supplier>): this {
+  as(another: SupplyPeer<SupplyReceiver & Supplier>): this {
     return this.needs(another).cuts(another);
   }
 

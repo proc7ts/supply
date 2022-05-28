@@ -95,139 +95,139 @@ describe('Supply', () => {
     it('returns `this` instance', () => {
       expect(supply.to({ isOff: false, off: () => {/* noop */} })).toBe(supply);
     });
-    it('calls target', () => {
+    it('calls receiver', () => {
 
-      const target = {
+      const receiver = {
         isOff: false,
         off: jest.fn(),
       };
       const reason = 'reason';
 
-      supply.to(target);
+      supply.to(receiver);
       supply.off(reason);
 
-      expect(target.off).toHaveBeenCalledWith(reason);
+      expect(receiver.off).toHaveBeenCalledWith(reason);
     });
-    it('calls the only target', () => {
+    it('calls the only receiver', () => {
       supply = new Supply();
 
-      const target = {
+      const receiver = {
         isOff: false,
         off: jest.fn(),
       };
       const reason = 'reason';
 
-      supply.to(target);
+      supply.to(receiver);
       supply.off(reason);
 
-      expect(target.off).toHaveBeenCalledWith(reason);
+      expect(receiver.off).toHaveBeenCalledWith(reason);
     });
-    it('does not call initially unavailable target', () => {
+    it('does not call initially unavailable receiver', () => {
 
-      const target = {
+      const receiver = {
         isOff: true,
         off: jest.fn(),
       };
 
-      supply.to(target);
+      supply.to(receiver);
       supply.off();
 
-      expect(target.off).not.toHaveBeenCalled();
+      expect(receiver.off).not.toHaveBeenCalled();
     });
-    it('does not call the target the became unavailable', () => {
-      const target = {
+    it('does not call the receiver the became unavailable', () => {
+      const receiver = {
         isOff: false,
         off: jest.fn(),
       };
 
-      supply.to(target);
-      target.isOff = true;
+      supply.to(receiver);
+      receiver.isOff = true;
       supply.off();
 
-      expect(target.off).not.toHaveBeenCalled();
+      expect(receiver.off).not.toHaveBeenCalled();
     });
-    it('does not call the only target if it became unavailable', () => {
+    it('does not call the only receiver if it became unavailable', () => {
       supply = new Supply();
 
-      const target = {
+      const receiver = {
         isOff: false,
         off: jest.fn(),
       };
 
-      supply.to(target);
-      target.isOff = true;
+      supply.to(receiver);
+      receiver.isOff = true;
       supply.off();
 
-      expect(target.off).not.toHaveBeenCalled();
+      expect(receiver.off).not.toHaveBeenCalled();
     });
-    it('does not call preceding target that became unavailable', () => {
+    it('does not call preceding receiver that became unavailable', () => {
 
-      const target1 = {
+      const receiver1 = {
         isOff: false,
         off: jest.fn(),
       };
-      const target2 = {
+      const receiver2 = {
         isOff: false,
         off: jest.fn(),
       };
       const reason = 'reason';
 
-      supply.to(target1);
-      supply.to(target2);
-      target1.isOff = true;
+      supply.to(receiver1);
+      supply.to(receiver2);
+      receiver1.isOff = true;
       supply.off(reason);
 
-      expect(target1.off).not.toHaveBeenCalled();
-      expect(target2.off).toHaveBeenCalledWith(reason);
+      expect(receiver1.off).not.toHaveBeenCalled();
+      expect(receiver2.off).toHaveBeenCalledWith(reason);
     });
-    it('does not call the only target that became unavailable before another one added', () => {
+    it('does not call the only receiver that became unavailable before another one added', () => {
       supply = new Supply();
 
-      const target1 = {
+      const receiver1 = {
         isOff: false,
         off: jest.fn(),
       };
-      const target2 = {
+      const receiver2 = {
         isOff: false,
         off: jest.fn(),
       };
       const reason = 'reason';
 
-      supply.to(target1);
-      target1.isOff = true;
-      supply.to(target2);
+      supply.to(receiver1);
+      receiver1.isOff = true;
+      supply.to(receiver2);
       supply.off(reason);
 
-      expect(target1.off).not.toHaveBeenCalled();
-      expect(target2.off).toHaveBeenCalledWith(reason);
+      expect(receiver1.off).not.toHaveBeenCalled();
+      expect(receiver2.off).toHaveBeenCalledWith(reason);
     });
-    it('does not call all preceding targets that became unavailable before another one added', () => {
+    it('does not call all preceding receivers that became unavailable before another one added', () => {
       supply = new Supply();
 
-      const target1 = {
+      const receiver1 = {
         isOff: false,
         off: jest.fn(),
       };
-      const target2 = {
+      const receiver2 = {
         isOff: false,
         off: jest.fn(),
       };
-      const target3 = {
+      const receiver3 = {
         isOff: false,
         off: jest.fn(),
       };
       const reason = 'reason';
 
-      supply.to(target1);
-      supply.to(target2);
-      target1.isOff = true;
-      target2.isOff = true;
-      supply.to(target3);
+      supply.to(receiver1);
+      supply.to(receiver2);
+      receiver1.isOff = true;
+      receiver2.isOff = true;
+      supply.to(receiver3);
       supply.off(reason);
 
-      expect(target1.off).not.toHaveBeenCalled();
-      expect(target2.off).not.toHaveBeenCalled();
-      expect(target3.off).toHaveBeenCalledWith(reason);
+      expect(receiver1.off).not.toHaveBeenCalled();
+      expect(receiver2.off).not.toHaveBeenCalled();
+      expect(receiver3.off).toHaveBeenCalledWith(reason);
     });
   });
 

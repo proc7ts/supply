@@ -8,4 +8,4 @@ export * from './never-supply.js';
 export * from './supplier.js';
 export * from './supply.js';
 export * from './supply-peer.js';
-export * from './supply-target.js';
+export * from './supply-receiver.js';
