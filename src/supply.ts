@@ -1,5 +1,6 @@
 import type { SupplyState } from './impl/mod.js';
 import { Supply$unexpectedAbort$handle, SupplyState$0t, SupplyState$Nt } from './impl/mod.js';
+import { Supplier } from './supplier.js';
 import type { SupplyPeer } from './supply-peer.js';
 import { SupplyTarget } from './supply-target.js';
 
@@ -10,7 +11,7 @@ import { SupplyTarget } from './supply-target.js';
  *
  * The supply can be {@link off cut off}, and can {@link whenOff inform} on cutting off.
  */
-export class Supply implements SupplyTarget, SupplyPeer {
+export class Supply implements Supplier, SupplyTarget, SupplyPeer {
 
   /**
    * Assigns unexpected abort handler.
@@ -49,14 +50,14 @@ export class Supply implements SupplyTarget, SupplyPeer {
   /**
    * Whether this supply is {@link off cut off} already.
    *
-   * `true` means nothing would be supplied anymore.
+   * `true` means nothing will be supplied anymore.
    */
   get isOff(): boolean {
     return this.#state.isOff;
   }
 
   /**
-   * The reason why supply is cut off. `undefined` when the supply is not cut off.
+   * The reason why supply is cut off. `undefined` while the supply is not cut off.
    */
   get reason(): unknown | undefined {
     return this.#state.reason;
@@ -114,13 +115,13 @@ export class Supply implements SupplyTarget, SupplyPeer {
    * Registers a target of this supply.
    *
    * Once this supply is {@link off cut off}, the `target` will be {@link SupplyTarget.off informed} on that, unless it
-   * become {@link SupplyTarget.isOff unavailable} at that time.
+   * is {@link SupplyTarget.isOff unavailable} already.
    *
    * Does nothing if the given `target` is {@link SupplyTarget.isOff} is unavailable already.
    *
    * Note that {@link whenOff} and {@link cuts} methods call this one by default.
    *
-   * @param target - Supply target to add.
+   * @param target - Supply target to register.
    *
    * @returns `this` instance.
    */
@@ -139,12 +140,12 @@ export class Supply implements SupplyTarget, SupplyPeer {
    *
    * Calling this method has the same effect as calling `this.to(another.supply)`.
    *
-   * @param another - A supply peer to make dependent on this one.
+   * @param consumer - A supply consumer peer to make dependent on this one.
    *
    * @returns `this` instance.
    */
-  cuts(another: SupplyPeer): this {
-    return this.to(another.supply);
+  cuts(consumer: SupplyPeer<SupplyTarget>): this {
+    return this.to(consumer.supply);
   }
 
   /**
@@ -167,14 +168,14 @@ export class Supply implements SupplyTarget, SupplyPeer {
    *
    * Once `another` supply is {@link off cut off}, this one will be cut off with the same reason.
    *
-   * Calling this method has the same effect as calling `another.supply.cuts(this)`.
+   * Calling this method has the same effect as calling `another.supply.to(this)`.
    *
-   * @param another - A supply peer to make this one depend on.
+   * @param supplier - A supplier peer to make this one depend on.
    *
    * @returns `this` instance.
    */
-  needs(another: SupplyPeer): this {
-    another.supply.cuts(this);
+  needs(supplier: SupplyPeer<Supplier>): this {
+    supplier.supply.to(this);
 
     return this;
   }
@@ -203,7 +204,7 @@ export class Supply implements SupplyTarget, SupplyPeer {
    *
    * @returns `this` instance.
    */
-  as(another: SupplyPeer): this {
+  as(another: SupplyPeer<SupplyTarget & Supplier>): this {
     return this.needs(another).cuts(another);
   }
 

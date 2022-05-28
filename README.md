@@ -85,7 +85,7 @@ Equals to `false` initially. Becomes `true` after calling the [off()] method.
 
 [reason]: #reason
 
-The reason why supply is cut off. `undefined` when the supply is not cut off.
+The reason why supply is cut off. `undefined` while the supply is not cut off.
 
 ### `whenOff(callback: (reason?: unknown) => void)`
 
@@ -100,9 +100,9 @@ The callback will be called at most once.
 
 Registers a target of the supply.
 
-Once this supply is cut off, the `target` will be informed on that, unless it become unavailable at that time.
+Once this supply is cut off, the `target` will be informed on that, unless it is unavailable already.
 
-The target `become` unavailable once its `isOff` flag set to true.
+The `target` becomes unavailable once its `isOff` flag set to true.
 
 Supply targets may be used as a passive alternative to `removeEventListener` approach. While the latter can be used
 to remove the listener in order to stop receiving events, the supply target may set itself unavailable, so that the
