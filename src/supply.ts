@@ -1,5 +1,5 @@
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedAbort$handle, SupplyState$0t, SupplyState$1t } from './impl/mod.js';
+import { Supply$unexpectedAbort$handle, SupplyState$0t, SupplyState$Nt } from './impl/mod.js';
 import type { SupplyPeer } from './supply-peer.js';
 import { SupplyTarget } from './supply-target.js';
 
@@ -36,7 +36,7 @@ export class Supply implements SupplyTarget, SupplyPeer {
    * as its only parameter. No-op by default.
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
-    this.#state = off ? new SupplyState$1t({ isOff: false, off }) : SupplyState$0t;
+    this.#state = off ? new SupplyState$Nt({ isOff: false, off }) : SupplyState$0t;
   }
 
   /**

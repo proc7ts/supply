@@ -1,12 +1,12 @@
 import { SupplyTarget } from '../supply-target.js';
 import type { SupplyState } from './supply-state.js';
-import { SupplyState$1t } from './supply-state.nt.js';
+import { SupplyState$Nt } from './supply-state.nt.js';
 import { Supply$off$unexpected, SupplyState$On } from './supply-state.on.js';
 
 class SupplyState$0t$ extends SupplyState$On {
 
   override to(update: (state: SupplyState) => void, target: SupplyTarget): void {
-    update(new SupplyState$1t(target));
+    update(new SupplyState$Nt(target));
   }
 
   protected override _off(reason: unknown): void {
