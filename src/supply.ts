@@ -1,6 +1,6 @@
 import type { SupplyState } from './impl/mod.js';
 import { Supply$unexpectedAbort$handle, SupplyState$cb0, SupplyState$Cb1 } from './impl/mod.js';
-import type { SupplyPeer } from './supply-peer';
+import type { SupplyPeer } from './supply-peer.js';
 
 /**
  * Supply handle.
