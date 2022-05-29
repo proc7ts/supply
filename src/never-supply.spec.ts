@@ -86,7 +86,11 @@ describe('neverSupply', () => {
     });
     it('does not cut the unavailable receiver', () => {
 
-      const receiver: Supplier & SupplyReceiver = { isOff: true, off: jest.fn(), alsoOff: jest.fn() };
+      const receiver: Supplier & SupplyReceiver = {
+        isOff: true,
+        off: jest.fn(),
+        alsoOff: jest.fn(),
+      };
       const supply = neverSupply();
 
       expect(supply.as(receiver)).toBe(neverSupply());
