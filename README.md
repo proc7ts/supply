@@ -98,7 +98,7 @@ The callback will be called at most once.
 
 ### `alsoOff(receiver: { isOff: false, off: (reason?: unknown) => void })`
 
-[alsooff]: #alsooff
+[alsooff]: #alsooffreceiver--isoff-false-off-reason-unknown--void-
 
 Registers a receiver of the supply.
 
@@ -119,7 +119,7 @@ supply is cut off with any reason except `undefined`.
 
 ### `cuts(receiver: SupplyReceiver)`
 
-[cuts]: #cuts
+[cuts]: #cutsreceiver-supplyreceiver
 
 Makes receiver depend on this supply.
 
@@ -135,7 +135,7 @@ In contrast to [cuts] method, this one returns derived supply receiver.
 
 ### `needs(supplier: Supplier)`
 
-[needs]: #needs
+[needs]: #needssupplier-supplier
 
 Makes this supply depend on another supplier.
 
@@ -157,19 +157,28 @@ Makes this and another supply depend on each other.
 
 Calling this method is the same as calling `this.needs(another).cuts(another)`.
 
-# `neverSupply()`
+# Predefined Supply Implementations
+
+## `neverSupply()`
 
 Builds a never-supply instance.
 
 Returns a supply instance that is already cut off without any particular reason.
 
-# `alwaysSupply()`
+## `alwaysSupply()`
 
 Builds an always-supply instance.
 
 The `off()` method of the returned supply does nothing.
 
 Returns a supply instance that can not be cut off.
+
+## `timedSupply(timeout: number, { createReason: (timeout: number) => unknown })`
+
+Creates a supply, that is automatically cut off after specified `timeout`.
+
+Optional `createReason` function creates a custom reason why the supply cut off after timeout. A timeout error used
+as reason when omitted.
 
 # Unexpected Aborts
 
