@@ -59,7 +59,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
   /**
    * The reason why supply is cut off. `undefined` while the supply is not cut off.
    */
-  get reason(): unknown | undefined {
+  get whyOff(): unknown | undefined {
     return this.#state.reason;
   }
 

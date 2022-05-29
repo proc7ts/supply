@@ -81,9 +81,9 @@ This is a flag indicating whether the supply is cut off.
 
 Equals to `false` initially. Becomes `true` after calling the [off()] method.
 
-### `reason`
+### `whyOff`
 
-[reason]: #reason
+[whyoff]: #whyoff
 
 The reason why supply is cut off. `undefined` while the supply is not cut off.
 

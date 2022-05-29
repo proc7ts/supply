@@ -28,7 +28,7 @@ describe('Supply', () => {
 
       expect(supply.off(reason)).toBe(supply);
       expect(whenOff).toHaveBeenCalledWith(reason);
-      expect(supply.reason).toBe(reason);
+      expect(supply.whyOff).toBe(reason);
     });
     it('(with callback) does not call unexpected abort handler', () => {
 
@@ -73,13 +73,13 @@ describe('Supply', () => {
     });
   });
 
-  describe('reason', () => {
+  describe('whyOff', () => {
     it('is `undefined` initially', () => {
-      expect(supply.reason).toBeUndefined();
+      expect(supply.whyOff).toBeUndefined();
     });
     it('is `undefined` when supply cut off without reason', () => {
       supply.off();
-      expect(supply.reason).toBeUndefined();
+      expect(supply.whyOff).toBeUndefined();
     });
     it('is set to reason when supply cut off', () => {
 
@@ -87,7 +87,7 @@ describe('Supply', () => {
 
       supply.off(reason);
 
-      expect(supply.reason).toBe(reason);
+      expect(supply.whyOff).toBe(reason);
     });
   });
 

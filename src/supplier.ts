@@ -17,7 +17,7 @@ export interface Supplier {
   /**
    * The reason why the supply is cut off. `undefined` while the supply is not cut off.
    */
-  reason?: unknown | undefined;
+  whyOff?: unknown | undefined;
 
   /**
    * Registers a receiver of the supply.
