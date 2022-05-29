@@ -117,21 +117,13 @@ Returns a promise that will be resolved once the supply is [cut off].
 The returned promise will be successfully resolved once the supply is cut off without a reason, or rejected once the
 supply is cut off with any reason except `undefined`.
 
-### `cuts(receiver: SupplyReceiver)`
-
-[cuts]: #cutsreceiver-supplyreceiver
-
-Makes receiver depend on this supply.
-
-This is an alias of [alsoOff] method.
-
 ### `derive(derived?: SupplyReceiver)`
 
 Creates derived supply depending on this one.
 
 If derived supply receiver specified, makes it depend on this one.
 
-In contrast to [cuts] method, this one returns derived supply receiver.
+In contrast to [alsoOff] method, this one returns derived supply receiver.
 
 ### `needs(supplier: Supplier)`
 
@@ -155,7 +147,7 @@ In contrast to [needs] method, this one returns required supply.
 
 Makes this and another supply depend on each other.
 
-Calling this method is the same as calling `this.needs(another).cuts(another)`.
+Calling this method is the same as calling `this.needs(another).alsoOff(another)`.
 
 # Predefined Supply Implementations
 

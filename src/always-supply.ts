@@ -20,10 +20,6 @@ class AlwaysSupply extends Supply {
     return this;
   }
 
-  override cuts(_receiver: SupplyReceiver): this {
-    return this;
-  }
-
   override needs(_supplier: Supplier): this {
     return this;
   }

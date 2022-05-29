@@ -111,8 +111,6 @@ export class Supply implements Supplier, SupplyReceiver {
    *
    * Does nothing if the given `receiver` is {@link SupplyReceiver.isOff unavailable} already.
    *
-   * Note that {@link whenOff} and {@link cuts} methods call this one by default.
-   *
    * @param receiver - Supply receiver to register.
    *
    * @returns `this` instance.
@@ -125,19 +123,6 @@ export class Supply implements Supplier, SupplyReceiver {
     return this;
   }
 
-  /**
-   * Makes `receiver` depend on this supply.
-   *
-   * This is an alias of {@link alsoOff} method.
-   *
-   * @param receiver - A supply receiver to make dependent on this supply.
-   *
-   * @returns `this` instance.
-   */
-  cuts(receiver: SupplyReceiver): this {
-    return this.alsoOff(receiver);
-  }
-
   derive(derived?: undefined): Supply;
   derive<TReceiver extends SupplyReceiver>(derived: TReceiver): TReceiver;
   derive<TReceiver extends SupplyReceiver>(derived: TReceiver | undefined): TReceiver | Supply;
@@ -147,7 +132,7 @@ export class Supply implements Supplier, SupplyReceiver {
    *
    * If derived supply receiver specified, makes it depend on this one.
    *
-   * In contrast to {@link cuts} and {@link alsoOff} methods, this one returns derived supply receiver.
+   * In contrast to {@link alsoOff} method, this one returns derived supply receiver.
    *
    * @typeParam TReceiver - Type of supply receiver.
    * @param derived - Optional derived supply receiver to make dependent on this one.
@@ -163,7 +148,7 @@ export class Supply implements Supplier, SupplyReceiver {
   /**
    * Makes this supply depend on another supplier.
    *
-   * Once the `supplier` {@link Supplier.isOff cuts off} the supply, this supply will be cut off with the same reason.
+   * Once the `supplier` {@link Supplier.alsoOff cuts off} the supply, this supply will be cut off with the same reason.
    *
    * Calling this method has the same effect as calling `supplier.alsoOff(this)`.
    *
@@ -202,14 +187,14 @@ export class Supply implements Supplier, SupplyReceiver {
   /**
    * Makes this and another supply depend on each other.
    *
-   * Calling this method is the same as calling `this.needs(another).cuts(another)`.
+   * Calling this method is the same as calling `this.needs(another).alsoOff(another)`.
    *
    * @param another - A supply to make this one to mutually depend on.
    *
    * @returns `this` instance.
    */
   as(another: SupplyReceiver & Supplier): this {
-    return this.needs(another).cuts(another);
+    return this.needs(another).alsoOff(another);
   }
 
 }

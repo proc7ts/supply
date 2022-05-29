@@ -36,7 +36,7 @@ describe('alwaysSupply', () => {
     });
   });
 
-  describe('to', () => {
+  describe('alsoOff', () => {
     it('does nothing', () => {
 
       const receiver = { isOff: false, off: jest.fn() };
@@ -46,20 +46,17 @@ describe('alwaysSupply', () => {
       supply.off('reason');
       expect(receiver.off).not.toHaveBeenCalled();
     });
-  });
-
-  describe('cuts', () => {
     it('never cuts dependent supply', () => {
 
       const supply = alwaysSupply();
-      const otherSupply = new Supply();
+      const receiver = new Supply();
       const whenOff = jest.fn();
 
-      otherSupply.whenOff(whenOff);
-      expect(supply.cuts(otherSupply)).toBe(alwaysSupply());
+      receiver.whenOff(whenOff);
+      expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
 
       supply.off();
-      expect(otherSupply.isOff).toBe(false);
+      expect(receiver.isOff).toBe(false);
       expect(whenOff).not.toHaveBeenCalled();
     });
   });

@@ -347,33 +347,6 @@ describe('Supply', () => {
     });
   });
 
-  describe('cuts', () => {
-    it('cuts off another supply when cutting this one off', () => {
-
-      const whenAnotherOff = jest.fn();
-      const anotherSupply = new Supply(whenAnotherOff);
-
-      expect(supply.cuts(anotherSupply)).toBe(supply);
-
-      const reason = 'some reason';
-
-      supply.off(reason);
-      expect(whenAnotherOff).toHaveBeenCalledWith(reason);
-    });
-    it('cuts off another supply if this one is cut off already', () => {
-
-      const reason = 'some reason';
-
-      supply.off(reason);
-
-      const whenAnotherOff = jest.fn();
-      const anotherSupply = new Supply(whenAnotherOff);
-
-      expect(supply.cuts(anotherSupply)).toBe(supply);
-      expect(whenAnotherOff).toHaveBeenCalledWith(reason);
-    });
-  });
-
   describe('derive', () => {
     it('cuts off another supply when cutting this one off', () => {
 
@@ -460,7 +433,7 @@ describe('Supply', () => {
     });
     it('reports abort reason only once', () => {
 
-      const supply = new Supply().cuts(new Supply()).cuts(new Supply());
+      const supply = new Supply().alsoOff(new Supply()).alsoOff(new Supply());
       const onAbort = jest.fn();
 
       Supply.onUnexpectedAbort(onAbort);
