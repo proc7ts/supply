@@ -3,7 +3,7 @@ import type { SupplyState } from './supply-state.js';
 
 class SupplyState$Off implements SupplyState {
 
-  constructor(readonly reason: unknown) {
+  constructor(readonly whyOff: unknown) {
   }
 
   get isOff(): true {
@@ -14,8 +14,8 @@ class SupplyState$Off implements SupplyState {
     // Already off.
   }
 
-  to(_update: unknown, receiver: SupplyReceiver): void {
-    receiver.off(this.reason);
+  alsoOff(_update: unknown, receiver: SupplyReceiver): void {
+    receiver.off(this.whyOff);
   }
 
 }

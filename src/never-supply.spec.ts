@@ -34,7 +34,7 @@ describe('neverSupply', () => {
       const receiver = { isOff: false, off: jest.fn() };
       const supply = neverSupply();
 
-      expect(supply.to(receiver)).toBe(neverSupply());
+      expect(supply.alsoOff(receiver)).toBe(neverSupply());
       supply.off('reason');
       expect(receiver.off).toHaveBeenCalledWith();
     });
@@ -43,7 +43,7 @@ describe('neverSupply', () => {
       const receiver = { isOff: true, off: jest.fn() };
       const supply = neverSupply();
 
-      expect(supply.to(receiver)).toBe(neverSupply());
+      expect(supply.alsoOff(receiver)).toBe(neverSupply());
       supply.off('reason');
       expect(receiver.off).not.toHaveBeenCalled();
     });
@@ -66,7 +66,7 @@ describe('neverSupply', () => {
       const receiver = { isOff: true, off: jest.fn() };
       const supply = neverSupply();
 
-      expect(supply.cuts({ supply: receiver })).toBe(neverSupply());
+      expect(supply.cuts(receiver)).toBe(neverSupply());
       supply.off('reason');
       expect(receiver.off).not.toHaveBeenCalled();
     });
@@ -86,13 +86,17 @@ describe('neverSupply', () => {
     });
     it('does not cut the unavailable receiver', () => {
 
-      const receiver: Supplier & SupplyReceiver = { isOff: true, off: jest.fn(), to: jest.fn() };
+      const receiver: Supplier & SupplyReceiver = {
+        isOff: true,
+        off: jest.fn(),
+        alsoOff: jest.fn(),
+      };
       const supply = neverSupply();
 
-      expect(supply.as({ supply: receiver })).toBe(neverSupply());
+      expect(supply.as(receiver)).toBe(neverSupply());
       supply.off('reason');
       expect(receiver.off).not.toHaveBeenCalled();
-      expect(receiver.to).not.toHaveBeenCalled();
+      expect(receiver.alsoOff).not.toHaveBeenCalled();
     });
   });
 

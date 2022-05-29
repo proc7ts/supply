@@ -15,12 +15,6 @@ describe('Supply', () => {
     Supply.onUnexpectedAbort();
   });
 
-  describe('supply', () => {
-    it('returns the supply itself', () => {
-      expect(supply.supply).toBe(supply);
-    });
-  });
-
   describe('off', () => {
     it('calls `off` function', () => {
 
@@ -28,7 +22,7 @@ describe('Supply', () => {
 
       expect(supply.off(reason)).toBe(supply);
       expect(whenOff).toHaveBeenCalledWith(reason);
-      expect(supply.reason).toBe(reason);
+      expect(supply.whyOff).toBe(reason);
     });
     it('(with callback) does not call unexpected abort handler', () => {
 
@@ -73,13 +67,13 @@ describe('Supply', () => {
     });
   });
 
-  describe('reason', () => {
+  describe('whyOff', () => {
     it('is `undefined` initially', () => {
-      expect(supply.reason).toBeUndefined();
+      expect(supply.whyOff).toBeUndefined();
     });
     it('is `undefined` when supply cut off without reason', () => {
       supply.off();
-      expect(supply.reason).toBeUndefined();
+      expect(supply.whyOff).toBeUndefined();
     });
     it('is set to reason when supply cut off', () => {
 
@@ -87,13 +81,13 @@ describe('Supply', () => {
 
       supply.off(reason);
 
-      expect(supply.reason).toBe(reason);
+      expect(supply.whyOff).toBe(reason);
     });
   });
 
-  describe('to', () => {
+  describe('alsoOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.to({ isOff: false, off: () => {/* noop */} })).toBe(supply);
+      expect(supply.alsoOff({ isOff: false, off: () => {/* noop */} })).toBe(supply);
     });
     it('calls receiver', () => {
 
@@ -103,7 +97,19 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver);
+      supply.alsoOff(receiver);
+      supply.off(reason);
+
+      expect(receiver.off).toHaveBeenCalledWith(reason);
+    });
+    it('calls receiver without `isOff` implemented', () => {
+
+      const receiver = {
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.alsoOff(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -117,7 +123,7 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver);
+      supply.alsoOff(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -129,7 +135,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.alsoOff(receiver);
       supply.off();
 
       expect(receiver.off).not.toHaveBeenCalled();
@@ -140,7 +146,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.alsoOff(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -154,7 +160,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.alsoOff(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -172,8 +178,8 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
-      supply.to(receiver2);
+      supply.alsoOff(receiver1);
+      supply.alsoOff(receiver2);
       receiver1.isOff = true;
       supply.off(reason);
 
@@ -193,9 +199,9 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
+      supply.alsoOff(receiver1);
       receiver1.isOff = true;
-      supply.to(receiver2);
+      supply.alsoOff(receiver2);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
@@ -218,11 +224,11 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
-      supply.to(receiver2);
+      supply.alsoOff(receiver1);
+      supply.alsoOff(receiver2);
       receiver1.isOff = true;
       receiver2.isOff = true;
-      supply.to(receiver3);
+      supply.alsoOff(receiver3);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
@@ -297,17 +303,17 @@ describe('Supply', () => {
   });
 
   describe('needs', () => {
-    it('is cut off when required supply cut off', () => {
+    it('is cut off when supplier cut off', () => {
 
       const whenOff = jest.fn();
-      const anotherSupply = new Supply();
+      const supplier = new Supply();
 
-      expect(supply.needs(anotherSupply)).toBe(supply);
+      expect(supply.needs(supplier)).toBe(supply);
       supply.whenOff(whenOff);
 
       const reason = 'some reason';
 
-      anotherSupply.off(reason);
+      supplier.off(reason);
       expect(whenOff).toHaveBeenCalledWith(reason);
     });
   });

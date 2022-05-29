@@ -1,5 +1,4 @@
 import { Supplier } from './supplier.js';
-import type { SupplyPeer } from './supply-peer.js';
 import { SupplyReceiver } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
@@ -19,7 +18,7 @@ class NeverSupply extends Supply {
     return this;
   }
 
-  override to(receiver: SupplyReceiver): this {
+  override alsoOff(receiver: SupplyReceiver): this {
     if (!receiver.isOff) {
       receiver.off();
     }
@@ -27,7 +26,7 @@ class NeverSupply extends Supply {
     return this;
   }
 
-  override needs(_supplier: SupplyPeer<Supplier>): this {
+  override needs(_supplier: Supplier): this {
     return this;
   }
 

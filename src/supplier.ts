@@ -8,18 +8,6 @@ import { SupplyReceiver } from './supply-receiver.js';
 export interface Supplier {
 
   /**
-   * Whether the supply is {@link Supply.off cut off} already.
-   *
-   * `true` means nothing will be supplied anymore.
-   */
-  readonly isOff: boolean;
-
-  /**
-   * The reason why the supply is cut off. `undefined` while the supply is not cut off.
-   */
-  reason?: unknown | undefined;
-
-  /**
    * Registers a receiver of the supply.
    *
    * Once the supply {@link Supply.off cut off}, the `receiver` will be {@link SupplyReceiver.off informed} on that,
@@ -29,6 +17,6 @@ export interface Supplier {
    *
    * @param receiver - Supply receiver to register.
    */
-  to(receiver: SupplyReceiver): void;
+  alsoOff(receiver: SupplyReceiver): void;
 
 }

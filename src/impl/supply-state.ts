@@ -3,10 +3,10 @@ import { SupplyReceiver } from '../supply-receiver.js';
 export interface SupplyState {
 
   readonly isOff: boolean;
-  readonly reason: unknown | undefined;
+  readonly whyOff: unknown | undefined;
 
   off(update: (supply: SupplyState) => void, reason?: unknown): void;
 
-  to(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
+  alsoOff(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
 
 }
