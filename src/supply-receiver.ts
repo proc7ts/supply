@@ -21,7 +21,7 @@ export interface SupplyReceiver {
    * The receiver with this flag set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this flag is set after the addition, the supplier may wish to remove it at any time.
    */
-  readonly isOff: boolean;
+  readonly isOff?: boolean | undefined;
 
   /**
    * Called by the source supply when the latter cut off.

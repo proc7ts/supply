@@ -102,6 +102,18 @@ describe('Supply', () => {
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
     });
+    it('calls receiver without `isOff` implemented', () => {
+
+      const receiver = {
+        off: jest.fn(),
+      };
+      const reason = 'reason';
+
+      supply.alsoOff(receiver);
+      supply.off(reason);
+
+      expect(receiver.off).toHaveBeenCalledWith(reason);
+    });
     it('calls the only receiver', () => {
       supply = new Supply();
 
@@ -291,17 +303,17 @@ describe('Supply', () => {
   });
 
   describe('needs', () => {
-    it('is cut off when required supply cut off', () => {
+    it('is cut off when supplier cut off', () => {
 
       const whenOff = jest.fn();
-      const anotherSupply = new Supply();
+      const supplier = new Supply();
 
-      expect(supply.needs(anotherSupply)).toBe(supply);
+      expect(supply.needs(supplier)).toBe(supply);
       supply.whenOff(whenOff);
 
       const reason = 'some reason';
 
-      anotherSupply.off(reason);
+      supplier.off(reason);
       expect(whenOff).toHaveBeenCalledWith(reason);
     });
   });
