@@ -96,13 +96,15 @@ The registered callback receives a cutoff reason as its only parameter.
 
 The callback will be called at most once.
 
-### `offWith(receiver: { isOff: false, off: (reason?: unknown) => void })`
+### `alsoOff(receiver: { isOff: false, off: (reason?: unknown) => void })`
+
+[alsooff]: #alsooff
 
 Registers a receiver of the supply.
 
-Once this supply is cut off, the `receiver` will be informed on that, unless it is unavailable already.
+Once this supply is [cut off], the `receiver` will be [informed][cut off] on that, unless it is unavailable already.
 
-The `receiver` becomes unavailable once its `isOff` flag set to true.
+The `receiver` becomes unavailable once its [isOff] flag set to true.
 
 Supply receivers may be used as a passive alternative to `removeEventListener` approach. While the latter can be used
 to remove the listener in order to stop receiving events, the supply receiver may set itself unavailable, so that the
@@ -115,48 +117,43 @@ Returns a promise that will be resolved once the supply is [cut off].
 The returned promise will be successfully resolved once the supply is cut off without a reason, or rejected once the
 supply is cut off with any reason except `undefined`.
 
-### `supply`
+### `cuts(receiver: SupplyReceiver)`
 
-This property contains the supply itself.
-
-Implementing this property makes the supply implement a `SupplyPeer` interface. Any instance implementing the latter
-can be passed to supporting methods like `cuts()`, `needs()`, or `as()`.
-
-### `cuts(receiver: SupplyPeer<SupplyReceiver>)`
+[cuts]: #cuts
 
 Makes receiver depend on this supply.
 
-Once this supply [cut off], the `receiver` will be informed on that with the same reason.
+This is an alias of [alsoOff] method.
 
-Calling this method has the same effect as calling `this.offWith(receiver.supply)`.
-
-### `derive(derived?: SupplyPeer<SupplyReceiver>)`
+### `derive(derived?: SupplyReceiver)`
 
 Creates derived supply depending on this one.
 
-If derived supply peer specified, makes it depend on this one.
+If derived supply receiver specified, makes it depend on this one.
 
-In contrast to `.cuts()` method, this one returns derived supply.
+In contrast to [cuts] method, this one returns derived supply receiver.
 
-### `needs(supplier: SupplyPeer<Supplier>)`
+### `needs(supplier: Supplier)`
+
+[needs]: #needs
 
 Makes this supply depend on another supplier.
 
-Once the `supplier` cuts off the supply, this supply will be cut off with the same reason.
+Once the `supplier` cuts off the supply, this supply will be [cut off] with the same reason.
 
-Calling this method has the same effect as calling `supplier.supply.offWith(this)`.
+Calling this method has the same effect as calling `supplier.alsoOff(this)`.
 
-### `require(required?: SupplyPeer<Supplier>)`
+### `require(required?: Supplier)`
 
 Creates required supply this one depends on.
 
-If required supply peer specified, makes this one depend on it.
+If required supplier specified, makes this one depend on it.
 
-In contrast to `.needs()` method, this one returns required supply.
+In contrast to [needs] method, this one returns required supply.
 
-### `as(another: SupplyPeer)`
+### `as(another: SupplyReceiver & Supplier)`
 
-Makes this and another supply peer depend on each other.
+Makes this and another supply depend on each other.
 
 Calling this method is the same as calling `this.needs(another).cuts(another)`.
 

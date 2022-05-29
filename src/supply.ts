@@ -1,7 +1,6 @@
 import type { SupplyState } from './impl/mod.js';
 import { Supply$unexpectedAbort$handle, SupplyState$NonReceiving, SupplyState$WithReceivers } from './impl/mod.js';
 import { Supplier } from './supplier.js';
-import type { SupplyPeer } from './supply-peer.js';
 import { SupplyReceiver } from './supply-receiver.js';
 
 /**
@@ -9,9 +8,9 @@ import { SupplyReceiver } from './supply-receiver.js';
  *
  * Represents a supply of something.
  *
- * The supply can be {@link off cut off}, and can {@link whenOff inform} on cutting off.
+ * The supply can be {@link off cut off}, and can {@link alsoOff inform} on cutting off.
  */
-export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
+export class Supply implements Supplier, SupplyReceiver {
 
   /**
    * Assigns unexpected abort handler.
@@ -38,13 +37,6 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    */
   constructor(off?: (this: void, reason?: unknown) => void) {
     this.#state = off ? new SupplyState$WithReceivers({ isOff: false, off }) : SupplyState$NonReceiving;
-  }
-
-  /**
-   * `this` supply instance.
-   */
-  get supply(): this {
-    return this;
   }
 
   /**
@@ -85,7 +77,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    * Registers a callback function that will be called as soon as this supply is {@link off cut off}. This callback
    * will be called immediately if {@link isOff} is `true`.
    *
-   * Calling this method is the same as calling `this.offWith({ isOff: false, off: callback, })`
+   * Calling this method is the same as calling `this.alsoOff({ isOff: false, off: callback, })`
    *
    * @param callback - A callback function accepting optional cut off reason as its only parameter.
    * By convenience an `undefined` reason means the supply is done successfully.
@@ -93,7 +85,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    * @returns `this` instance.
    */
   whenOff(callback: (this: void, reason?: unknown) => void): this {
-    return this.offWith({
+    return this.alsoOff({
       isOff: false,
       off: callback,
     });
@@ -125,9 +117,9 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * @returns `this` instance.
    */
-  offWith(receiver: SupplyReceiver): this {
+  alsoOff(receiver: SupplyReceiver): this {
     if (!receiver.isOff) {
-      this.#state.offWith(this.#update, receiver);
+      this.#state.alsoOff(this.#update, receiver);
     }
 
     return this;
@@ -136,40 +128,36 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
   /**
    * Makes `receiver` depend on this supply.
    *
-   * Once this supply {@link off cut off}, the `receiver` will be informed on that with the same reason.
+   * This is an alias of {@link alsoOff} method.
    *
-   * Calling this method has the same effect as calling `this.offWith(receiver.supply)`.
-   *
-   * @param receiver - A supply receiver peer to make dependent on this supply.
+   * @param receiver - A supply receiver to make dependent on this supply.
    *
    * @returns `this` instance.
    */
-  cuts(receiver: SupplyPeer<SupplyReceiver>): this {
-    return this.offWith(receiver.supply);
+  cuts(receiver: SupplyReceiver): this {
+    return this.alsoOff(receiver);
   }
 
   derive(derived?: undefined): Supply;
-  derive<TReceiver extends SupplyReceiver>(derived: SupplyPeer<TReceiver>): TReceiver;
-  derive<TReceiver extends SupplyReceiver>(derived?: SupplyPeer<TReceiver>): TReceiver | Supply;
+  derive<TReceiver extends SupplyReceiver>(derived: TReceiver): TReceiver;
+  derive<TReceiver extends SupplyReceiver>(derived: TReceiver | undefined): TReceiver | Supply;
 
   /**
    * Creates derived supply depending on this one.
    *
-   * If derived supply peer specified, makes it depend on this one.
+   * If derived supply receiver specified, makes it depend on this one.
    *
-   * In contrast to {@link cuts} method, this one returns derived supply.
+   * In contrast to {@link cuts} and {@link alsoOff} methods, this one returns derived supply receiver.
    *
-   * @param derived - Optional derived supply consumer peer to make dependent on this one.
+   * @typeParam TReceiver - Type of supply receiver.
+   * @param derived - Optional derived supply receiver to make dependent on this one.
    *
-   * @returns Derived supply.
+   * @returns Derived supply receiver.
    */
-  derive<TReceiver extends SupplyReceiver>(derived: SupplyPeer<TReceiver> | Supply = new Supply()): TReceiver | Supply {
+  derive<TReceiver extends SupplyReceiver>(derived: TReceiver | Supply = new Supply()): TReceiver | Supply {
+    this.alsoOff(derived);
 
-    const supply = derived.supply;
-
-    this.offWith(supply);
-
-    return supply;
+    return derived;
   }
 
   /**
@@ -177,52 +165,50 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * Once the `supplier` {@link Supplier.isOff cuts off} the supply, this supply will be cut off with the same reason.
    *
-   * Calling this method has the same effect as calling `supplier.supply.offWith(this)`.
+   * Calling this method has the same effect as calling `supplier.alsoOff(this)`.
    *
-   * @param supplier - A supplier peer to make this supply depend on.
+   * @param supplier - A supplier to make this supply depend on.
    *
    * @returns `this` instance.
    */
-  needs(supplier: SupplyPeer<Supplier>): this {
-    supplier.supply.offWith(this);
+  needs(supplier: Supplier): this {
+    supplier.alsoOff(this);
 
     return this;
   }
 
   require(required?: undefined): Supply;
-  require<TSupplier extends Supplier>(required: SupplyPeer<TSupplier>): TSupplier;
-  require<TSupplier extends Supplier>(required?: SupplyPeer<TSupplier>): TSupplier | Supply;
+  require<TSupplier extends Supplier>(required: TSupplier): TSupplier;
+  require<TSupplier extends Supplier>(required: TSupplier | undefined): TSupplier | Supply;
 
   /**
    * Creates required supply this one depends on.
    *
-   * If required supply peer specified, makes this one depend on it.
+   * If required supplier specified, makes this one depend on it.
    *
    * In contrast to {@link needs} method, this one returns required supply.
    *
-   * @param required - Optional supplier peer to make this one depend on.
+   * @typeParam TSupplier - Type of required supplier.
+   * @param required - Optional supplier to make this one depend on.
    *
-   * @returns Required supply.
+   * @returns Required supplier.
    */
-  require<TSupplier extends Supplier>(required: SupplyPeer<TSupplier> | Supply = new Supply()): TSupplier | Supply {
+  require<TSupplier extends Supplier>(required: TSupplier | Supply = new Supply()): TSupplier | Supply {
+    required.alsoOff(this);
 
-    const supply = required.supply;
-
-    supply.offWith(this);
-
-    return supply;
+    return required;
   }
 
   /**
-   * Makes this and another supply peer depend on each other.
+   * Makes this and another supply depend on each other.
    *
    * Calling this method is the same as calling `this.needs(another).cuts(another)`.
    *
-   * @param another - A supply peer to make this one to mutually depend on.
+   * @param another - A supply to make this one to mutually depend on.
    *
    * @returns `this` instance.
    */
-  as(another: SupplyPeer<SupplyReceiver & Supplier>): this {
+  as(another: SupplyReceiver & Supplier): this {
     return this.needs(another).cuts(another);
   }
 

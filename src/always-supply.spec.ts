@@ -42,7 +42,7 @@ describe('alwaysSupply', () => {
       const receiver = { isOff: false, off: jest.fn() };
       const supply = alwaysSupply();
 
-      expect(supply.offWith(receiver)).toBe(alwaysSupply());
+      expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
       supply.off('reason');
       expect(receiver.off).not.toHaveBeenCalled();
     });

@@ -14,7 +14,7 @@ class SupplyState$Off implements SupplyState {
     // Already off.
   }
 
-  offWith(_update: unknown, receiver: SupplyReceiver): void {
+  alsoOff(_update: unknown, receiver: SupplyReceiver): void {
     receiver.off(this.whyOff);
   }
 

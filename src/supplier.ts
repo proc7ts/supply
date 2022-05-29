@@ -29,6 +29,6 @@ export interface Supplier {
    *
    * @param receiver - Supply receiver to register.
    */
-  offWith(receiver: SupplyReceiver): void;
+  alsoOff(receiver: SupplyReceiver): void;
 
 }

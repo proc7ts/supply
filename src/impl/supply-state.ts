@@ -7,6 +7,6 @@ export interface SupplyState {
 
   off(update: (supply: SupplyState) => void, reason?: unknown): void;
 
-  offWith(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
+  alsoOff(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
 
 }

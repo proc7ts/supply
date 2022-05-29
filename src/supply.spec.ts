@@ -15,12 +15,6 @@ describe('Supply', () => {
     Supply.onUnexpectedAbort();
   });
 
-  describe('supply', () => {
-    it('returns the supply itself', () => {
-      expect(supply.supply).toBe(supply);
-    });
-  });
-
   describe('off', () => {
     it('calls `off` function', () => {
 
@@ -91,9 +85,9 @@ describe('Supply', () => {
     });
   });
 
-  describe('to', () => {
+  describe('alsoOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.offWith({ isOff: false, off: () => {/* noop */} })).toBe(supply);
+      expect(supply.alsoOff({ isOff: false, off: () => {/* noop */} })).toBe(supply);
     });
     it('calls receiver', () => {
 
@@ -103,7 +97,7 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.offWith(receiver);
+      supply.alsoOff(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -117,7 +111,7 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.offWith(receiver);
+      supply.alsoOff(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -129,7 +123,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.offWith(receiver);
+      supply.alsoOff(receiver);
       supply.off();
 
       expect(receiver.off).not.toHaveBeenCalled();
@@ -140,7 +134,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.offWith(receiver);
+      supply.alsoOff(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -154,7 +148,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.offWith(receiver);
+      supply.alsoOff(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -172,8 +166,8 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.offWith(receiver1);
-      supply.offWith(receiver2);
+      supply.alsoOff(receiver1);
+      supply.alsoOff(receiver2);
       receiver1.isOff = true;
       supply.off(reason);
 
@@ -193,9 +187,9 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.offWith(receiver1);
+      supply.alsoOff(receiver1);
       receiver1.isOff = true;
-      supply.offWith(receiver2);
+      supply.alsoOff(receiver2);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
@@ -218,11 +212,11 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.offWith(receiver1);
-      supply.offWith(receiver2);
+      supply.alsoOff(receiver1);
+      supply.alsoOff(receiver2);
       receiver1.isOff = true;
       receiver2.isOff = true;
-      supply.offWith(receiver3);
+      supply.alsoOff(receiver3);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();

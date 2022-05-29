@@ -31,7 +31,7 @@ export abstract class SupplyState$On implements SupplyState {
     }
   }
 
-  abstract offWith(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
+  abstract alsoOff(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
 
   protected abstract _off(reason: unknown): void;
 

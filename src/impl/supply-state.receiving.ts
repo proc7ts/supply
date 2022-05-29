@@ -11,7 +11,7 @@ export class SupplyState$WithReceivers extends SupplyState$On {
     this.#receivers = [receiver];
   }
 
-  override offWith(_update: (state: SupplyState) => void, receiver: SupplyReceiver): void {
+  override alsoOff(_update: (state: SupplyState) => void, receiver: SupplyReceiver): void {
     this.#compact();
     this.#receivers.push(receiver);
   }

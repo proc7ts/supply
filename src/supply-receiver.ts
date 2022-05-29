@@ -1,7 +1,7 @@
 /**
  * Supply receiver is informed when supply {@link Supply.off cut off}.
  *
- * When {@link Supplier.offWith registered} in supplier, the latter calls the {@link off} method once cut off,
+ * When {@link Supplier.alsoOff registered} in supplier, the latter calls the {@link off} method once cut off,
  * unless the receiver is {@link isOff not available} anymore.
  *
  * Supply receivers may be used as a passive alternative to `removeEventListener` approach. While the latter can be used
@@ -18,7 +18,7 @@ export interface SupplyReceiver {
    *
    * The supply would never call the {@link off} method of this receiver, once this flag is set.
    *
-   * The receiver with this flag set will be ignored by supplier when trying {@link Supplier.offWith register} it.
+   * The receiver with this flag set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this flag is set after the addition, the supplier may wish to remove it at any time.
    */
   readonly isOff: boolean;
