@@ -5,7 +5,7 @@ import { SupplyState$WithReceivers } from './supply-state.receiving.js';
 
 class SupplyState$NonReceiving$ extends SupplyState$On {
 
-  override to(update: (state: SupplyState) => void, receiver: SupplyReceiver): void {
+  override offWith(update: (state: SupplyState) => void, receiver: SupplyReceiver): void {
     update(new SupplyState$WithReceivers(receiver));
   }
 

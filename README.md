@@ -96,7 +96,7 @@ The registered callback receives a cutoff reason as its only parameter.
 
 The callback will be called at most once.
 
-### `to(receiver: { isOff: false, off: (reason?: unknown) => void })`
+### `offWith(receiver: { isOff: false, off: (reason?: unknown) => void })`
 
 Registers a receiver of the supply.
 
@@ -128,7 +128,7 @@ Makes receiver depend on this supply.
 
 Once this supply [cut off], the `receiver` will be informed on that with the same reason.
 
-Calling this method has the same effect as calling `this.to(receiver.supply)`.
+Calling this method has the same effect as calling `this.offWith(receiver.supply)`.
 
 ### `derive(derived?: SupplyPeer<SupplyReceiver>)`
 
@@ -144,7 +144,7 @@ Makes this supply depend on another supplier.
 
 Once the `supplier` cuts off the supply, this supply will be cut off with the same reason.
 
-Calling this method has the same effect as calling `supplier.supply.to(this)`.
+Calling this method has the same effect as calling `supplier.supply.offWith(this)`.
 
 ### `require(required?: SupplyPeer<Supplier>)`
 

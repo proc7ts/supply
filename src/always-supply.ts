@@ -17,7 +17,7 @@ class AlwaysSupply extends Supply {
     return this;
   }
 
-  override to(_receiver: SupplyReceiver): this {
+  override offWith(_receiver: SupplyReceiver): this {
     return this;
   }
 

@@ -93,7 +93,7 @@ describe('Supply', () => {
 
   describe('to', () => {
     it('returns `this` instance', () => {
-      expect(supply.to({ isOff: false, off: () => {/* noop */} })).toBe(supply);
+      expect(supply.offWith({ isOff: false, off: () => {/* noop */} })).toBe(supply);
     });
     it('calls receiver', () => {
 
@@ -103,7 +103,7 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver);
+      supply.offWith(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -117,7 +117,7 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver);
+      supply.offWith(receiver);
       supply.off(reason);
 
       expect(receiver.off).toHaveBeenCalledWith(reason);
@@ -129,7 +129,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.offWith(receiver);
       supply.off();
 
       expect(receiver.off).not.toHaveBeenCalled();
@@ -140,7 +140,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.offWith(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -154,7 +154,7 @@ describe('Supply', () => {
         off: jest.fn(),
       };
 
-      supply.to(receiver);
+      supply.offWith(receiver);
       receiver.isOff = true;
       supply.off();
 
@@ -172,8 +172,8 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
-      supply.to(receiver2);
+      supply.offWith(receiver1);
+      supply.offWith(receiver2);
       receiver1.isOff = true;
       supply.off(reason);
 
@@ -193,9 +193,9 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
+      supply.offWith(receiver1);
       receiver1.isOff = true;
-      supply.to(receiver2);
+      supply.offWith(receiver2);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
@@ -218,11 +218,11 @@ describe('Supply', () => {
       };
       const reason = 'reason';
 
-      supply.to(receiver1);
-      supply.to(receiver2);
+      supply.offWith(receiver1);
+      supply.offWith(receiver2);
       receiver1.isOff = true;
       receiver2.isOff = true;
-      supply.to(receiver3);
+      supply.offWith(receiver3);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();

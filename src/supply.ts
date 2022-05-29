@@ -60,7 +60,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    * The reason why supply is cut off. `undefined` while the supply is not cut off.
    */
   get whyOff(): unknown | undefined {
-    return this.#state.reason;
+    return this.#state.whyOff;
   }
 
   /**
@@ -85,7 +85,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    * Registers a callback function that will be called as soon as this supply is {@link off cut off}. This callback
    * will be called immediately if {@link isOff} is `true`.
    *
-   * Calling this method is the same as calling `this.to({ isOff: false, off: callback, })`
+   * Calling this method is the same as calling `this.offWith({ isOff: false, off: callback, })`
    *
    * @param callback - A callback function accepting optional cut off reason as its only parameter.
    * By convenience an `undefined` reason means the supply is done successfully.
@@ -93,7 +93,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    * @returns `this` instance.
    */
   whenOff(callback: (this: void, reason?: unknown) => void): this {
-    return this.to({
+    return this.offWith({
       isOff: false,
       off: callback,
     });
@@ -125,9 +125,9 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * @returns `this` instance.
    */
-  to(receiver: SupplyReceiver): this {
+  offWith(receiver: SupplyReceiver): this {
     if (!receiver.isOff) {
-      this.#state.to(this.#update, receiver);
+      this.#state.offWith(this.#update, receiver);
     }
 
     return this;
@@ -138,14 +138,14 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * Once this supply {@link off cut off}, the `receiver` will be informed on that with the same reason.
    *
-   * Calling this method has the same effect as calling `this.to(receiver.supply)`.
+   * Calling this method has the same effect as calling `this.offWith(receiver.supply)`.
    *
    * @param receiver - A supply receiver peer to make dependent on this supply.
    *
    * @returns `this` instance.
    */
   cuts(receiver: SupplyPeer<SupplyReceiver>): this {
-    return this.to(receiver.supply);
+    return this.offWith(receiver.supply);
   }
 
   derive(derived?: undefined): Supply;
@@ -167,7 +167,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
 
     const supply = derived.supply;
 
-    this.to(supply);
+    this.offWith(supply);
 
     return supply;
   }
@@ -177,14 +177,14 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
    *
    * Once the `supplier` {@link Supplier.isOff cuts off} the supply, this supply will be cut off with the same reason.
    *
-   * Calling this method has the same effect as calling `supplier.supply.to(this)`.
+   * Calling this method has the same effect as calling `supplier.supply.offWith(this)`.
    *
    * @param supplier - A supplier peer to make this supply depend on.
    *
    * @returns `this` instance.
    */
   needs(supplier: SupplyPeer<Supplier>): this {
-    supplier.supply.to(this);
+    supplier.supply.offWith(this);
 
     return this;
   }
@@ -208,7 +208,7 @@ export class Supply implements Supplier, SupplyReceiver, SupplyPeer {
 
     const supply = required.supply;
 
-    supply.to(this);
+    supply.offWith(this);
 
     return supply;
   }

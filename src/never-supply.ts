@@ -19,7 +19,7 @@ class NeverSupply extends Supply {
     return this;
   }
 
-  override to(receiver: SupplyReceiver): this {
+  override offWith(receiver: SupplyReceiver): this {
     if (!receiver.isOff) {
       receiver.off();
     }

@@ -12,7 +12,7 @@ export abstract class SupplyState$On implements SupplyState {
     return false;
   }
 
-  get reason(): undefined {
+  get whyOff(): undefined {
     return;
   }
 
@@ -31,7 +31,7 @@ export abstract class SupplyState$On implements SupplyState {
     }
   }
 
-  abstract to(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
+  abstract offWith(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
 
   protected abstract _off(reason: unknown): void;
 
