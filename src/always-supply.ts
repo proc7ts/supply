@@ -8,7 +8,7 @@ class AlwaysSupply extends Supply {
     return false;
   }
 
-  override off(_reason?: unknown): Supply {
+  override off(_reason?: unknown): this {
     return this;
   }
 
