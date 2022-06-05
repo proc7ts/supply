@@ -18,7 +18,8 @@ export class SupplyController extends AbortController {
    */
   constructor(supply = new Supply()) {
     super();
-    this.#supply = abortSupplyBy(this.signal, supply)
+    this.#supply = abortSupplyBy(this.signal)
+        .derive(supply)
         .whenOff((reason = new SupplyAbortError) => this.abort(reason));
   }
 
