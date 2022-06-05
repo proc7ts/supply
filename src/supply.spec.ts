@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Mock, SpyInstance } from 'jest-mock';
-import { Supply } from './supply.js';
+import { Supply, SupplyIn, SupplyOut } from './supply.js';
 
 describe('Supply', () => {
 
@@ -13,6 +13,39 @@ describe('Supply', () => {
   });
   afterEach(() => {
     Supply.onUnexpectedAbort();
+  });
+
+  describe('split', () => {
+
+    let supplyIn: SupplyIn;
+    let supplyOut: SupplyOut;
+
+    beforeEach(() => {
+      [supplyIn, supplyOut] = Supply.split();
+    });
+
+    it('creates connected sides of supply', () => {
+      const whenOff = jest.fn();
+
+      supplyOut.whenOff(whenOff);
+      supplyIn.off('test reason');
+
+      expect(whenOff).toHaveBeenCalledWith('test reason');
+      expect(supplyIn.isOff).toBe(true);
+      expect(supplyIn.whyOff).toBe('test reason');
+    });
+
+    describe('supplyIn', () => {
+      it('is itself', () => {
+        expect(supplyIn.supplyIn).toBe(supplyIn);
+      });
+    });
+
+    describe('supplyOut', () => {
+      it('is itself', () => {
+        expect(supplyOut.supplyOut).toBe(supplyOut);
+      });
+    });
   });
 
   describe('off', () => {
@@ -82,6 +115,43 @@ describe('Supply', () => {
       supply.off(reason);
 
       expect(supply.whyOff).toBe(reason);
+    });
+  });
+
+  describe('supplyIn', () => {
+    it('is not itself', () => {
+      expect(supply.supplyIn).not.toBe(supply);
+      expect(supply.supplyIn).not.toBeInstanceOf(Supply);
+      expect(supply.supplyIn).toBeInstanceOf(SupplyIn);
+    });
+    it('depends on supply', () => {
+      supply.off('test reason');
+
+      expect(supply.supplyIn.isOff).toBe(true);
+      expect(supply.supplyIn.whyOff).toBe('test reason');
+    });
+    it('required by supply', () => {
+      supply.supplyIn.off('test reason');
+
+      expect(supply.isOff).toBe(true);
+      expect(supply.whyOff).toBe('test reason');
+    });
+  });
+
+  describe('supplyOut', () => {
+    it('is not itself', () => {
+      expect(supply.supplyOut).not.toBe(supply);
+      expect(supply.supplyOut).not.toBeInstanceOf(Supply);
+      expect(supply.supplyOut).toBeInstanceOf(SupplyOut);
+    });
+    it('depends on supply', () => {
+
+      const whenOff = jest.fn();
+
+      supply.supplyOut.whenOff(whenOff);
+      supply.off('test reason');
+
+      expect(whenOff).toHaveBeenCalledWith('test reason');
     });
   });
 
