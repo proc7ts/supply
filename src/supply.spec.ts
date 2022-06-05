@@ -17,8 +17,8 @@ describe('Supply', () => {
 
   describe('split', () => {
 
-    let supplyIn: Supply.In;
-    let supplyOut: Supply.Out;
+    let supplyIn: SupplyIn;
+    let supplyOut: SupplyOut;
 
     beforeEach(() => {
       [supplyIn, supplyOut] = Supply.split();
