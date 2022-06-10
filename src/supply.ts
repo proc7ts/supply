@@ -1,5 +1,5 @@
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedAbort$handle, SupplyState$NonReceiving, SupplyState$WithReceivers } from './impl/mod.js';
+import { Supply$unexpectedAbort$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
 import { Supplier } from './supplier.js';
 import { SupplyReceiver } from './supply-receiver.js';
 
@@ -14,11 +14,11 @@ class SupplyIn$ implements SupplyIn {
   readonly #update = (state: SupplyState): void => { this.#state = state; };
 
   constructor(
-      off?: (this: void, reason?: unknown) => void,
-      setAlsoOff?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
+      setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
+      receiver?: SupplyReceiver,
   ) {
-    this.#state = off ? new SupplyState$WithReceivers({ isOff: false, off }) : SupplyState$NonReceiving;
-    setAlsoOff?.(receiver => this.#state.alsoOff(this.#update, receiver));
+    this.#state = receiver ? new SupplyState$Receiving(receiver) : SupplyState$NonReceiving;
+    setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
   get isOff(): boolean {
@@ -59,13 +59,12 @@ class SupplyIn$ implements SupplyIn {
 /**
  * Constructs receiving side of supply.
  *
- * @param off - A function to call when the supply is {@link Supply.off cut off}. Accepts optional cut off reason
- * as its only parameter. No-op by default.
- * @param setAlsoOff - An optional receiver of {@link Supplier.alsoOff} method implementation.
+ * @param setup - An optional receiver of {@link Supplier.alsoOff} method implementation.
+ * @param receiver - Optional supply receiver.
  */
 export const SupplyIn: new (
-    off?: (this: void, reason?: unknown) => void,
-    setAlsoOff?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
+    setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
+    receiver?: SupplyReceiver,
 ) => SupplyIn = SupplyIn$;
 
 class SupplyOut$ implements SupplyOut {
@@ -134,17 +133,16 @@ export class Supply extends SupplyOut implements SupplyIn {
   /**
    * Creates split sides of supply.
    *
-   * @param off - A function to call when the supply is {@link Supply.off cut off}. Accepts optional cut off reason
-   * as its only parameter. No-op by default.
+   * @param receiver - Optional supply receiver.
    *
    * @returns A tuple containing {@link SupplyIn input} and {@link SupplyOut output} sides of supply connected to
    * each other.
    */
-  static split(off?: (this: void, reason?: unknown) => void): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
+  static split(receiver?: SupplyReceiver): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
-    return [new SupplyIn(off, newAlsoOff => { alsoOff = newAlsoOff; }), new SupplyOut(alsoOff)];
+    return [new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver), new SupplyOut(alsoOff)];
   }
 
   /**
@@ -167,14 +165,13 @@ export class Supply extends SupplyOut implements SupplyIn {
   /**
    * Constructs new supply instance.
    *
-   * @param off - A function to call when the supply is {@link Supply.off cut off}. Accepts optional cut off reason
-   * as its only parameter. No-op by default.
+   * @param receiver - Optional supply receiver.
    */
-  constructor(off?: (this: void, reason?: unknown) => void) {
+  constructor(receiver?: SupplyReceiver) {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
-    const supplyIn = new SupplyIn(off, newAlsoOff => { alsoOff = newAlsoOff; });
+    const supplyIn = new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver);
 
     super(alsoOff);
 

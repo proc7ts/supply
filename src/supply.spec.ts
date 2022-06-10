@@ -9,7 +9,7 @@ describe('Supply', () => {
 
   beforeEach(() => {
     whenOff = jest.fn();
-    supply = new Supply(whenOff);
+    supply = new Supply({ off: whenOff });
   });
   afterEach(() => {
     Supply.onUnexpectedAbort();
@@ -421,7 +421,7 @@ describe('Supply', () => {
     it('cuts off another supply when cutting this one off', () => {
 
       const whenDerivedOff = jest.fn();
-      const derivedSupply = new Supply(whenDerivedOff);
+      const derivedSupply = new Supply({ off: whenDerivedOff });
 
       expect(supply.derive(derivedSupply)).toBe(derivedSupply);
 
@@ -461,7 +461,7 @@ describe('Supply', () => {
     it('cuts off another supply when cutting this one off', () => {
 
       const whenAnotherOff = jest.fn();
-      const anotherSupply = new Supply(whenAnotherOff);
+      const anotherSupply = new Supply({ off: whenAnotherOff });
 
       expect(supply.as(anotherSupply)).toBe(supply);
 

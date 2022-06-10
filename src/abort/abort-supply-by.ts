@@ -16,11 +16,8 @@ import { SupplyAbortError } from './supply-abort.error.js';
  */
 export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver): SupplyOut {
 
-  const [supplyIn, supplyOut] = Supply.split();
+  const [supplyIn, supplyOut] = Supply.split(receiver);
 
-  if (receiver) {
-    supplyOut.alsoOff(receiver);
-  }
   if (signal.aborted) {
     supplyIn.off(SupplyAbortError.reasonOf(signal));
   } else {

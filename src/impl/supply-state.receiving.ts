@@ -2,7 +2,7 @@ import { SupplyReceiver } from '../supply-receiver.js';
 import { SupplyState } from './supply-state.js';
 import { SupplyState$On } from './supply-state.on.js';
 
-export class SupplyState$WithReceivers extends SupplyState$On {
+export class SupplyState$Receiving extends SupplyState$On {
 
   readonly #receivers: SupplyReceiver[];
 
