@@ -20,23 +20,23 @@ describe('abortSupplyBy', () => {
     abortCtl.abort(reason);
 
     const whenOff = jest.fn();
-    const supply = new Supply(whenOff);
 
-    expect(abortSupplyBy(signal, supply)).toBe(supply);
+    abortSupplyBy(signal, { off: whenOff });
+
     expect(whenOff).toHaveBeenCalledWith(reason);
   });
   it('cuts off supply immediately by signal aborted without explicit reason', () => {
     abortCtl.abort();
 
     const whenOff = jest.fn();
-    const supply = new Supply(whenOff);
 
-    expect(abortSupplyBy(signal, supply)).toBe(supply);
+    abortSupplyBy(signal, { off: whenOff });
+
     expect(whenOff).toHaveBeenCalledWith(new SupplyAbortError());
   });
   it('cuts off supply when abort signal received', () => {
 
-    const supply = abortSupplyBy(signal);
+    const supply = new Supply().needs(abortSupplyBy(signal));
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
@@ -50,7 +50,7 @@ describe('abortSupplyBy', () => {
   });
   it('cuts off supply when abort signal without explicit reason received', () => {
 
-    const supply = abortSupplyBy(signal);
+    const supply = new Supply().needs(abortSupplyBy(signal));
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
