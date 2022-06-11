@@ -141,7 +141,7 @@ export namespace SupplyIsOff {
     /**
      * Whether supply failed.
      *
-     * Defaults to `true`.
+     * Defaults to `true` if {@link error} is also specified.
      */
     readonly failed?: boolean | undefined;
 
@@ -179,7 +179,7 @@ export namespace SupplyIsOff {
     /**
      * Always `false`, which means the supply succeed.
      */
-    readonly failed: false;
+    readonly failed?: false | undefined;
 
     /**
      * Always ignored.

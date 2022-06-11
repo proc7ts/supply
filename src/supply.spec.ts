@@ -466,6 +466,26 @@ describe('Supply', () => {
       expect(warnSpy).toHaveBeenCalledWith('Supply aborted unexpectedly.', 'reason');
       expect(warnSpy).toHaveBeenCalledTimes(1);
     });
+    it('does not report unexpected failure when supply depends on itself', () => {
+
+      const onFailure = jest.fn();
+
+      Supply.onUnexpectedFailure(onFailure);
+
+      const supply = new Supply();
+
+      supply.alsoOff({
+        get isOff() {
+          return supply.isOff;
+        },
+        off(reason) {
+          supply.off(reason);
+        },
+      });
+
+      supply.off('reason');
+      expect(onFailure).not.toHaveBeenCalled();
+    });
     it('replaces unexpected failure handler', () => {
 
       const onFailure = jest.fn();
