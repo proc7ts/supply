@@ -1,7 +1,8 @@
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedAbort$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
+import { Supply$unexpectedFailure$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
 import { Supplier } from './supplier.js';
-import { SupplyReceiver } from './supply-receiver.js';
+import { SupplyIsOff } from './supply-is-off.js';
+import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 
 /**
  * Default implementation of receiving side of {@link Supply supply}.
@@ -15,18 +16,16 @@ class SupplyIn$ implements SupplyIn {
 
   constructor(
       setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-      receiver?: SupplyReceiver,
+      receiver?: SupplyReceiver | SupplyReceiverFn,
   ) {
-    this.#state = receiver ? new SupplyState$Receiving(receiver) : SupplyState$NonReceiving;
+    this.#state = receiver
+        ? new SupplyState$Receiving(SupplyReceiver(receiver))
+        : SupplyState$NonReceiving;
     setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
-  get isOff(): boolean {
+  get isOff(): SupplyIsOff | undefined {
     return this.#state.isOff;
-  }
-
-  get whyOff(): unknown | undefined {
-    return this.#state.whyOff;
   }
 
   get supplyIn(): SupplyIn {
@@ -34,7 +33,7 @@ class SupplyIn$ implements SupplyIn {
   }
 
   off(reason?: unknown): this {
-    this.#state.off(this.#update, reason);
+    this.#state.off(this.#update, SupplyIsOff.becauseOf(reason));
 
     return this;
   }
@@ -60,11 +59,11 @@ class SupplyIn$ implements SupplyIn {
  * Constructs receiving side of supply.
  *
  * @param setup - An optional receiver of {@link Supplier.alsoOff} method implementation.
- * @param receiver - Optional supply receiver.
+ * @param receiver - Optional supply receiver. Can be either an object, or a function.
  */
 export const SupplyIn: new (
     setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-    receiver?: SupplyReceiver,
+    receiver?: SupplyReceiver | SupplyReceiverFn,
 ) => SupplyIn = SupplyIn$;
 
 class SupplyOut$ implements SupplyOut {
@@ -87,16 +86,13 @@ class SupplyOut$ implements SupplyOut {
     return this;
   }
 
-  whenOff(callback: (this: void, reason?: unknown) => void): this {
-    return this.alsoOff({
-      isOff: false,
-      off: callback,
-    });
+  whenOff(receiver: SupplyReceiverFn): this {
+    return this.alsoOff(SupplyReceiver(receiver));
   }
 
   whenDone(): Promise<void> {
     return new Promise((resolve, reject) => this.whenOff(
-        reason => reason === undefined ? resolve() : reject(reason),
+        reason => reason.failed ? reject(reason.error) : resolve(),
     ));
   }
 
@@ -114,6 +110,7 @@ class SupplyOut$ implements SupplyOut {
 /**
  * Constructs sending side of supply.
  *
+ * @constructor
  * @param alsoOff - A function that registers a receiver of this supply. It will be used as a {@link alsoOff} method
  * implementation.
  */
@@ -138,7 +135,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    * @returns A tuple containing {@link SupplyIn input} and {@link SupplyOut output} sides of supply connected to
    * each other.
    */
-  static split(receiver?: SupplyReceiver): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
+  static split(receiver?: SupplyReceiver | SupplyReceiverFn): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
@@ -146,17 +143,18 @@ export class Supply extends SupplyOut implements SupplyIn {
   }
 
   /**
-   * Assigns unexpected abort handler.
+   * Assigns unexpected supply failure handler.
    *
-   * When a supply {@link off aborted}, and there is no {@link whenOff cut off callback} registered, the given handler
-   * will be called with the abort reason.
+   * When a supply {@link off cut off} due to some {@link SupplyIsOff.Faultily failure}, and there is no
+   * {@link alsoOff supply receiver} registered and still {@link SupplyReceiver.isOff available} to handle it,
+   * the given `handler` will be called with failure indicator as its only parameter.
    *
-   * By default, the unexpected abort reason will be logged to console.
+   * By default, a warning with unexpected failure {@link SupplyIsOff.Faultily.error reason} will be issued to console.
    *
-   * @param handler - A handler to call on unexpected abort, or `undefined` to reset to default one.
+   * @param handler - A handler to call on unexpected failure, or `undefined` to reset to default one.
    */
-  static onUnexpectedAbort(handler?: (this: void, reason: unknown) => void): void {
-    Supply$unexpectedAbort$handle(handler);
+  static onUnexpectedFailure(handler?: (this: void, reason: SupplyIsOff.Faultily) => void): void {
+    Supply$unexpectedFailure$handle(handler);
   }
 
   readonly #in: SupplyIn;
@@ -167,7 +165,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @param receiver - Optional supply receiver.
    */
-  constructor(receiver?: SupplyReceiver) {
+  constructor(receiver?: SupplyReceiver | SupplyReceiverFn) {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
@@ -178,12 +176,8 @@ export class Supply extends SupplyOut implements SupplyIn {
     this.#in = supplyIn;
   }
 
-  get isOff(): boolean {
+  get isOff(): SupplyIsOff | undefined {
     return this.#in.isOff;
-  }
-
-  get whyOff(): unknown | undefined {
-    return this.#in.whyOff;
   }
 
   get supplyIn(): SupplyIn {
@@ -275,17 +269,13 @@ export class Supply extends SupplyOut implements SupplyIn {
  * It is informed on supply cut off.
  */
 export interface SupplyIn extends SupplyReceiver {
-  /**
-   * Whether this supply is {@link off cut off} already.
-   *
-   * `true` means nothing will be supplied anymore.
-   */
-  get isOff(): boolean;
 
   /**
-   * The reason why supply is cut off. `undefined` while the supply is not cut off.
+   * Indicates whether this supply is {@link off cut off} already.
+   *
+   * `undefined` initially. Set once supply {@link off cut off}. Once set, nothing will be supplied anymore.
    */
-  get whyOff(): unknown | undefined;
+  get isOff(): SupplyIsOff | undefined;
 
   /**
    * Receiving side of this supply.
@@ -299,7 +289,8 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * Calling this method for the second time has no effect.
    *
-   * @param reason - An optional reason why the supply is cut off.
+   * @param reason - An optional reason why the supply is cut off. This reason will be {@link SupplyIsOff.becauseOf
+   * converted} to supply cut off {@link isOff indicator}.
    *
    * @returns `this` instance.
    */
@@ -381,23 +372,22 @@ export interface SupplyOut extends Supplier {
   alsoOff(receiver: SupplyReceiver): this;
 
   /**
-   * Registers a callback function that will be called as soon as this supply is {@link Supply.off cut off}.
+   * Registers a supply receiver function that will be called as soon as this supply {@link Supply.off cut off}.
    *
-   * Calling this method is the same as calling `this.alsoOff({ isOff: false, off: callback, })`
+   * Calling this method is the same as calling `this.alsoOff(SupplyReceiver(receiver))`
    *
-   * @param callback - A callback function accepting optional cut off reason as its only parameter.
-   * By convenience an `undefined` reason means the supply is done successfully.
+   * @param receiver - Supply receiver function accepting cut off indicator as its only parameter.
    *
    * @returns `this` instance.
    */
-  whenOff(callback: (this: void, reason?: unknown) => void): this;
+  whenOff(receiver: SupplyReceiverFn): this;
 
   /**
    * Builds a promise that will be resolved once this supply is {@link Supply.off done}. This callback will be called
    * immediately if supply is {@link Supply.isOff cut off} already.
    *
-   * @returns A promise that will be successfully resolved once this supply is cut off without a reason, or rejected
-   * once this supply is cut off with any reason except `undefined`.
+   * @returns A promise that will be successfully resolved once this supply completes {@link SupplyIsOff.Successfully
+   * successfully}, or rejected with failure {@link SupplyIsOff.Faultily.error reason}.
    */
   whenDone(): Promise<void>;
 

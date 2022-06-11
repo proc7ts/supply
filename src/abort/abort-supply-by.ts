@@ -1,4 +1,5 @@
-import { SupplyReceiver } from '../supply-receiver.js';
+import { SupplyIsOff } from '../supply-is-off.js';
+import { SupplyReceiver, SupplyReceiverFn } from '../supply-receiver.js';
 import { Supply, SupplyOut } from '../supply.js';
 import { SupplyAbortError } from './supply-abort.error.js';
 
@@ -10,21 +11,21 @@ import { SupplyAbortError } from './supply-abort.error.js';
  *
  * @param signal - The signal that aborts the supply.
  * @param receiver - Optional supply receiver for contructed supplier. It can be useful to prevent the
- * {@link Supply.onUnexpectedAbort unexpected abort} in case the `signal` already aborted.
+ * {@link Supply.onUnexpectedFailure unexpected failure} in case the `signal` already aborted.
  *
  * @returns New supplier instance cut off once the `signal` aborted.
  */
-export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver): SupplyOut {
+export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver | SupplyReceiverFn): SupplyOut {
 
   const [supplyIn, supplyOut] = Supply.split(receiver);
 
   if (signal.aborted) {
-    supplyIn.off(SupplyAbortError.reasonOf(signal));
+    supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));
   } else {
 
     const onAbort = (): void => {
       signal.removeEventListener('abort', onAbort);
-      supplyIn.off(SupplyAbortError.reasonOf(signal));
+      supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));
     };
 
     signal.addEventListener('abort', onAbort);

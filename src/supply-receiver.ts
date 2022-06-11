@@ -1,3 +1,5 @@
+import { SupplyIsOff } from './supply-is-off.js';
+
 /**
  * Supply receiver is informed when supply {@link Supply.off cut off}.
  *
@@ -11,17 +13,18 @@
  * Note that any {@link Supply} may act as a supply receiver.
  */
 export interface SupplyReceiver {
+
   /**
    * Indicates whether this receiver is unavailable.
    *
-   * It is expected that once this flag is set to `true`, it would never be reset.
+   * It is expected that once this indicator set , it would never be reset.
    *
-   * The supply would never call the {@link off} method of this receiver, once this flag is set.
+   * The supply would never call the {@link off} method of this receiver, once this indicator set.
    *
-   * The receiver with this flag set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
-   * Moreover, if this flag is set after the addition, the supplier may wish to remove it at any time.
+   * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
+   * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
    */
-  readonly isOff?: boolean | undefined;
+  readonly isOff: SupplyIsOff | undefined;
 
   /**
    * Called by the source supply when the latter cut off.
@@ -32,8 +35,56 @@ export interface SupplyReceiver {
    * It is reasonable to set this property to no-op once the receiver becomes unavailable. This would release the
    * resources held by it, and help Garbage Collector to free them.
    *
-   * @param reason - An optional reason why the supply is cut off. By convenience, an absent reason means the supply is
-   * done successfully.
+   * @param reason - A reason indicating why the supply has been cut off, and when.
    */
-  off(reason?: unknown): void;
+  off(reason: SupplyIsOff): void;
+
+}
+
+/**
+ * Supply receiver function signature.
+ *
+ * Can be passed to {@link Supply} constructor, or as a {@link Supply.whenOff} method parameter.
+ *
+ * Can be converted to {@link SupplyReceiver}.
+ *
+ * @param reason - A reason indicating why the supply has been cut off, and when.
+ */
+export type SupplyReceiverFn = (this: void, reason: SupplyIsOff) => void;
+
+class FnSupplyReceiver implements SupplyReceiver {
+
+  #off: SupplyReceiverFn | null;
+  #isOff: SupplyIsOff | undefined;
+
+  constructor(off: SupplyReceiverFn) {
+    this.#off = off;
+  }
+
+  get isOff(): SupplyIsOff | undefined {
+    return this.#isOff;
+  }
+
+  off(reason: SupplyIsOff): void {
+    this.#isOff = reason;
+
+    const off = this.#off;
+
+    this.#off = null;
+    off?.(reason);
+  }
+
+}
+
+/**
+ * Converts a supply receiver function to supply receiver object.
+ *
+ * When called for `receiver` object, just returns it.
+ *
+ * @param receiver - Either receiver function to convert, or receiver object.
+ *
+ * @returns Supply receiver object that calls the given function when supply cut off at most once.
+ */
+export function SupplyReceiver(receiver: SupplyReceiver | SupplyReceiverFn): SupplyReceiver {
+  return typeof receiver === 'function' ? new FnSupplyReceiver(receiver) : receiver;
 }

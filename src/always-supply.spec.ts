@@ -5,12 +5,12 @@ import { Supply } from './supply.js';
 
 describe('alwaysSupply', () => {
   afterEach(() => {
-    Supply.onUnexpectedAbort();
+    Supply.onUnexpectedFailure();
   });
 
   describe('isOff', () => {
-    it('is always `false`', () => {
-      expect(alwaysSupply().isOff).toBe(false);
+    it('is always undefined', () => {
+      expect(alwaysSupply().isOff).toBeUndefined();
     });
   });
 
@@ -20,7 +20,7 @@ describe('alwaysSupply', () => {
       const supply = alwaysSupply();
 
       expect(supply.off()).toBe(alwaysSupply());
-      expect(supply.isOff).toBe(false);
+      expect(supply.isOff).toBeUndefined();
     });
   });
 
@@ -39,7 +39,10 @@ describe('alwaysSupply', () => {
   describe('alsoOff', () => {
     it('does nothing', () => {
 
-      const receiver = { isOff: false, off: jest.fn() };
+      const receiver = {
+        isOff: undefined,
+        off: jest.fn(),
+      };
       const supply = alwaysSupply();
 
       expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
@@ -56,7 +59,7 @@ describe('alwaysSupply', () => {
       expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
 
       supply.off();
-      expect(receiver.isOff).toBe(false);
+      expect(receiver.isOff).toBeUndefined();
       expect(whenOff).not.toHaveBeenCalled();
     });
   });
@@ -66,7 +69,7 @@ describe('alwaysSupply', () => {
 
       const onAbort = jest.fn();
 
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onAbort);
 
       const supply = alwaysSupply();
       const otherSupply = new Supply();
@@ -74,8 +77,8 @@ describe('alwaysSupply', () => {
       expect(supply.needs(otherSupply)).toBe(alwaysSupply());
 
       otherSupply.off('reason');
-      expect(supply.isOff).toBe(false);
-      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(supply.isOff).toBeUndefined();
+      expect(onAbort).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
       expect(onAbort).toHaveBeenCalledTimes(1);
     });
   });
@@ -91,14 +94,14 @@ describe('alwaysSupply', () => {
       expect(supply.as(otherSupply)).toBe(alwaysSupply());
 
       supply.off();
-      expect(otherSupply.isOff).toBe(false);
+      expect(otherSupply.isOff).toBeUndefined();
       expect(whenOff).not.toHaveBeenCalled();
     });
     it('never cuts off the always-supply', () => {
 
       const onAbort = jest.fn();
 
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onAbort);
 
       const supply = alwaysSupply();
       const otherSupply = new Supply();
@@ -106,8 +109,8 @@ describe('alwaysSupply', () => {
       expect(supply.as(otherSupply)).toBe(alwaysSupply());
 
       otherSupply.off('reason');
-      expect(supply.isOff).toBe(false);
-      expect(onAbort).toHaveBeenCalledWith('reason');
+      expect(supply.isOff).toBeUndefined();
+      expect(onAbort).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
       expect(onAbort).toHaveBeenCalledTimes(1);
     });
   });

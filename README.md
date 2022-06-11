@@ -77,28 +77,16 @@ When called, all registered cut off callbacks are called with the given reason a
 
 [isoff]: #isoff
 
-This is a flag indicating whether the supply is cut off.
+Indicates whether this supply is [cut off] already.
 
-Equals to `false` initially. Becomes `true` after calling the [off()] method.
+`undefined` initially. Set once supply [cut off]. Once set, nothing will be supplied anymore.
 
-### `whyOff`
+The value returned is an object that indicates why the supply has been cut off (i.e. due to failure or successful
+completion), and when this happened.
 
-[whyoff]: #whyoff
+### `alsoOff(receiver: { isOff: undefined, off: (reason?: unknown) => void })`
 
-The reason why supply is cut off. `undefined` while the supply is not cut off.
-
-### `whenOff(callback: (reason?: unknown) => void)`
-
-Registers a callback function that will be called when the supply is [cut off]. If the supply is cut off already when
-calling this method, the callback will be called immediately.
-
-The registered callback receives a cutoff reason as its only parameter.
-
-The callback will be called at most once.
-
-### `alsoOff(receiver: { isOff: false, off: (reason?: unknown) => void })`
-
-[alsooff]: #alsooffreceiver--isoff-false-off-reason-unknown--void-
+[alsooff]: #alsooffreceiver--isoff-undefined-off-reason-unknown--void-
 
 Registers a receiver of the supply.
 
@@ -110,12 +98,18 @@ Supply receivers may be used as a passive alternative to `removeEventListener` a
 to remove the listener in order to stop receiving events, the supply receiver may set itself unavailable, so that the
 supplier would be able to remove it occasionally.
 
+### `whenOff(receiver: (reason?: unknown) => void)`
+
+Registers a supply receiver function that will be called as soon as this supply [cut off].
+
+Calling this method is the same as calling `this.alsoOff(SupplyReceiver(receiver))`
+
 ### `whenDone()`
 
-Returns a promise that will be resolved once the supply is [cut off].
+Builds a promise that will be resolved once the supply is [cut off].
 
-The returned promise will be successfully resolved once the supply is cut off without a reason, or rejected once the
-supply is cut off with any reason except `undefined`.
+The returned promise will be successfully resolved once this supply completes successfully, or rejected with failure
+reason.
 
 ### `derive(derived?: SupplyReceiver)`
 
@@ -172,9 +166,10 @@ Creates a supply, that is automatically cut off after specified `timeout`.
 Optional `createReason` function creates a custom reason why the supply cut off after timeout. A timeout error used
 as reason when omitted.
 
-# Unexpected Aborts
+# Unexpected Failures
 
-An unexpected abort happens when any supply [cut off] with some reason, but there is no cut off callback registered.
+Unexpected failure happens when any supply [cut off] due to some failure, and there is no supply receiver registered
+and still available to handle it.
 
-By default, an unexpected abort reason is logged to console. This behavior can be changed by assigning another
-unexpected abort handler with `Supply.onUnexpectedAbort()` static method.
+By default, an unexpected abort reason is warned to console. This behavior can be changed by assigning another
+unexpected failure handler with `Supply.onUnexpectedFailure()` static method.

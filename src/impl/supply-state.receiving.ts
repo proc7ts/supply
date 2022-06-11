@@ -1,3 +1,4 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 import { SupplyState } from './supply-state.js';
 import { SupplyState$On } from './supply-state.on.js';
@@ -30,12 +31,23 @@ export class SupplyState$Receiving extends SupplyState$On {
     }
   }
 
-  protected override _off(reason: unknown): void {
+  protected override _off(reason: SupplyIsOff): boolean {
+
+    let received = false;
+
     for (const receiver of this.#receivers) {
-      if (!receiver.isOff) {
+
+      const { isOff } = receiver;
+
+      if (!isOff) {
+        received = true;
         receiver.off(reason);
+      } else if (reason.sameTimeAs(isOff)) {
+        received = true;
       }
     }
+
+    return received;
   }
 
 }

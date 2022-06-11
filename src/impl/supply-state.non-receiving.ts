@@ -1,6 +1,7 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 import type { SupplyState } from './supply-state.js';
-import { Supply$off$unexpected, SupplyState$On } from './supply-state.on.js';
+import { SupplyState$On } from './supply-state.on.js';
 import { SupplyState$Receiving } from './supply-state.receiving.js';
 
 class SupplyState$NonReceiving$ extends SupplyState$On {
@@ -9,8 +10,8 @@ class SupplyState$NonReceiving$ extends SupplyState$On {
     update(new SupplyState$Receiving(receiver));
   }
 
-  protected override _off(reason: unknown): void {
-    Supply$off$unexpected(reason);
+  protected override _off(_reason: SupplyIsOff): false {
+    return false;
   }
 
 }

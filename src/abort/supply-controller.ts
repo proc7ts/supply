@@ -1,6 +1,5 @@
 import { Supply } from '../supply.js';
 import { abortSupplyBy } from './abort-supply-by.js';
-import { SupplyAbortError } from './supply-abort.error.js';
 
 /**
  * Supply controller is an `AbortController` that acts as a supplier and supply receiver.
@@ -20,7 +19,7 @@ export class SupplyController extends AbortController {
     super();
     this.#supply = abortSupplyBy(this.signal, supply)
         .derive(supply)
-        .whenOff((reason = new SupplyAbortError) => this.abort(reason));
+        .whenOff(reason => this.abort(reason));
   }
 
   /**
