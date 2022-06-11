@@ -24,7 +24,7 @@ export interface SupplyReceiver {
    * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
    */
-  readonly isOff?: SupplyIsOff | undefined;
+  readonly isOff: SupplyIsOff | undefined;
 
   /**
    * Called by the source supply when the latter cut off.
@@ -39,4 +39,52 @@ export interface SupplyReceiver {
    */
   off(reason: SupplyIsOff): void;
 
+}
+
+/**
+ * Supply receiver function signature.
+ *
+ * Can be passed to {@link Supply} constructor, or as a {@link Supply.whenOff} method parameter.
+ *
+ * Can be converted to {@link SupplyReceiver}.
+ *
+ * @param reason - A reason indicating why the supply has been cut off, and when.
+ */
+export type SupplyReceiverFn = (this: void, reason: SupplyIsOff) => void;
+
+class FnSupplyReceiver implements SupplyReceiver {
+
+  #off: SupplyReceiverFn | null;
+  #isOff: SupplyIsOff | undefined;
+
+  constructor(off: SupplyReceiverFn) {
+    this.#off = off;
+  }
+
+  get isOff(): SupplyIsOff | undefined {
+    return this.#isOff;
+  }
+
+  off(reason: SupplyIsOff): void {
+    this.#isOff = reason;
+
+    const off = this.#off;
+
+    this.#off = null;
+    off?.(reason);
+  }
+
+}
+
+/**
+ * Converts a supply receiver function to supply receiver object.
+ *
+ * When called for `receiver` object, just returns it.
+ *
+ * @param receiver - Either receiver function to convert, or receiver object.
+ *
+ * @returns Supply receiver object that calls the given function when supply cut off at most once.
+ */
+export function SupplyReceiver(receiver: SupplyReceiver | SupplyReceiverFn): SupplyReceiver {
+  return typeof receiver === 'function' ? new FnSupplyReceiver(receiver) : receiver;
 }

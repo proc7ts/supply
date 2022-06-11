@@ -1,5 +1,5 @@
 import { SupplyIsOff } from '../supply-is-off.js';
-import { SupplyReceiver } from '../supply-receiver.js';
+import { SupplyReceiver, SupplyReceiverFn } from '../supply-receiver.js';
 import { Supply, SupplyOut } from '../supply.js';
 import { SupplyAbortError } from './supply-abort.error.js';
 
@@ -15,7 +15,7 @@ import { SupplyAbortError } from './supply-abort.error.js';
  *
  * @returns New supplier instance cut off once the `signal` aborted.
  */
-export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver): SupplyOut {
+export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver | SupplyReceiverFn): SupplyOut {
 
   const [supplyIn, supplyOut] = Supply.split(receiver);
 

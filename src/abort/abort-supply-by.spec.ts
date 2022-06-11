@@ -21,7 +21,7 @@ describe('abortSupplyBy', () => {
 
     const whenOff = jest.fn();
 
-    abortSupplyBy(signal, { off: whenOff });
+    abortSupplyBy(signal, whenOff);
 
     expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
@@ -30,7 +30,7 @@ describe('abortSupplyBy', () => {
 
     const whenOff = jest.fn();
 
-    abortSupplyBy(signal, { off: whenOff });
+    abortSupplyBy(signal, whenOff);
 
     expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: new SupplyAbortError() }));
   });

@@ -11,7 +11,7 @@ describe('Supply', () => {
 
   beforeEach(() => {
     whenOff = jest.fn();
-    supply = new Supply({ off: whenOff });
+    supply = new Supply(whenOff);
   });
   afterEach(() => {
     Supply.onUnexpectedFailure();
@@ -148,11 +148,14 @@ describe('Supply', () => {
 
   describe('alsoOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.alsoOff({ off: () => {/* noop */} })).toBe(supply);
+      expect(supply.alsoOff(SupplyReceiver(() => void 0))).toBe(supply);
     });
     it('calls receiver', () => {
 
-      const receiver = { off: jest.fn() };
+      const receiver = {
+        isOff: undefined,
+        off: jest.fn(),
+      };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
@@ -163,6 +166,7 @@ describe('Supply', () => {
     it('calls receiver without `isOff` implemented', () => {
 
       const receiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -175,7 +179,10 @@ describe('Supply', () => {
     it('calls the only receiver', () => {
       supply = new Supply();
 
-      const receiver = { off: jest.fn() };
+      const receiver = {
+        isOff: undefined,
+        off: jest.fn(),
+      };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
@@ -198,6 +205,7 @@ describe('Supply', () => {
     it('does not call the receiver the became unavailable', () => {
 
       const receiver: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
 
@@ -211,6 +219,7 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
 
@@ -223,9 +232,11 @@ describe('Supply', () => {
     it('does not call preceding receiver that became unavailable', () => {
 
       const receiver1: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -242,9 +253,11 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -261,12 +274,15 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const receiver3: TestSupplyReceiver = {
+        isOff: undefined,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -398,7 +414,7 @@ describe('Supply', () => {
     it('cuts off another supply when cutting this one off', () => {
 
       const whenDerivedOff = jest.fn();
-      const derivedSupply = new Supply({ off: whenDerivedOff });
+      const derivedSupply = new Supply(whenDerivedOff);
 
       expect(supply.derive(derivedSupply)).toBe(derivedSupply);
 
@@ -438,7 +454,7 @@ describe('Supply', () => {
     it('cuts off another supply when cutting this one off', () => {
 
       const whenAnotherOff = jest.fn();
-      const anotherSupply = new Supply({ off: whenAnotherOff });
+      const anotherSupply = new Supply(whenAnotherOff);
 
       expect(supply.as(anotherSupply)).toBe(supply);
 
@@ -513,6 +529,6 @@ describe('Supply', () => {
 });
 
 interface TestSupplyReceiver {
-  isOff?: SupplyReceiver['isOff'];
+  isOff: SupplyReceiver['isOff'];
   off: SupplyReceiver['off'];
 }

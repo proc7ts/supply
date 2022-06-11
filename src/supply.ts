@@ -2,7 +2,7 @@ import type { SupplyState } from './impl/mod.js';
 import { Supply$unexpectedFailure$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
 import { Supplier } from './supplier.js';
 import { SupplyIsOff } from './supply-is-off.js';
-import { SupplyReceiver } from './supply-receiver.js';
+import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 
 /**
  * Default implementation of receiving side of {@link Supply supply}.
@@ -16,9 +16,11 @@ class SupplyIn$ implements SupplyIn {
 
   constructor(
       setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-      receiver?: SupplyReceiver,
+      receiver?: SupplyReceiver | SupplyReceiverFn,
   ) {
-    this.#state = receiver ? new SupplyState$Receiving(receiver) : SupplyState$NonReceiving;
+    this.#state = receiver
+        ? new SupplyState$Receiving(SupplyReceiver(receiver))
+        : SupplyState$NonReceiving;
     setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
@@ -57,11 +59,11 @@ class SupplyIn$ implements SupplyIn {
  * Constructs receiving side of supply.
  *
  * @param setup - An optional receiver of {@link Supplier.alsoOff} method implementation.
- * @param receiver - Optional supply receiver.
+ * @param receiver - Optional supply receiver. Can be either an object, or a function.
  */
 export const SupplyIn: new (
     setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-    receiver?: SupplyReceiver,
+    receiver?: SupplyReceiver | SupplyReceiverFn,
 ) => SupplyIn = SupplyIn$;
 
 class SupplyOut$ implements SupplyOut {
@@ -84,8 +86,8 @@ class SupplyOut$ implements SupplyOut {
     return this;
   }
 
-  whenOff(callback: (this: void, reason: SupplyIsOff) => void): this {
-    return this.alsoOff({ off: callback });
+  whenOff(receiver: SupplyReceiverFn): this {
+    return this.alsoOff(SupplyReceiver(receiver));
   }
 
   whenDone(): Promise<void> {
@@ -108,6 +110,7 @@ class SupplyOut$ implements SupplyOut {
 /**
  * Constructs sending side of supply.
  *
+ * @constructor
  * @param alsoOff - A function that registers a receiver of this supply. It will be used as a {@link alsoOff} method
  * implementation.
  */
@@ -132,7 +135,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    * @returns A tuple containing {@link SupplyIn input} and {@link SupplyOut output} sides of supply connected to
    * each other.
    */
-  static split(receiver?: SupplyReceiver): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
+  static split(receiver?: SupplyReceiver | SupplyReceiverFn): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
@@ -162,7 +165,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @param receiver - Optional supply receiver.
    */
-  constructor(receiver?: SupplyReceiver) {
+  constructor(receiver?: SupplyReceiver | SupplyReceiverFn) {
 
     let alsoOff!: (receiver: SupplyReceiver) => void;
 
@@ -369,15 +372,15 @@ export interface SupplyOut extends Supplier {
   alsoOff(receiver: SupplyReceiver): this;
 
   /**
-   * Registers a callback function that will be called as soon as this supply is {@link Supply.off cut off}.
+   * Registers a supply receiver function that will be called as soon as this supply {@link Supply.off cut off}.
    *
-   * Calling this method is the same as calling `this.alsoOff({ isOff: false, off: callback, })`
+   * Calling this method is the same as calling `this.alsoOff(SupplyReceiver(callback))`
    *
-   * @param callback - A callback function accepting cut off indicator as its only parameter.
+   * @param receiver - Supply receiver function accepting cut off indicator as its only parameter.
    *
    * @returns `this` instance.
    */
-  whenOff(callback: (this: void, reason: SupplyIsOff) => void): this;
+  whenOff(receiver: SupplyReceiverFn): this;
 
   /**
    * Builds a promise that will be resolved once this supply is {@link Supply.off done}. This callback will be called

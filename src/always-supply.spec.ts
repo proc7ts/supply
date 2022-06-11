@@ -39,7 +39,10 @@ describe('alwaysSupply', () => {
   describe('alsoOff', () => {
     it('does nothing', () => {
 
-      const receiver = { off: jest.fn() };
+      const receiver = {
+        isOff: undefined,
+        off: jest.fn(),
+      };
       const supply = alwaysSupply();
 
       expect(supply.alsoOff(receiver)).toBe(alwaysSupply());

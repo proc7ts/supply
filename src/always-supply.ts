@@ -1,6 +1,5 @@
 import { Supplier } from './supplier.js';
-import { SupplyIsOff } from './supply-is-off.js';
-import { SupplyReceiver } from './supply-receiver.js';
+import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 class AlwaysSupply extends Supply {
@@ -13,7 +12,7 @@ class AlwaysSupply extends Supply {
     return this;
   }
 
-  override whenOff(_callback: (this: void, reason: SupplyIsOff) => void): this {
+  override whenOff(_callback: SupplyReceiverFn): this {
     return this;
   }
 
