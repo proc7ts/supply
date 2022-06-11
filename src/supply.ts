@@ -146,7 +146,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    * {@link alsoOff supply receiver} registered and still {@link SupplyReceiver.isOff available} to handle it,
    * the given `handler` will be called with failure indicator as its only parameter.
    *
-   * By default, the unexpected failure {@link SupplyIsOff.Faultily.error reason} will be logged to console.
+   * By default, a warning with unexpected failure {@link SupplyIsOff.Faultily.error reason} will be issued to console.
    *
    * @param handler - A handler to call on unexpected failure, or `undefined` to reset to default one.
    */

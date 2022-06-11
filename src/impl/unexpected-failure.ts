@@ -7,5 +7,5 @@ export function Supply$unexpectedFailure$handle(handler = Supply$unexpectedFailu
 }
 
 function Supply$unexpectedFailure$byDefault(reason: SupplyIsOff.Faultily): void {
-  console.error('Supply aborted unexpectedly.', reason.error);
+  console.warn('Supply aborted unexpectedly.', reason.error);
 }

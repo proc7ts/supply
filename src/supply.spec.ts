@@ -451,20 +451,20 @@ describe('Supply', () => {
 
   describe('onUnexpectedFailure', () => {
 
-    let errorSpy: SpyInstance<(...args: unknown[]) => void>;
+    let warnSpy: SpyInstance<(...args: unknown[]) => void>;
 
     beforeEach(() => {
-      errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {/* noop */});
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {/* noop */});
     });
     afterEach(() => {
-      errorSpy.mockRestore();
+      warnSpy.mockRestore();
     });
 
     it('logs failure reason by default', () => {
       new Supply().off('reason');
 
-      expect(errorSpy).toHaveBeenCalledWith('Supply aborted unexpectedly.', 'reason');
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith('Supply aborted unexpectedly.', 'reason');
+      expect(warnSpy).toHaveBeenCalledTimes(1);
     });
     it('replaces unexpected failure handler', () => {
 
@@ -476,7 +476,7 @@ describe('Supply', () => {
 
       expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
       expect(onFailure).toHaveBeenCalledTimes(1);
-      expect(errorSpy).not.toHaveBeenCalled();
+      expect(warnSpy).not.toHaveBeenCalled();
     });
     it('reports failure reason only once', () => {
 
