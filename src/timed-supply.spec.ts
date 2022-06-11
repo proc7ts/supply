@@ -15,8 +15,7 @@ describe('timedSupply', () => {
 
     jest.advanceTimersByTime(10_000);
 
-    expect(supply.isOff).toBe(true);
-    expect(supply.whyOff).toEqual(new Error('Timed out after 10000 ms'));
+    expect(supply.isOff?.error).toEqual(new Error('Timed out after 10000 ms'));
   });
   it('cuts off the supply with custom reason after timeout', () => {
 
@@ -24,8 +23,7 @@ describe('timedSupply', () => {
 
     jest.advanceTimersByTime(10_000);
 
-    expect(supply.isOff).toBe(true);
-    expect(supply.whyOff).toBe('Test timeout: 10000');
+    expect(supply.isOff?.error).toBe('Test timeout: 10000');
   });
   it('can be cut off before the timeout', () => {
 
@@ -35,7 +33,6 @@ describe('timedSupply', () => {
     supply.off('test reason');
     jest.advanceTimersByTime(1000);
 
-    expect(supply.isOff).toBe(true);
-    expect(supply.whyOff).toBe('test reason');
+    expect(supply.isOff?.error).toBe('test reason');
   });
 });

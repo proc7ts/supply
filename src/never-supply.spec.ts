@@ -1,13 +1,14 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { neverSupply } from './never-supply.js';
 import { Supplier } from './supplier.js';
+import { SupplyIsOff } from './supply-is-off.js';
 import { SupplyReceiver } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 describe('neverSupply', () => {
   describe('isOff', () => {
-    it('is always `true`', () => {
-      expect(neverSupply().isOff).toBe(true);
+    it('is always set', () => {
+      expect(neverSupply().isOff).toEqual(expect.objectContaining({ failed: false }));
     });
   });
 
@@ -31,16 +32,16 @@ describe('neverSupply', () => {
   describe('alsoOff', () => {
     it('informs the receiver immediately', () => {
 
-      const receiver = { isOff: false, off: jest.fn() };
+      const receiver = { isOff: undefined, off: jest.fn() };
       const supply = neverSupply();
 
       expect(supply.alsoOff(receiver)).toBe(neverSupply());
       supply.off('reason');
-      expect(receiver.off).toHaveBeenCalledWith();
+      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ failed: false }));
     });
     it('does not inform the unavailable receiver', () => {
 
-      const receiver = { isOff: true, off: jest.fn() };
+      const receiver = { isOff: new SupplyIsOff(), off: jest.fn() };
       const supply = neverSupply();
 
       expect(supply.alsoOff(receiver)).toBe(neverSupply());
@@ -57,14 +58,14 @@ describe('neverSupply', () => {
 
       supply.whenOff(whenOff);
       expect(neverSupply().as(supply)).toBe(neverSupply());
-      expect(supply.isOff).toBe(true);
-      expect(whenOff).toHaveBeenCalledWith(undefined);
+      expect(supply.isOff?.failed).toBe(false);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ failed: false }));
       expect(whenOff).toHaveBeenCalledTimes(1);
     });
     it('does not cut the unavailable receiver', () => {
 
       const receiver: Supplier & SupplyReceiver = {
-        isOff: true,
+        isOff: new SupplyIsOff(),
         off: jest.fn(),
         alsoOff: jest.fn(),
       };
@@ -83,7 +84,7 @@ describe('neverSupply', () => {
       const supply = new Supply();
 
       expect(neverSupply().needs(supply)).toBe(neverSupply());
-      expect(supply.isOff).toBe(false);
+      expect(supply.isOff).toBeUndefined();
     });
   });
 });

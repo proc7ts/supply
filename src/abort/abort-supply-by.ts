@@ -10,7 +10,7 @@ import { SupplyAbortError } from './supply-abort.error.js';
  *
  * @param signal - The signal that aborts the supply.
  * @param receiver - Optional supply receiver for contructed supplier. It can be useful to prevent the
- * {@link Supply.onUnexpectedAbort unexpected abort} in case the `signal` already aborted.
+ * {@link Supply.onUnexpectedFailure unexpected failure} in case the `signal` already aborted.
  *
  * @returns New supplier instance cut off once the `signal` aborted.
  */

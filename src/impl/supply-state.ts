@@ -1,11 +1,11 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 
 export interface SupplyState {
 
-  readonly isOff: boolean;
-  readonly whyOff: unknown | undefined;
+  readonly isOff: SupplyIsOff | undefined;
 
-  off(update: (supply: SupplyState) => void, reason?: unknown): void;
+  off(update: (supply: SupplyState) => void, reason: SupplyIsOff): void;
 
   alsoOff(update: (supply: SupplyState) => void, receiver: SupplyReceiver): void;
 

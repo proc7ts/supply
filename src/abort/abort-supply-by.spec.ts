@@ -23,7 +23,7 @@ describe('abortSupplyBy', () => {
 
     abortSupplyBy(signal, { off: whenOff });
 
-    expect(whenOff).toHaveBeenCalledWith(reason);
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('cuts off supply immediately by signal aborted without explicit reason', () => {
     abortCtl.abort();
@@ -32,7 +32,7 @@ describe('abortSupplyBy', () => {
 
     abortSupplyBy(signal, { off: whenOff });
 
-    expect(whenOff).toHaveBeenCalledWith(new SupplyAbortError());
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: new SupplyAbortError() }));
   });
   it('cuts off supply when abort signal received', () => {
 
@@ -40,13 +40,13 @@ describe('abortSupplyBy', () => {
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
-    expect(supply.isOff).toBe(false);
+    expect(supply.isOff).toBeUndefined();
 
     const reason = new Error('Aborted');
 
     abortCtl.abort(reason);
-    expect(supply.isOff).toBe(true);
-    expect(whenOff).toHaveBeenCalledWith(reason);
+    expect(supply.isOff).toMatchObject({ failed: true, error: reason });
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('cuts off supply when abort signal without explicit reason received', () => {
 
@@ -54,10 +54,10 @@ describe('abortSupplyBy', () => {
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
-    expect(supply.isOff).toBe(false);
+    expect(supply.isOff).toBeUndefined();
 
     abortCtl.abort();
-    expect(supply.isOff).toBe(true);
-    expect(whenOff).toHaveBeenCalledWith(new SupplyAbortError());
+    expect(supply.isOff).toMatchObject({ failed: true, error: new SupplyAbortError() });
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: new SupplyAbortError() }));
   });
 });

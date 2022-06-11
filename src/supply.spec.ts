@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import type { Mock, SpyInstance } from 'jest-mock';
+import { SupplyIsOff } from './supply-is-off.js';
+import { SupplyReceiver } from './supply-receiver.js';
 import { Supply, SupplyIn, SupplyOut } from './supply.js';
 
 describe('Supply', () => {
@@ -12,7 +14,7 @@ describe('Supply', () => {
     supply = new Supply({ off: whenOff });
   });
   afterEach(() => {
-    Supply.onUnexpectedAbort();
+    Supply.onUnexpectedFailure();
   });
 
   describe('split', () => {
@@ -25,14 +27,14 @@ describe('Supply', () => {
     });
 
     it('creates connected sides of supply', () => {
+
       const whenOff = jest.fn();
 
       supplyOut.whenOff(whenOff);
       supplyIn.off('test reason');
 
-      expect(whenOff).toHaveBeenCalledWith('test reason');
-      expect(supplyIn.isOff).toBe(true);
-      expect(supplyIn.whyOff).toBe('test reason');
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: 'test reason' }));
+      expect(supplyIn.isOff?.error).toBe('test reason');
     });
 
     describe('supplyIn', () => {
@@ -49,40 +51,40 @@ describe('Supply', () => {
   });
 
   describe('off', () => {
-    it('calls `off` function', () => {
+    it('informs initial supply receiver', () => {
 
       const reason = 'some reason';
 
       expect(supply.off(reason)).toBe(supply);
-      expect(whenOff).toHaveBeenCalledWith(reason);
-      expect(supply.whyOff).toBe(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(supply.isOff?.error).toBe(reason);
     });
     it('(with callback) does not call unexpected abort handler', () => {
 
       const onAbort = jest.fn();
 
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onAbort);
       supply.off('reason');
 
       expect(onAbort).not.toHaveBeenCalled();
     });
-    it('(without callback) calls unexpected abort handler', () => {
+    it('(without callback) calls unexpected failure handler', () => {
 
-      const onAbort = jest.fn();
+      const onFailure = jest.fn();
 
       supply = new Supply();
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onFailure);
       supply.off('reason');
 
-      expect(onAbort).toHaveBeenCalledWith('reason');
-      expect(onAbort).toHaveBeenCalledTimes(1);
+      expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
+      expect(onFailure).toHaveBeenCalledTimes(1);
     });
     it('(without callback and reason) does not call unexpected abort handler', () => {
 
       const onAbort = jest.fn();
 
       supply = new Supply();
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onAbort);
       supply.off();
 
       expect(onAbort).not.toHaveBeenCalled();
@@ -90,31 +92,22 @@ describe('Supply', () => {
   });
 
   describe('isOff', () => {
-    it('is `false` initially', () => {
-      expect(supply.isOff).toBe(false);
+    it('is undefined initially', () => {
+      expect(supply.isOff).toBeUndefined();
     });
-    it('is `true` when supply cut off', () => {
+    it('is set when supply cut off without reason', () => {
       supply.off();
 
-      expect(supply.isOff).toBe(true);
+      expect(supply.isOff).toBeDefined();
+      expect(supply.isOff?.failed).toBe(false);
+      expect(supply.isOff?.error).toBeUndefined();
     });
-  });
+    it('is set when supply cut off with custom reason', () => {
+      supply.off('test reason');
 
-  describe('whyOff', () => {
-    it('is `undefined` initially', () => {
-      expect(supply.whyOff).toBeUndefined();
-    });
-    it('is `undefined` when supply cut off without reason', () => {
-      supply.off();
-      expect(supply.whyOff).toBeUndefined();
-    });
-    it('is set to reason when supply cut off', () => {
-
-      const reason = 'reason';
-
-      supply.off(reason);
-
-      expect(supply.whyOff).toBe(reason);
+      expect(supply.isOff).toBeDefined();
+      expect(supply.isOff?.failed).toBe(true);
+      expect(supply.isOff?.error).toBe('test reason');
     });
   });
 
@@ -127,14 +120,12 @@ describe('Supply', () => {
     it('depends on supply', () => {
       supply.off('test reason');
 
-      expect(supply.supplyIn.isOff).toBe(true);
-      expect(supply.supplyIn.whyOff).toBe('test reason');
+      expect(supply.supplyIn.isOff?.error).toBe('test reason');
     });
     it('required by supply', () => {
       supply.supplyIn.off('test reason');
 
-      expect(supply.isOff).toBe(true);
-      expect(supply.whyOff).toBe('test reason');
+      expect(supply.isOff?.error).toBe('test reason');
     });
   });
 
@@ -151,26 +142,23 @@ describe('Supply', () => {
       supply.supplyOut.whenOff(whenOff);
       supply.off('test reason');
 
-      expect(whenOff).toHaveBeenCalledWith('test reason');
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: 'test reason' }));
     });
   });
 
   describe('alsoOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.alsoOff({ isOff: false, off: () => {/* noop */} })).toBe(supply);
+      expect(supply.alsoOff({ off: () => {/* noop */} })).toBe(supply);
     });
     it('calls receiver', () => {
 
-      const receiver = {
-        isOff: false,
-        off: jest.fn(),
-      };
+      const receiver = { off: jest.fn() };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(reason);
+      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls receiver without `isOff` implemented', () => {
 
@@ -182,26 +170,23 @@ describe('Supply', () => {
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(reason);
+      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls the only receiver', () => {
       supply = new Supply();
 
-      const receiver = {
-        isOff: false,
-        off: jest.fn(),
-      };
+      const receiver = { off: jest.fn() };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(reason);
+      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call initially unavailable receiver', () => {
 
       const receiver = {
-        isOff: true,
+        isOff: new SupplyIsOff(),
         off: jest.fn(),
       };
 
@@ -211,13 +196,13 @@ describe('Supply', () => {
       expect(receiver.off).not.toHaveBeenCalled();
     });
     it('does not call the receiver the became unavailable', () => {
-      const receiver = {
-        isOff: false,
+
+      const receiver: TestSupplyReceiver = {
         off: jest.fn(),
       };
 
       supply.alsoOff(receiver);
-      receiver.isOff = true;
+      receiver.isOff = new SupplyIsOff();
       supply.off();
 
       expect(receiver.off).not.toHaveBeenCalled();
@@ -225,85 +210,77 @@ describe('Supply', () => {
     it('does not call the only receiver if it became unavailable', () => {
       supply = new Supply();
 
-      const receiver = {
-        isOff: false,
+      const receiver: TestSupplyReceiver = {
         off: jest.fn(),
       };
 
       supply.alsoOff(receiver);
-      receiver.isOff = true;
+      receiver.isOff = new SupplyIsOff();
       supply.off();
 
       expect(receiver.off).not.toHaveBeenCalled();
     });
     it('does not call preceding receiver that became unavailable', () => {
 
-      const receiver1 = {
-        isOff: false,
+      const receiver1: TestSupplyReceiver = {
         off: jest.fn(),
       };
-      const receiver2 = {
-        isOff: false,
+      const receiver2: TestSupplyReceiver = {
         off: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver1);
       supply.alsoOff(receiver2);
-      receiver1.isOff = true;
+      receiver1.isOff = new SupplyIsOff();
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
-      expect(receiver2.off).toHaveBeenCalledWith(reason);
+      expect(receiver2.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call the only receiver that became unavailable before another one added', () => {
       supply = new Supply();
 
-      const receiver1 = {
-        isOff: false,
+      const receiver1: TestSupplyReceiver = {
         off: jest.fn(),
       };
-      const receiver2 = {
-        isOff: false,
+      const receiver2: TestSupplyReceiver = {
         off: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver1);
-      receiver1.isOff = true;
+      receiver1.isOff = new SupplyIsOff();
       supply.alsoOff(receiver2);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
-      expect(receiver2.off).toHaveBeenCalledWith(reason);
+      expect(receiver2.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call all preceding receivers that became unavailable before another one added', () => {
       supply = new Supply();
 
-      const receiver1 = {
-        isOff: false,
+      const receiver1: TestSupplyReceiver = {
         off: jest.fn(),
       };
-      const receiver2 = {
-        isOff: false,
+      const receiver2: TestSupplyReceiver = {
         off: jest.fn(),
       };
-      const receiver3 = {
-        isOff: false,
+      const receiver3: TestSupplyReceiver = {
         off: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver1);
       supply.alsoOff(receiver2);
-      receiver1.isOff = true;
-      receiver2.isOff = true;
+      receiver1.isOff = new SupplyIsOff();
+      receiver2.isOff = new SupplyIsOff();
       supply.alsoOff(receiver3);
       supply.off(reason);
 
       expect(receiver1.off).not.toHaveBeenCalled();
       expect(receiver2.off).not.toHaveBeenCalled();
-      expect(receiver3.off).toHaveBeenCalledWith(reason);
+      expect(receiver3.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
@@ -318,7 +295,7 @@ describe('Supply', () => {
 
       supply.whenOff(whenOff);
       supply.off(reason);
-      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls registered callback only once', () => {
 
@@ -330,8 +307,8 @@ describe('Supply', () => {
       supply.off(reason1);
       supply.off(reason2);
 
-      expect(whenOff).toHaveBeenCalledWith(reason1);
-      expect(whenOff).not.toHaveBeenCalledWith(reason2);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason1 }));
+      expect(whenOff).not.toHaveBeenCalledWith(expect.objectContaining({ error: reason2 }));
       expect(whenOff).toHaveBeenCalledTimes(1);
     });
     it('calls registered callback when supply is cut off without reason', () => {
@@ -341,7 +318,7 @@ describe('Supply', () => {
       supply.whenOff(whenOff);
       supply.off();
 
-      expect(whenOff).toHaveBeenCalledWith(undefined);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ failed: false }));
     });
     it('calls registered callback immediately if supply is cut off already', () => {
 
@@ -353,22 +330,22 @@ describe('Supply', () => {
 
       supply.whenOff(mockCallback);
 
-      expect(mockCallback).toHaveBeenCalledWith(reason);
+      expect(mockCallback).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
   describe('whenDone', () => {
     it('resolves when supply is cut off without reason', async () => {
-      expect(await supply.off().whenDone()).toBeUndefined();
+      await expect(supply.off().whenDone()).resolves.toBeUndefined();
     });
     it('rejects when supply is cut off with reason', async () => {
 
       const reason = 'test';
 
-      expect(await supply.off(reason).whenDone().then(() => 'resolved', e => e)).toBe(reason);
+      await expect(supply.off(reason).whenDone()).rejects.toBe(reason);
     });
     it('rejects when supply is cut off with `null` reason', async () => {
-      expect(await supply.off(null).whenDone().then(() => 'resolved', e => e)).toBeNull();
+      await expect(supply.off(null).whenDone()).rejects.toBeNull();
     });
   });
 
@@ -384,7 +361,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       supplier.off(reason);
-      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
@@ -400,7 +377,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       requiredSupply.off(reason);
-      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('creates new required supply when omitted', () => {
 
@@ -413,7 +390,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       requiredSupply.off(reason);
-      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
@@ -428,7 +405,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       supply.off(reason);
-      expect(whenDerivedOff).toHaveBeenCalledWith(reason);
+      expect(whenDerivedOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('creates new derived supply when omitted', () => {
 
@@ -440,7 +417,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       supply.off(reason);
-      expect(whenDerivedOff).toHaveBeenCalledWith(reason);
+      expect(whenDerivedOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
@@ -456,7 +433,7 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       anotherSupply.off(reason);
-      expect(whenOff).toHaveBeenCalledWith(reason);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('cuts off another supply when cutting this one off', () => {
 
@@ -468,11 +445,11 @@ describe('Supply', () => {
       const reason = 'some reason';
 
       supply.off(reason);
-      expect(whenAnotherOff).toHaveBeenCalledWith(reason);
+      expect(whenAnotherOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
-  describe('onUnexpectedAbort', () => {
+  describe('onUnexpectedFailure', () => {
 
     let errorSpy: SpyInstance<(...args: unknown[]) => void>;
 
@@ -483,34 +460,39 @@ describe('Supply', () => {
       errorSpy.mockRestore();
     });
 
-    it('logs abort reason by default', () => {
+    it('logs failure reason by default', () => {
       new Supply().off('reason');
 
       expect(errorSpy).toHaveBeenCalledWith('Supply aborted unexpectedly.', 'reason');
       expect(errorSpy).toHaveBeenCalledTimes(1);
     });
-    it('replaces unexpected abort handler', () => {
+    it('replaces unexpected failure handler', () => {
 
-      const onAbort = jest.fn();
+      const onFailure = jest.fn();
 
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onFailure);
 
       new Supply().off('reason');
 
-      expect(onAbort).toHaveBeenCalledWith('reason');
-      expect(onAbort).toHaveBeenCalledTimes(1);
+      expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
+      expect(onFailure).toHaveBeenCalledTimes(1);
       expect(errorSpy).not.toHaveBeenCalled();
     });
-    it('reports abort reason only once', () => {
+    it('reports failure reason only once', () => {
 
       const supply = new Supply().alsoOff(new Supply()).alsoOff(new Supply());
-      const onAbort = jest.fn();
+      const onFailure = jest.fn();
 
-      Supply.onUnexpectedAbort(onAbort);
+      Supply.onUnexpectedFailure(onFailure);
       supply.off('reason');
 
-      expect(onAbort).toHaveBeenCalledWith('reason');
-      expect(onAbort).toHaveBeenCalledTimes(1);
+      expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
+      expect(onFailure).toHaveBeenCalledTimes(1);
     });
   });
 });
+
+interface TestSupplyReceiver {
+  isOff?: SupplyReceiver['isOff'];
+  off: SupplyReceiver['off'];
+}

@@ -1,13 +1,10 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 import type { SupplyState } from './supply-state.js';
 
-class SupplyState$Off implements SupplyState {
+export class SupplyState$Off implements SupplyState {
 
-  constructor(readonly whyOff: unknown) {
-  }
-
-  get isOff(): true {
-    return true;
+  constructor(readonly isOff: SupplyIsOff) {
   }
 
   off(_update: unknown, _reason?: unknown): void {
@@ -15,13 +12,7 @@ class SupplyState$Off implements SupplyState {
   }
 
   alsoOff(_update: unknown, receiver: SupplyReceiver): void {
-    receiver.off(this.whyOff);
+    receiver.off(this.isOff);
   }
 
-}
-
-const SupplyState$done = (/*#__PURE__*/ new SupplyState$Off(void 0));
-
-export function SupplyState$off(reason: unknown): SupplyState {
-  return reason === undefined ? SupplyState$done : new SupplyState$Off(reason);
 }

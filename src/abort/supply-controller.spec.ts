@@ -5,22 +5,24 @@ import { SupplyController } from './supply-controller.js';
 
 describe('SupplyController', () => {
   it('cuts off the supply on abort', () => {
+
     const ctl = new SupplyController();
     const { supply } = ctl;
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
 
-    expect(supply.isOff).toBe(false);
+    expect(supply.isOff).toBeUndefined();
 
     const reason = new Error('Aborted');
 
     ctl.abort(reason);
 
-    expect(supply.isOff).toBe(true);
-    expect(whenOff).toHaveBeenCalledWith(reason);
+    expect(supply.isOff?.error).toBe(reason);
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('aborts once supply cut off', () => {
+
     const whenOff = jest.fn();
     const supply = new Supply().whenOff(whenOff);
     const ctl = new SupplyController(supply);
@@ -33,9 +35,10 @@ describe('SupplyController', () => {
     ctl.supply.off(reason);
     expect(signal.aborted).toBe(true);
     expect(signal.reason).toBe(reason);
-    expect(whenOff).toHaveBeenCalledWith(reason);
+    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('aborts with `SupplyAbortError` once supply cut off without explicit reason', () => {
+
     const ctl = new SupplyController(new Supply().whenOff(() => void 0));
     const { signal } = ctl;
 

@@ -1,29 +1,26 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 import type { SupplyState } from './supply-state.js';
-import { SupplyState$off } from './supply-state.off.js';
-import { Supply$unexpectedAbort } from './unexpected-abort.js';
+import { SupplyState$Off } from './supply-state.off.js';
+import { Supply$unexpectedFailure } from './unexpected-failure.js';
 
 let Supply$off: 0 | 1 = 0;
-let Supply$off$unexpected$reasons: Set<unknown> | undefined;
+let Supply$off$unexpected$reasons: Set<SupplyIsOff.Faultily> | undefined;
 
 export abstract class SupplyState$On implements SupplyState {
 
-  get isOff(): boolean {
-    return false;
+  get isOff(): undefined {
+    return undefined;
   }
 
-  get whyOff(): undefined {
-    return;
-  }
-
-  off(update: (state: SupplyState) => void, reason?: unknown): void {
-    update(SupplyState$off(reason));
+  off(update: (state: SupplyState) => void, reason: SupplyIsOff): void {
+    update(new SupplyState$Off(reason));
     if (Supply$off) {
-      this._off(reason);
+      this.#off(reason);
     } else {
       Supply$off = 1;
       try {
-        this._off(reason);
+        this.#off(reason);
       } finally {
         Supply$off = 0;
         Supply$off$unexpected$report();
@@ -33,16 +30,22 @@ export abstract class SupplyState$On implements SupplyState {
 
   abstract alsoOff(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
 
-  protected abstract _off(reason: unknown): void;
+  protected abstract _off(reason: SupplyIsOff): boolean;
+
+  #off(reason: SupplyIsOff): void {
+    if (!this._off(reason)) {
+      Supply$off$unexpected(reason);
+    }
+  }
 
 }
 
-export function Supply$off$unexpected(reason: unknown): void {
-  if (reason !== undefined) {
+function Supply$off$unexpected(reason: SupplyIsOff): void {
+  if (reason.failed) {
     if (!Supply$off$unexpected$reasons) {
-      Supply$off$unexpected$reasons = new Set<unknown>();
+      Supply$off$unexpected$reasons = new Set();
     }
-    Supply$off$unexpected$reasons.add(reason);
+    Supply$off$unexpected$reasons.add(reason as SupplyIsOff.Faultily);
   }
 }
 
@@ -53,7 +56,7 @@ function Supply$off$unexpected$report(): void {
   if (reasons) {
     Supply$off$unexpected$reasons = undefined;
     for (const reason of reasons) {
-      Supply$unexpectedAbort(reason);
+      Supply$unexpectedFailure(reason);
     }
   }
 }
