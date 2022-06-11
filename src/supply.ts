@@ -273,7 +273,7 @@ export interface SupplyIn extends SupplyReceiver {
   /**
    * Indicates whether this supply is {@link off cut off} already.
    *
-   * Once set, nothing will be supplied anymore.
+   * `undefined` initially. Set once supply {@link off cut off}. Once set, nothing will be supplied anymore.
    */
   get isOff(): SupplyIsOff | undefined;
 
@@ -374,7 +374,7 @@ export interface SupplyOut extends Supplier {
   /**
    * Registers a supply receiver function that will be called as soon as this supply {@link Supply.off cut off}.
    *
-   * Calling this method is the same as calling `this.alsoOff(SupplyReceiver(callback))`
+   * Calling this method is the same as calling `this.alsoOff(SupplyReceiver(receiver))`
    *
    * @param receiver - Supply receiver function accepting cut off indicator as its only parameter.
    *
@@ -387,8 +387,7 @@ export interface SupplyOut extends Supplier {
    * immediately if supply is {@link Supply.isOff cut off} already.
    *
    * @returns A promise that will be successfully resolved once this supply completes {@link SupplyIsOff.Successfully
-   * successfully}, or rejected once this supply {@link SupplyIsOff.Faultily failed} with failure
-   * {@link SupplyIsOff.Faultily.error reason}.
+   * successfully}, or rejected with failure {@link SupplyIsOff.Faultily.error reason}.
    */
   whenDone(): Promise<void>;
 

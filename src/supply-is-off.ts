@@ -4,8 +4,6 @@ let SupplyIsOff$rev = 0;
  * An indicator of supply {@link Supply.isOff cut off}.
  *
  * Indicates why the supply has been cut off (i.e. due to failure or successful completion), and when this happened.
- *
- * It is used to wrap a reason why the supply has been cut off.
  */
 export class SupplyIsOff {
 
