@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
+import { SupplyIsOff } from '../supply-is-off.js';
 import { Supply } from '../supply.js';
-import { SupplyAbortError } from './supply-abort.error.js';
 import { SupplyController } from './supply-controller.js';
 
 describe('SupplyController', () => {
@@ -34,7 +34,7 @@ describe('SupplyController', () => {
 
     ctl.supply.off(reason);
     expect(signal.aborted).toBe(true);
-    expect(signal.reason).toBe(reason);
+    expect(signal.reason).toMatchObject({ failed: true, error: reason });
     expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('aborts with `SupplyAbortError` once supply cut off without explicit reason', () => {
@@ -44,6 +44,7 @@ describe('SupplyController', () => {
 
     ctl.supply.off();
     expect(signal.aborted).toBe(true);
-    expect(signal.reason).toEqual(new SupplyAbortError());
+    expect(signal.reason).toBeInstanceOf(SupplyIsOff);
+    expect(signal.reason).toMatchObject({ failed: false });
   });
 });

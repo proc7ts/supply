@@ -1,3 +1,4 @@
+import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver } from '../supply-receiver.js';
 import { Supply, SupplyOut } from '../supply.js';
 import { SupplyAbortError } from './supply-abort.error.js';
@@ -19,12 +20,12 @@ export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver): S
   const [supplyIn, supplyOut] = Supply.split(receiver);
 
   if (signal.aborted) {
-    supplyIn.off(SupplyAbortError.reasonOf(signal));
+    supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));
   } else {
 
     const onAbort = (): void => {
       signal.removeEventListener('abort', onAbort);
-      supplyIn.off(SupplyAbortError.reasonOf(signal));
+      supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));
     };
 
     signal.addEventListener('abort', onAbort);

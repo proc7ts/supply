@@ -16,7 +16,7 @@ export class SupplyAbortError extends Error {
       return;
     }
 
-    const { reason = new SupplyAbortError() } = signal;
+    const { reason = new SupplyAbortError } = signal;
 
     return reason;
   }
