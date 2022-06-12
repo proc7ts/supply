@@ -71,6 +71,12 @@ property value becomes equal to it. Calling this method for the second time has 
 
 After this method call nothing would be supplied anymore.
 
+### `done(result)`
+
+Completes this supply with the given result.
+
+Calling this method is the same as calling `this.cutOff(new SupplyIsOff({ result }))`.
+
 ### `off(reason?: unknown)`
 
 Cuts off this supply with arbitrary reason.

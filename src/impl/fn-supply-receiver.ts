@@ -1,20 +1,20 @@
 import { SupplyIsOff } from '../supply-is-off.js';
 import { SupplyReceiver, SupplyReceiverFn } from '../supply-receiver.js';
 
-export class FnSupplyReceiver implements SupplyReceiver {
+export class FnSupplyReceiver<in out TResult> implements SupplyReceiver<TResult> {
 
-  #off: SupplyReceiverFn | null;
-  #isOff: SupplyIsOff | null = null;
+  #off: SupplyReceiverFn<TResult> | null;
+  #isOff: SupplyIsOff<TResult> | null = null;
 
-  constructor(off: SupplyReceiverFn) {
+  constructor(off: SupplyReceiverFn<TResult>) {
     this.#off = off;
   }
 
-  get isOff(): SupplyIsOff | null {
+  get isOff(): SupplyIsOff<TResult> | null {
     return this.#isOff;
   }
 
-  cutOff(reason: SupplyIsOff): void {
+  cutOff(reason: SupplyIsOff<TResult>): void {
     this.#isOff = reason;
 
     const off = this.#off;

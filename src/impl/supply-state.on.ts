@@ -7,13 +7,13 @@ import { Supply$unexpectedFailure } from './unexpected-failure.js';
 let Supply$off: 0 | 1 = 0;
 let Supply$off$unexpected$reasons: Set<SupplyIsOff.Faultily> | undefined;
 
-export abstract class SupplyState$On implements SupplyState {
+export abstract class SupplyState$On<out TResult> implements SupplyState<TResult> {
 
   get isOff(): null {
     return null;
   }
 
-  off(update: (state: SupplyState) => void, reason: SupplyIsOff): void {
+  off(update: (state: SupplyState<TResult>) => void, reason: SupplyIsOff<TResult>): void {
     update(new SupplyState$Off(reason));
     if (Supply$off) {
       this.#off(reason);
@@ -28,11 +28,11 @@ export abstract class SupplyState$On implements SupplyState {
     }
   }
 
-  abstract alsoOff(update: (state: SupplyState) => void, receiver: SupplyReceiver): void;
+  abstract alsoOff(update: (state: SupplyState<TResult>) => void, receiver: SupplyReceiver<TResult>): void;
 
-  protected abstract _off(reason: SupplyIsOff): boolean;
+  protected abstract _off(reason: SupplyIsOff<TResult>): boolean;
 
-  #off(reason: SupplyIsOff): void {
+  #off(reason: SupplyIsOff<TResult>): void {
     if (!this._off(reason)) {
       Supply$off$unexpected(reason);
     }
@@ -40,7 +40,7 @@ export abstract class SupplyState$On implements SupplyState {
 
 }
 
-function Supply$off$unexpected(reason: SupplyIsOff): void {
+function Supply$off$unexpected(reason: SupplyIsOff<unknown>): void {
   if (reason.failed) {
     if (!Supply$off$unexpected$reasons) {
       Supply$off$unexpected$reasons = new Set();
