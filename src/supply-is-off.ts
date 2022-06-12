@@ -20,10 +20,8 @@ export class SupplyIsOff<out TResult = void> {
    *
    * @returns Supply cut off indicator cause by `reason`.
    */
-  static becauseOf<TResult>(
-      ...[reason]: undefined extends TResult
-          ? [reason?: unknown]
-          : [reason: unknown]
+  static becauseOf<TReason, TResult = void>(
+      ...[reason]: SupplyIsOff.ReasonArgs<TResult, TReason>
   ): SupplyIsOff<TResult> {
     return isSupplyIsOff<TResult>(reason)
         ? reason
@@ -300,5 +298,15 @@ export namespace SupplyIsOff {
     get result(): TResult;
 
   }
+
+  export type Reason<TResult, TReason> = TReason extends SupplyIsOff<TResult>
+      ? TReason
+      : TReason extends SupplyIsOff<unknown>
+          ? never
+          : TReason;
+
+  export type ReasonArgs<TResult, TReason> = undefined extends TResult
+      ? [reason?: Reason<TResult, TReason>]
+      : [reason: Reason<TResult, TReason>];
 
 }

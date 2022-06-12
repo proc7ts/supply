@@ -47,12 +47,8 @@ class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
     return this.cutOff(new SupplyIsOff({ result }));
   }
 
-  off(
-      ...[reason]: undefined extends TResult
-          ? [reason?: unknown]
-          : [reason: unknown]
-  ): this {
-    return this.cutOff(SupplyIsOff.becauseOf(reason));
+  off<TReason>(...reason: SupplyIsOff.ReasonArgs<TResult, TReason>): this {
+    return this.cutOff(SupplyIsOff.becauseOf(...reason));
   }
 
   needs(supplier: Supplier<TResult>): this {
@@ -226,12 +222,8 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
     return this;
   }
 
-  off(
-      ...[reason]: undefined extends TResult
-          ? [reason?: unknown]
-          : [reason: unknown]
-  ): this {
-    this.#in.off(reason);
+  off<TReason>(...reason: SupplyIsOff.ReasonArgs<TResult, TReason>): this {
+    this.#in.off(...reason);
 
     return this;
   }
@@ -356,17 +348,14 @@ export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult>
    *
    * Calling this method is the same as calling `this.cutOff(SupplyIsOff.becauseOf(reason))`.
    *
+   * @typeParam - Type of cut off reason.
    * @param reason - An optional reason why the supply is cut off. This reason {@link SupplyIsOff.becauseOf converted}
    * to supply cut off {@link isOff indicator}. By convenience, `undefined` or missing `reason` means successful supply
    * completion.
    *
    * @returns `this` instance.
    */
-  off(
-      ...reason: undefined extends TResult
-          ? [reason?: unknown]
-          : [reason: unknown]
-  ): this;
+  off<TReason>(...reason: SupplyIsOff.ReasonArgs<TResult, TReason>): this;
 
   /**
    * Makes this supply depend on another supplier.
