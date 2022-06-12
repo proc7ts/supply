@@ -10,7 +10,7 @@ describe('SupplyReceiver', () => {
 
       const receiver = {
         isOff: null,
-        off: (_reason: SupplyIsOff) => void 0,
+        cutOff: (_reason: SupplyIsOff) => void 0,
       };
 
       expect(SupplyReceiver(receiver)).toBe(receiver);
@@ -47,8 +47,8 @@ describe('SupplyReceiver', () => {
 
       const reason = new SupplyIsOff({ error: 'test' });
 
-      receiver.off(reason);
-      receiver.off(reason);
+      receiver.cutOff(reason);
+      receiver.cutOff(reason);
 
       expect(whenOff).toHaveBeenCalledWith(reason);
       expect(whenOff).toHaveBeenCalledTimes(1);

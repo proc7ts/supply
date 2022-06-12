@@ -154,90 +154,90 @@ describe('Supply', () => {
 
       const receiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls receiver without `isOff` implemented', () => {
 
       const receiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls the only receiver', () => {
       supply = new Supply();
 
       const receiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
       supply.alsoOff(receiver);
       supply.off(reason);
 
-      expect(receiver.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call initially unavailable receiver', () => {
 
       const receiver = {
         isOff: new SupplyIsOff(),
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
 
       supply.alsoOff(receiver);
       supply.off();
 
-      expect(receiver.off).not.toHaveBeenCalled();
+      expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('does not call the receiver the became unavailable', () => {
 
       const receiver: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
 
       supply.alsoOff(receiver);
       receiver.isOff = new SupplyIsOff();
       supply.off();
 
-      expect(receiver.off).not.toHaveBeenCalled();
+      expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('does not call the only receiver if it became unavailable', () => {
       supply = new Supply();
 
       const receiver: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
 
       supply.alsoOff(receiver);
       receiver.isOff = new SupplyIsOff();
       supply.off();
 
-      expect(receiver.off).not.toHaveBeenCalled();
+      expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('does not call preceding receiver that became unavailable', () => {
 
       const receiver1: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
@@ -246,19 +246,19 @@ describe('Supply', () => {
       receiver1.isOff = new SupplyIsOff();
       supply.off(reason);
 
-      expect(receiver1.off).not.toHaveBeenCalled();
-      expect(receiver2.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver1.cutOff).not.toHaveBeenCalled();
+      expect(receiver2.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call the only receiver that became unavailable before another one added', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
@@ -267,23 +267,23 @@ describe('Supply', () => {
       supply.alsoOff(receiver2);
       supply.off(reason);
 
-      expect(receiver1.off).not.toHaveBeenCalled();
-      expect(receiver2.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver1.cutOff).not.toHaveBeenCalled();
+      expect(receiver2.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call all preceding receivers that became unavailable before another one added', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const receiver3: TestSupplyReceiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const reason = 'reason';
 
@@ -294,9 +294,9 @@ describe('Supply', () => {
       supply.alsoOff(receiver3);
       supply.off(reason);
 
-      expect(receiver1.off).not.toHaveBeenCalled();
-      expect(receiver2.off).not.toHaveBeenCalled();
-      expect(receiver3.off).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
+      expect(receiver1.cutOff).not.toHaveBeenCalled();
+      expect(receiver2.cutOff).not.toHaveBeenCalled();
+      expect(receiver3.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
   });
 
@@ -494,7 +494,7 @@ describe('Supply', () => {
         get isOff() {
           return supply.isOff;
         },
-        off(reason) {
+        cutOff(reason) {
           supply.off(reason);
         },
       });
@@ -530,5 +530,5 @@ describe('Supply', () => {
 
 interface TestSupplyReceiver {
   isOff: SupplyReceiver['isOff'];
-  off: SupplyReceiver['off'];
+  cutOff: SupplyReceiver['cutOff'];
 }

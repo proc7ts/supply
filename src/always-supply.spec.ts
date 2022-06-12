@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
 import { alwaysSupply, isAlwaysSupply } from './always-supply.js';
 import { neverSupply } from './never-supply.js';
+import { SupplyIsOff } from './supply-is-off.js';
 import { Supply } from './supply.js';
 
 describe('alwaysSupply', () => {
@@ -11,6 +12,16 @@ describe('alwaysSupply', () => {
   describe('isOff', () => {
     it('is always undefined', () => {
       expect(alwaysSupply().isOff).toBeNull();
+    });
+  });
+
+  describe('cutOff', () => {
+    it('is no-op', () => {
+
+      const supply = alwaysSupply();
+
+      expect(supply.cutOff(new SupplyIsOff())).toBe(alwaysSupply());
+      expect(supply.isOff).toBeNull();
     });
   });
 
@@ -41,13 +52,13 @@ describe('alwaysSupply', () => {
 
       const receiver = {
         isOff: null,
-        off: jest.fn(),
+        cutOff: jest.fn(),
       };
       const supply = alwaysSupply();
 
       expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
       supply.off('reason');
-      expect(receiver.off).not.toHaveBeenCalled();
+      expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('never cuts dependent supply', () => {
 

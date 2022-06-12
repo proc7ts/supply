@@ -1,6 +1,6 @@
 import { Supplier } from './supplier.js';
 import { SupplyIsOff } from './supply-is-off.js';
-import { SupplyReceiver } from './supply-receiver.js';
+import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
 const neverSupply$isOff = /*#__PURE__*/ new SupplyIsOff();
@@ -11,20 +11,24 @@ class NeverSupply extends Supply {
     return neverSupply$isOff;
   }
 
-  override off(): this {
+  override cutOff(_reason: SupplyIsOff): this {
     return this;
   }
 
-  override whenOff(callback: (reason?: any) => void): this {
-    callback();
-
+  override off(_reason?: unknown): this {
     return this;
   }
 
   override alsoOff(receiver: SupplyReceiver): this {
     if (!receiver.isOff) {
-      receiver.off(this.isOff);
+      receiver.cutOff(this.isOff);
     }
+
+    return this;
+  }
+
+  override whenOff(receiver: SupplyReceiverFn): this {
+    receiver(this.isOff);
 
     return this;
   }

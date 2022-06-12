@@ -60,18 +60,26 @@ supply.off();
 A `Supply` is a class. Its constructor accepts optional callback instance. The latter will be called once the supply
 cut off.
 
+### `cutOff(reason: SuupplyIsOff)`
+
+[cut off]: #cutoffreason-suupplyisoff
+
+Cuts off the supply.
+
+When called for the first time, all registered supply receivers informed with the given `reason`, and [isOff]
+property value becomes equal to it. Calling this method for the second time has no effect.
+
+After this method call nothing would be supplied anymore.
+
 ### `off(reason?: unknown)`
 
-[off()]: #offreason-unknown
-[cut off]: #offreason-unknown
+Cuts off this supply with arbitrary reason.
 
-Calling this method cuts off the supply.
+Calling this method is the same as calling `this.cutOff(SupplyIsOff.becauseOf(reason))`.
 
-Accepts an optional reason. By convention `undefined` or absent reason means the supply is done successfully.
-Everything else means the supply is aborted abnormally because of that reason.
-
-When called, all registered cut off callbacks are called with the given reason and [isOff] property value becomes
-`true`.
+Accepts an optional reason why the supply is cut off. This reason converted to supply cut off {@link isOff indicator}.
+Everything else means the supply is aborted abnormally because of that reason. By convenience, `undefined` or missing
+`reason` means successful supply completion.
 
 ### `isOff`
 
@@ -155,7 +163,7 @@ Returns a supply instance that is already cut off without any particular reason.
 
 Builds an always-supply instance.
 
-The `off()` method of the returned supply does nothing.
+The `cutOff()` method of the returned supply does nothing.
 
 Returns a supply instance that can not be cut off.
 

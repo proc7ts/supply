@@ -1,4 +1,5 @@
 import { Supplier } from './supplier.js';
+import { SupplyIsOff } from './supply-is-off.js';
 import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 import { Supply } from './supply.js';
 
@@ -8,15 +9,19 @@ class AlwaysSupply extends Supply {
     return null;
   }
 
+  override cutOff(_reason: SupplyIsOff): this {
+    return this;
+  }
+
   override off(_reason?: unknown): this {
     return this;
   }
 
-  override whenOff(_callback: SupplyReceiverFn): this {
+  override alsoOff(_receiver: SupplyReceiver): this {
     return this;
   }
 
-  override alsoOff(_receiver: SupplyReceiver): this {
+  override whenOff(_receiver: SupplyReceiverFn): this {
     return this;
   }
 

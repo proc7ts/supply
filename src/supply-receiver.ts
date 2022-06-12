@@ -1,3 +1,4 @@
+import { FnSupplyReceiver } from './impl/mod.js';
 import { SupplyIsOff } from './supply-is-off.js';
 
 /**
@@ -19,7 +20,7 @@ export interface SupplyReceiver {
    *
    * It is expected that once this indicator set , it would never be reset.
    *
-   * The supply would never call the {@link off} method of this receiver, once this indicator set.
+   * The supply would never call the {@link cutOff} method of this receiver, once this indicator set.
    *
    * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
@@ -37,7 +38,7 @@ export interface SupplyReceiver {
    *
    * @param reason - A reason indicating why the supply has been cut off, and when.
    */
-  off(reason: SupplyIsOff): void;
+  cutOff(reason: SupplyIsOff): void;
 
 }
 
@@ -51,30 +52,6 @@ export interface SupplyReceiver {
  * @param reason - A reason indicating why the supply has been cut off, and when.
  */
 export type SupplyReceiverFn = (this: void, reason: SupplyIsOff) => void;
-
-class FnSupplyReceiver implements SupplyReceiver {
-
-  #off: SupplyReceiverFn | null;
-  #isOff: SupplyIsOff | null = null;
-
-  constructor(off: SupplyReceiverFn) {
-    this.#off = off;
-  }
-
-  get isOff(): SupplyIsOff | null {
-    return this.#isOff;
-  }
-
-  off(reason: SupplyIsOff): void {
-    this.#isOff = reason;
-
-    const off = this.#off;
-
-    this.#off = null;
-    off?.(reason);
-  }
-
-}
 
 /**
  * Converts a supply receiver function to supply receiver object.
