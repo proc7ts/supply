@@ -34,7 +34,7 @@ describe('SupplyIsOff', () => {
     const isOff = new SupplyIsOff({
       failed: true,
       result: 1,
-    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.FailureInit);
+    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.ErrorInit);
 
     expect(isOff.failed).toBe(true);
     expect(isOff.error).toBeUndefined();
@@ -45,7 +45,7 @@ describe('SupplyIsOff', () => {
     const isOff = new SupplyIsOff({
       error: 'error',
       result: 1,
-    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.FailureInit);
+    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.ErrorInit);
 
     expect(isOff.failed).toBe(true);
     expect(isOff.error).toBe('error');
@@ -179,9 +179,17 @@ describe('SupplyIsOff', () => {
       expect(String(new SupplyIsOff({ error: 'test error' })))
           .toMatch(/^SupplyIsOff\.Faultily#\d+\(error: test error\)$/);
     });
+    it('indicates failure without error', () => {
+      expect(String(new SupplyIsOff({ failed: true })))
+          .toMatch(/^SupplyIsOff\.Faultily#\d+$/);
+    });
     it('indicates success', () => {
       expect(String(new SupplyIsOff({})))
           .toMatch(/^SupplyIsOff\.Successfully#\d+$/);
+    });
+    it('indicates result', () => {
+      expect(String(new SupplyIsOff({ result: 123 })))
+          .toMatch(/^SupplyIsOff\.Successfully#\d+\(result: 123\)$/);
     });
   });
 });

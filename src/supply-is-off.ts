@@ -149,9 +149,19 @@ export class SupplyIsOff<out TResult = void> {
   }
 
   toString(): string {
-    return this.failed
-        ? `SupplyIsOff.Faultily#${this.#whenOff}(error: ${this.error})`
-        : `SupplyIsOff.Successfully#${this.#whenOff}`;
+    if (this.failed) {
+      if (this.error === undefined) {
+        return `SupplyIsOff.Faultily#${this.#whenOff}`;
+      }
+
+      return `SupplyIsOff.Faultily#${this.#whenOff}(error: ${this.error})`;
+    }
+
+    if (this.result === undefined) {
+      return `SupplyIsOff.Successfully#${this.#whenOff}`;
+    }
+
+    return `SupplyIsOff.Successfully#${this.#whenOff}(result: ${this.result})`;
   }
 
 }
@@ -170,8 +180,8 @@ export namespace SupplyIsOff {
    * @typeParam TResult - Supply result type.
    */
   export type Init<TResult = void> = undefined extends TResult
-      ? FailureInit | SuccessInit | ResultInit<TResult>
-      : FailureInit | ResultInit<TResult>;
+      ? FailureInit | ErrorInit | SuccessInit | ResultInit<TResult>
+      : FailureInit | ErrorInit | ResultInit<TResult>;
 
   /**
    * Initialization parameters of arbitrary supply cut off {@link SupplyIsOff indicator}.
@@ -204,9 +214,31 @@ export namespace SupplyIsOff {
   }
 
   /**
-   * Initialization parameters of failed supply cut off {@link SupplyIsOff indicator}.
+   * Initialization parameters of failed supply cut off {@link SupplyIsOff indicator} with or without error.
    */
   export interface FailureInit extends AnyInit {
+
+    /**
+     * Either `true` or `undefined`, which means the supply failed.
+     */
+    readonly failed: true;
+
+    /**
+     * An error indicating supply failure reason.
+     */
+    readonly error?: unknown;
+
+    /**
+     * Always ignored.
+     */
+    readonly result?: undefined;
+
+  }
+
+  /**
+   * Initialization parameters of failed supply cut off {@link SupplyIsOff indicator} with error.
+   */
+  export interface ErrorInit extends AnyInit {
 
     /**
      * Either `true` or `undefined`, which means the supply failed.
