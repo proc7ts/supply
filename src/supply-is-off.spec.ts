@@ -8,6 +8,7 @@ describe('SupplyIsOff', () => {
 
     expect(isOff.failed).toBe(false);
     expect(isOff.error).toBeUndefined();
+    expect(isOff.result).toBeUndefined();
   });
   it('is successful when error is not specified', () => {
 
@@ -15,6 +16,7 @@ describe('SupplyIsOff', () => {
 
     expect(isOff.failed).toBe(false);
     expect(isOff.error).toBeUndefined();
+    expect(isOff.result).toBeUndefined();
   });
   it('ignores error if successful', () => {
 
@@ -29,6 +31,7 @@ describe('SupplyIsOff', () => {
 
     expect(isOff.failed).toBe(true);
     expect(isOff.error).toBe('error');
+    expect(isOff.result).toBeUndefined();
   });
   it('is faulty if explicitly set and error omitted', () => {
 
@@ -36,6 +39,7 @@ describe('SupplyIsOff', () => {
 
     expect(isOff.failed).toBe(true);
     expect(isOff.error).toBeUndefined();
+    expect(isOff.result).toBeUndefined();
   });
 
   describe('derivation', () => {
@@ -46,6 +50,7 @@ describe('SupplyIsOff', () => {
 
       expect(derived.failed).toBe(true);
       expect(derived.error).toBe('test error');
+      expect(derived.result).toBeUndefined();
     });
     it('derives successful state', () => {
 
@@ -54,6 +59,16 @@ describe('SupplyIsOff', () => {
 
       expect(derived.failed).toBe(false);
       expect(derived.error).toBeUndefined();
+      expect(derived.result).toBeUndefined();
+    });
+    it('derives result', () => {
+
+      const base = new SupplyIsOff({ result: 1 });
+      const derived = new SupplyIsOff(base, {});
+
+      expect(derived.failed).toBe(false);
+      expect(derived.error).toBeUndefined();
+      expect(derived.result).toBe(1);
     });
     it('overrides faulty state', () => {
 
@@ -62,6 +77,7 @@ describe('SupplyIsOff', () => {
 
       expect(derived.failed).toBe(false);
       expect(derived.error).toBeUndefined();
+      expect(derived.result).toBeUndefined();
     });
     it('overrides successful state explicitly', () => {
 
@@ -70,6 +86,24 @@ describe('SupplyIsOff', () => {
 
       expect(derived.failed).toBe(true);
       expect(derived.error).toBeUndefined();
+      expect(derived.result).toBeUndefined();
+    });
+    it('overrides result', () => {
+
+      const base = new SupplyIsOff<number>({ result: 1 });
+      const derived = new SupplyIsOff(base, { result: 13 });
+
+      expect(derived.failed).toBe(false);
+      expect(derived.error).toBeUndefined();
+      expect(derived.result).toBe(13);
+    });
+    it('overrides faulty state by result', () => {
+      const base = new SupplyIsOff<number>({ error: 'test error' });
+      const derived = new SupplyIsOff(base, { result: 13 });
+
+      expect(derived.failed).toBe(false);
+      expect(derived.error).toBeUndefined();
+      expect(derived.result).toBe(13);
     });
     it('overrides failure error', () => {
 
