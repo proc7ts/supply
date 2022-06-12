@@ -24,7 +24,7 @@ class SupplyIn$ implements SupplyIn {
     setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
-  get isOff(): SupplyIsOff | undefined {
+  get isOff(): SupplyIsOff | null {
     return this.#state.isOff;
   }
 
@@ -176,7 +176,7 @@ export class Supply extends SupplyOut implements SupplyIn {
     this.#in = supplyIn;
   }
 
-  get isOff(): SupplyIsOff | undefined {
+  get isOff(): SupplyIsOff | null {
     return this.#in.isOff;
   }
 
@@ -273,9 +273,9 @@ export interface SupplyIn extends SupplyReceiver {
   /**
    * Indicates whether this supply is {@link off cut off} already.
    *
-   * `undefined` initially. Set once supply {@link off cut off}. Once set, nothing will be supplied anymore.
+   * `null` initially. Set once supply {@link off cut off}. Once set, nothing will be supplied anymore.
    */
-  get isOff(): SupplyIsOff | undefined;
+  get isOff(): SupplyIsOff | null;
 
   /**
    * Receiving side of this supply.

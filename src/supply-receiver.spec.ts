@@ -9,7 +9,7 @@ describe('SupplyReceiver', () => {
     it('returns unconverted receiver', () => {
 
       const receiver = {
-        isOff: undefined,
+        isOff: null,
         off: (_reason: SupplyIsOff) => void 0,
       };
 

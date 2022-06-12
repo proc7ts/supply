@@ -4,8 +4,8 @@ import { Supply } from './supply.js';
 
 class AlwaysSupply extends Supply {
 
-  override get isOff(): undefined {
-    return;
+  override get isOff(): null {
+    return null;
   }
 
   override off(_reason?: unknown): this {

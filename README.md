@@ -79,7 +79,7 @@ When called, all registered cut off callbacks are called with the given reason a
 
 Indicates whether this supply is [cut off] already.
 
-`undefined` initially. Set once supply [cut off]. Once set, nothing will be supplied anymore.
+`null` initially. Set once supply [cut off]. Once set, nothing will be supplied anymore.
 
 The value returned is an object that indicates why the supply has been cut off (i.e. due to failure or successful
 completion), and when this happened.

@@ -24,7 +24,7 @@ export interface SupplyReceiver {
    * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
    */
-  readonly isOff: SupplyIsOff | undefined;
+  readonly isOff: SupplyIsOff | null;
 
   /**
    * Called by the source supply when the latter cut off.
@@ -55,13 +55,13 @@ export type SupplyReceiverFn = (this: void, reason: SupplyIsOff) => void;
 class FnSupplyReceiver implements SupplyReceiver {
 
   #off: SupplyReceiverFn | null;
-  #isOff: SupplyIsOff | undefined;
+  #isOff: SupplyIsOff | null = null;
 
   constructor(off: SupplyReceiverFn) {
     this.#off = off;
   }
 
-  get isOff(): SupplyIsOff | undefined {
+  get isOff(): SupplyIsOff | null {
     return this.#isOff;
   }
 

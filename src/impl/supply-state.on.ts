@@ -9,8 +9,8 @@ let Supply$off$unexpected$reasons: Set<SupplyIsOff.Faultily> | undefined;
 
 export abstract class SupplyState$On implements SupplyState {
 
-  get isOff(): undefined {
-    return undefined;
+  get isOff(): null {
+    return null;
   }
 
   off(update: (state: SupplyState) => void, reason: SupplyIsOff): void {

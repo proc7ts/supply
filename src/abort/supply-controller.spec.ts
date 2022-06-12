@@ -12,7 +12,7 @@ describe('SupplyController', () => {
 
     supply.whenOff(whenOff);
 
-    expect(supply.isOff).toBeUndefined();
+    expect(supply.isOff).toBeNull();
 
     const reason = new Error('Aborted');
 

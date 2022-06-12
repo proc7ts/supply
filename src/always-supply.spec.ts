@@ -10,7 +10,7 @@ describe('alwaysSupply', () => {
 
   describe('isOff', () => {
     it('is always undefined', () => {
-      expect(alwaysSupply().isOff).toBeUndefined();
+      expect(alwaysSupply().isOff).toBeNull();
     });
   });
 
@@ -20,7 +20,7 @@ describe('alwaysSupply', () => {
       const supply = alwaysSupply();
 
       expect(supply.off()).toBe(alwaysSupply());
-      expect(supply.isOff).toBeUndefined();
+      expect(supply.isOff).toBeNull();
     });
   });
 
@@ -40,7 +40,7 @@ describe('alwaysSupply', () => {
     it('does nothing', () => {
 
       const receiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const supply = alwaysSupply();
@@ -59,7 +59,7 @@ describe('alwaysSupply', () => {
       expect(supply.alsoOff(receiver)).toBe(alwaysSupply());
 
       supply.off();
-      expect(receiver.isOff).toBeUndefined();
+      expect(receiver.isOff).toBeNull();
       expect(whenOff).not.toHaveBeenCalled();
     });
   });
@@ -77,7 +77,7 @@ describe('alwaysSupply', () => {
       expect(supply.needs(otherSupply)).toBe(alwaysSupply());
 
       otherSupply.off('reason');
-      expect(supply.isOff).toBeUndefined();
+      expect(supply.isOff).toBeNull();
       expect(onAbort).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
       expect(onAbort).toHaveBeenCalledTimes(1);
     });
@@ -94,7 +94,7 @@ describe('alwaysSupply', () => {
       expect(supply.as(otherSupply)).toBe(alwaysSupply());
 
       supply.off();
-      expect(otherSupply.isOff).toBeUndefined();
+      expect(otherSupply.isOff).toBeNull();
       expect(whenOff).not.toHaveBeenCalled();
     });
     it('never cuts off the always-supply', () => {
@@ -109,7 +109,7 @@ describe('alwaysSupply', () => {
       expect(supply.as(otherSupply)).toBe(alwaysSupply());
 
       otherSupply.off('reason');
-      expect(supply.isOff).toBeUndefined();
+      expect(supply.isOff).toBeNull();
       expect(onAbort).toHaveBeenCalledWith(expect.objectContaining({ error: 'reason' }));
       expect(onAbort).toHaveBeenCalledTimes(1);
     });

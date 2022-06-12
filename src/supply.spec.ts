@@ -93,7 +93,7 @@ describe('Supply', () => {
 
   describe('isOff', () => {
     it('is undefined initially', () => {
-      expect(supply.isOff).toBeUndefined();
+      expect(supply.isOff).toBeNull();
     });
     it('is set when supply cut off without reason', () => {
       supply.off();
@@ -153,7 +153,7 @@ describe('Supply', () => {
     it('calls receiver', () => {
 
       const receiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -166,7 +166,7 @@ describe('Supply', () => {
     it('calls receiver without `isOff` implemented', () => {
 
       const receiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -180,7 +180,7 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -205,7 +205,7 @@ describe('Supply', () => {
     it('does not call the receiver the became unavailable', () => {
 
       const receiver: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
 
@@ -219,7 +219,7 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
 
@@ -232,11 +232,11 @@ describe('Supply', () => {
     it('does not call preceding receiver that became unavailable', () => {
 
       const receiver1: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -253,11 +253,11 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';
@@ -274,15 +274,15 @@ describe('Supply', () => {
       supply = new Supply();
 
       const receiver1: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const receiver2: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const receiver3: TestSupplyReceiver = {
-        isOff: undefined,
+        isOff: null,
         off: jest.fn(),
       };
       const reason = 'reason';

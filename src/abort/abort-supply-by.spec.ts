@@ -40,7 +40,7 @@ describe('abortSupplyBy', () => {
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
-    expect(supply.isOff).toBeUndefined();
+    expect(supply.isOff).toBeNull();
 
     const reason = new Error('Aborted');
 
@@ -54,7 +54,7 @@ describe('abortSupplyBy', () => {
     const whenOff = jest.fn();
 
     supply.whenOff(whenOff);
-    expect(supply.isOff).toBeUndefined();
+    expect(supply.isOff).toBeNull();
 
     abortCtl.abort();
     expect(supply.isOff).toMatchObject({ failed: true, error: new SupplyAbortError() });

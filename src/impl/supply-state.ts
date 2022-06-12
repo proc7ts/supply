@@ -3,7 +3,7 @@ import { SupplyReceiver } from '../supply-receiver.js';
 
 export interface SupplyState {
 
-  readonly isOff: SupplyIsOff | undefined;
+  readonly isOff: SupplyIsOff | null;
 
   off(update: (supply: SupplyState) => void, reason: SupplyIsOff): void;
 

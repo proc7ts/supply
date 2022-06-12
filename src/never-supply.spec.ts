@@ -32,7 +32,10 @@ describe('neverSupply', () => {
   describe('alsoOff', () => {
     it('informs the receiver immediately', () => {
 
-      const receiver = { isOff: undefined, off: jest.fn() };
+      const receiver = {
+        isOff: null,
+        off: jest.fn(),
+      };
       const supply = neverSupply();
 
       expect(supply.alsoOff(receiver)).toBe(neverSupply());
@@ -84,7 +87,7 @@ describe('neverSupply', () => {
       const supply = new Supply();
 
       expect(neverSupply().needs(supply)).toBe(neverSupply());
-      expect(supply.isOff).toBeUndefined();
+      expect(supply.isOff).toBeNull();
     });
   });
 });
