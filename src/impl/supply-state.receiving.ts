@@ -3,16 +3,16 @@ import { SupplyReceiver } from '../supply-receiver.js';
 import { SupplyState } from './supply-state.js';
 import { SupplyState$On } from './supply-state.on.js';
 
-export class SupplyState$Receiving extends SupplyState$On {
+export class SupplyState$Receiving<out TResult> extends SupplyState$On<TResult> {
 
-  readonly #receivers: SupplyReceiver[];
+  readonly #receivers: SupplyReceiver<TResult>[];
 
-  constructor(receiver: SupplyReceiver) {
+  constructor(receiver: SupplyReceiver<TResult>) {
     super();
     this.#receivers = [receiver];
   }
 
-  override alsoOff(_update: (state: SupplyState) => void, receiver: SupplyReceiver): void {
+  override alsoOff(_update: (state: SupplyState<TResult>) => void, receiver: SupplyReceiver<TResult>): void {
     this.#compact();
     this.#receivers.push(receiver);
   }
@@ -31,7 +31,7 @@ export class SupplyState$Receiving extends SupplyState$On {
     }
   }
 
-  protected override _off(reason: SupplyIsOff): boolean {
+  protected override _off(reason: SupplyIsOff<TResult>): boolean {
 
     let received = false;
 

@@ -12,8 +12,10 @@ import { SupplyIsOff } from './supply-is-off.js';
  * unavailable}, so that the supplier would be able to remove it occasionally.
  *
  * Note that any {@link Supply} may act as a supply receiver.
+ *
+ * @typeParam TResult - Supply result type.
  */
-export interface SupplyReceiver {
+export interface SupplyReceiver<out TResult = void> {
 
   /**
    * Indicates whether this receiver is unavailable.
@@ -25,7 +27,7 @@ export interface SupplyReceiver {
    * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
    * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
    */
-  readonly isOff: SupplyIsOff | null;
+  readonly isOff: SupplyIsOff<TResult> | null;
 
   /**
    * Called by the source supply when the latter cut off.
@@ -38,7 +40,7 @@ export interface SupplyReceiver {
    *
    * @param reason - A reason indicating why the supply has been cut off, and when.
    */
-  cutOff(reason: SupplyIsOff): void;
+  cutOff(reason: SupplyIsOff<TResult>): void;
 
 }
 
@@ -49,19 +51,23 @@ export interface SupplyReceiver {
  *
  * Can be converted to {@link SupplyReceiver}.
  *
+ * @typeParam TResult - Supply result type.
  * @param reason - A reason indicating why the supply has been cut off, and when.
  */
-export type SupplyReceiverFn = (this: void, reason: SupplyIsOff) => void;
+export type SupplyReceiverFn<in TResult = void> = (this: void, reason: SupplyIsOff<TResult>) => void;
 
 /**
  * Converts a supply receiver function to supply receiver object.
  *
  * When called for `receiver` object, just returns it.
  *
+ * @typeParam TResult - Supply result type.
  * @param receiver - Either receiver function to convert, or receiver object.
  *
  * @returns Supply receiver object that calls the given function when supply cut off at most once.
  */
-export function SupplyReceiver(receiver: SupplyReceiver | SupplyReceiverFn): SupplyReceiver {
+export function SupplyReceiver<TResult = void>(
+    receiver: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+): SupplyReceiver<TResult> {
   return typeof receiver === 'function' ? new FnSupplyReceiver(receiver) : receiver;
 }

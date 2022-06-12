@@ -4,6 +4,8 @@ let SupplyIsOff$rev = 0;
  * An indicator of supply {@link Supply.isOff cut off}.
  *
  * Indicates why the supply has been cut off (i.e. due to failure or successful completion), and when this happened.
+ *
+ * @typeParam TResult - Supply result type.
  */
 export class SupplyIsOff<out TResult = void> {
 
@@ -18,11 +20,15 @@ export class SupplyIsOff<out TResult = void> {
    *
    * @returns Supply cut off indicator cause by `reason`.
    */
-  static becauseOf(reason?: unknown): SupplyIsOff {
-    return isSupplyIsOff(reason)
+  static becauseOf<TResult>(
+      ...[reason]: undefined extends TResult
+          ? [reason?: unknown]
+          : [reason: unknown]
+  ): SupplyIsOff<TResult> {
+    return isSupplyIsOff<TResult>(reason)
         ? reason
         : reason === undefined
-            ? new SupplyIsOff()
+            ? new SupplyIsOff(undefined!)
             : new SupplyIsOff({ error: reason });
   }
 
@@ -36,9 +42,10 @@ export class SupplyIsOff<out TResult = void> {
    *
    * @param init - Initialization parameters. Successful supply completion indicator
    */
-  constructor(...init: undefined extends TResult
-      ? [init?: SupplyIsOff.Init<TResult>]
-      : [init: SupplyIsOff.Init<TResult>]
+  constructor(
+      ...init: undefined extends TResult
+          ? [init?: SupplyIsOff.Init<TResult>]
+          : [init: SupplyIsOff.Init<TResult>]
   );
 
   /**
@@ -139,7 +146,7 @@ export class SupplyIsOff<out TResult = void> {
    *
    * @param another - Another cut off indicator.
    */
-  sameTimeAs(another: SupplyIsOff): boolean {
+  sameTimeAs(another: SupplyIsOff<unknown>): boolean {
     return another.#whenOff === this.#whenOff;
   }
 
@@ -151,7 +158,7 @@ export class SupplyIsOff<out TResult = void> {
 
 }
 
-function isSupplyIsOff(reason: unknown): reason is SupplyIsOff {
+function isSupplyIsOff<TResult>(reason: unknown): reason is SupplyIsOff<TResult> {
   return typeof reason === 'object' && !!reason && (reason as Partial<SupplyIsOff>).isOff === reason;
 }
 
@@ -161,6 +168,8 @@ export namespace SupplyIsOff {
    * Initialization parameters of supply cut off {@link SupplyIsOff indicator}.
    *
    * Provides either success of failure indication.
+   *
+   * @typeParam TResult - Supply result type.
    */
   export type Init<TResult = void> = undefined extends TResult
       ? FailureInit | SuccessInit | ResultInit<TResult>
@@ -168,6 +177,8 @@ export namespace SupplyIsOff {
 
   /**
    * Initialization parameters of arbitrary supply cut off {@link SupplyIsOff indicator}.
+   *
+   * @typeParam TResult - Supply result type.
    */
   export interface AnyInit<out TResult = void> {
 
@@ -240,6 +251,8 @@ export namespace SupplyIsOff {
 
   /**
    * Initialization parameters of successful supply cut off {@link SupplyIsOff indicator}.
+   *
+   * @typeParam TResult - Supply result type.
    */
   export interface ResultInit<out TResult = void> extends AnyInit<TResult> {
 
@@ -269,16 +282,22 @@ export namespace SupplyIsOff {
 
     get error(): unknown;
 
+    get result(): undefined;
+
   }
 
   /**
    * An indicator of successful supply {@link Supply.isOff cut off}.
+   *
+   * @typeParam TResult - Supply result type.
    */
   export interface Successfully<out TResult = void> extends SupplyIsOff<TResult> {
 
     get failed(): false;
 
     get error(): undefined;
+
+    get result(): TResult;
 
   }
 

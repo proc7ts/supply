@@ -9,15 +9,19 @@ import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
  * Default implementation of receiving side of {@link Supply supply}.
  *
  * It is informed on supply cut off.
+ *
+ * @typeParam TResult - Supply result type.
  */
-class SupplyIn$ implements SupplyIn {
+class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
 
-  #state: SupplyState;
-  readonly #update = (state: SupplyState): void => { this.#state = state; };
+  #state: SupplyState<TResult>;
+  readonly #update = (state: SupplyState<TResult>): void => {
+    this.#state = state;
+  };
 
   constructor(
-      setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-      receiver?: SupplyReceiver | SupplyReceiverFn,
+      setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
+      receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
   ) {
     this.#state = receiver
         ? new SupplyState$Receiving(SupplyReceiver(receiver))
@@ -25,34 +29,44 @@ class SupplyIn$ implements SupplyIn {
     setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
-  get isOff(): SupplyIsOff | null {
+  get isOff(): SupplyIsOff<TResult> | null {
     return this.#state.isOff;
   }
 
-  get supplyIn(): SupplyIn {
+  get supplyIn(): SupplyIn<TResult> {
     return this;
   }
 
-  cutOff(reason: SupplyIsOff): this {
+  cutOff(reason: SupplyIsOff<TResult>): this {
     this.#state.off(this.#update, reason);
 
     return this;
   }
 
-  off(reason?: unknown): this {
+  done(result: TResult): this {
+    return this.cutOff(new SupplyIsOff({ result }));
+  }
+
+  off(
+      ...[reason]: undefined extends TResult
+          ? [reason?: unknown]
+          : [reason: unknown]
+  ): this {
     return this.cutOff(SupplyIsOff.becauseOf(reason));
   }
 
-  needs(supplier: Supplier): this {
+  needs(supplier: Supplier<TResult>): this {
     supplier.alsoOff(this);
 
     return this;
   }
 
   require(required?: undefined): Supply;
-  require<TSupplier extends Supplier>(required: TSupplier): TSupplier;
-  require<TSupplier extends Supplier>(required: TSupplier | undefined): TSupplier | Supply;
-  require<TSupplier extends Supplier>(required: TSupplier | Supply = new Supply()): TSupplier | Supply {
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier): TSupplier;
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
+  require<TSupplier extends Supplier<TResult>>(
+      required: TSupplier | Supply<TResult> = new Supply(),
+  ): TSupplier | Supply<TResult> {
     required.alsoOff(this);
 
     return required;
@@ -66,24 +80,24 @@ class SupplyIn$ implements SupplyIn {
  * @param setup - An optional receiver of {@link Supplier.alsoOff} method implementation.
  * @param receiver - Optional supply receiver. Can be either an object, or a function.
  */
-export const SupplyIn: new (
-    setup?: (alsoOff: (receiver: SupplyReceiver) => void) => void,
-    receiver?: SupplyReceiver | SupplyReceiverFn,
-) => SupplyIn = SupplyIn$;
+export const SupplyIn: new <TResult = void>(
+    setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
+    receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+) => SupplyIn<TResult> = SupplyIn$;
 
-class SupplyOut$ implements SupplyOut {
+class SupplyOut$<in out TResult> implements SupplyOut<TResult> {
 
-  readonly #alsoOff: (receiver: SupplyReceiver) => void;
+  readonly #alsoOff: (receiver: SupplyReceiver<TResult>) => void;
 
-  constructor(alsoOff: (receiver: SupplyReceiver) => void) {
+  constructor(alsoOff: (receiver: SupplyReceiver<TResult>) => void) {
     this.#alsoOff = alsoOff;
   }
 
-  get supplyOut(): SupplyOut {
+  get supplyOut(): SupplyOut<TResult> {
     return this;
   }
 
-  alsoOff(receiver: SupplyReceiver): this {
+  alsoOff(receiver: SupplyReceiver<TResult>): this {
     if (!receiver.isOff) {
       this.#alsoOff(receiver);
     }
@@ -91,20 +105,22 @@ class SupplyOut$ implements SupplyOut {
     return this;
   }
 
-  whenOff(receiver: SupplyReceiverFn): this {
+  whenOff(receiver: SupplyReceiverFn<TResult>): this {
     return this.alsoOff(new FnSupplyReceiver(receiver));
   }
 
-  whenDone(): Promise<void> {
+  whenDone(): Promise<TResult> {
     return new Promise((resolve, reject) => this.whenOff(
-        reason => reason.failed ? reject(reason.error) : resolve(),
+        reason => reason.failed ? reject(reason.error) : resolve(reason.result!),
     ));
   }
 
-  derive(derived?: undefined): Supply;
-  derive<TReceiver extends SupplyReceiver>(derived: TReceiver): TReceiver;
-  derive<TReceiver extends SupplyReceiver>(derived: TReceiver | undefined): TReceiver | Supply;
-  derive<TReceiver extends SupplyReceiver>(derived: TReceiver | Supply = new Supply()): TReceiver | Supply {
+  derive(derived?: undefined): Supply<TResult>;
+  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver): TReceiver;
+  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver | undefined): TReceiver | Supply<TResult>;
+  derive<TReceiver extends SupplyReceiver<TResult>>(
+      derived: TReceiver | Supply<TResult> = new Supply(),
+  ): TReceiver | Supply<TResult> {
     this.alsoOff(derived);
 
     return derived;
@@ -119,9 +135,9 @@ class SupplyOut$ implements SupplyOut {
  * @param alsoOff - A function that registers a receiver of this supply. It will be used as a {@link alsoOff} method
  * implementation.
  */
-export const SupplyOut: new (
-    alsoOff: (receiver: SupplyReceiver) => void,
-) => SupplyOut = SupplyOut$;
+export const SupplyOut: new <TResult = void>(
+    alsoOff: (receiver: SupplyReceiver<TResult>) => void,
+) => SupplyOut<TResult> = SupplyOut$;
 
 /**
  * Supply handle.
@@ -130,7 +146,7 @@ export const SupplyOut: new (
  *
  * The supply can be {@link off cut off}, and can {@link alsoOff inform} on cutting off.
  */
-export class Supply extends SupplyOut implements SupplyIn {
+export class Supply<in out TResult = void> extends SupplyOut<TResult> implements SupplyIn<TResult> {
 
   /**
    * Creates split sides of supply.
@@ -140,11 +156,16 @@ export class Supply extends SupplyOut implements SupplyIn {
    * @returns A tuple containing {@link SupplyIn input} and {@link SupplyOut output} sides of supply connected to
    * each other.
    */
-  static split(receiver?: SupplyReceiver | SupplyReceiverFn): [supplyIn: SupplyIn, supplyOut: SupplyOut] {
+  static split<TResult>(
+      receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+  ): [supplyIn: SupplyIn<TResult>, supplyOut: SupplyOut<TResult>] {
 
-    let alsoOff!: (receiver: SupplyReceiver) => void;
+    let alsoOff!: (receiver: SupplyReceiver<TResult>) => void;
 
-    return [new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver), new SupplyOut(alsoOff)];
+    return [
+      new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver),
+      new SupplyOut(alsoOff),
+    ];
   }
 
   /**
@@ -162,17 +183,17 @@ export class Supply extends SupplyOut implements SupplyIn {
     Supply$unexpectedFailure$handle(handler);
   }
 
-  readonly #in: SupplyIn;
-  #out?: SupplyOut;
+  readonly #in: SupplyIn<TResult>;
+  #out?: SupplyOut<TResult>;
 
   /**
    * Constructs new supply instance.
    *
    * @param receiver - Optional supply receiver.
    */
-  constructor(receiver?: SupplyReceiver | SupplyReceiverFn) {
+  constructor(receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>) {
 
-    let alsoOff!: (receiver: SupplyReceiver) => void;
+    let alsoOff!: (receiver: SupplyReceiver<TResult>) => void;
 
     const supplyIn = new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver);
 
@@ -181,25 +202,35 @@ export class Supply extends SupplyOut implements SupplyIn {
     this.#in = supplyIn;
   }
 
-  get isOff(): SupplyIsOff | null {
+  get isOff(): SupplyIsOff<TResult> | null {
     return this.#in.isOff;
   }
 
-  get supplyIn(): SupplyIn {
+  get supplyIn(): SupplyIn<TResult> {
     return this.#in;
   }
 
-  override get supplyOut(): SupplyOut {
+  override get supplyOut(): SupplyOut<TResult> {
     return this.#out ??= new SupplyOut(this.alsoOff.bind(this));
   }
 
-  cutOff(reason: SupplyIsOff): this {
+  cutOff(reason: SupplyIsOff<TResult>): this {
     this.#in.cutOff(reason);
 
     return this;
   }
 
-  off(reason?: unknown): this {
+  done(result: TResult): this {
+    this.#in.done(result);
+
+    return this;
+  }
+
+  off(
+      ...[reason]: undefined extends TResult
+          ? [reason?: unknown]
+          : [reason: unknown]
+  ): this {
     this.#in.off(reason);
 
     return this;
@@ -216,7 +247,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @returns `this` instance.
    */
-  needs(supplier: Supplier): this {
+  needs(supplier: Supplier<TResult>): this {
     this.#in.needs(supplier);
 
     return this;
@@ -227,7 +258,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @returns New required supplier.
    */
-  require(required?: undefined): Supply;
+  require(required?: undefined): Supply<TResult>;
 
   /**
    * Makes this supplier require depend on another one.
@@ -239,7 +270,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier>(required: TSupplier): TSupplier;
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier): TSupplier;
 
   /**
    * Creates required supply this one depends on.
@@ -253,9 +284,9 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier>(required: TSupplier | undefined): TSupplier | Supply;
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
 
-  require<TSupplier extends Supplier>(required: TSupplier | undefined): TSupplier | Supply {
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult> {
     return this.#in.require(required);
   }
 
@@ -268,7 +299,7 @@ export class Supply extends SupplyOut implements SupplyIn {
    *
    * @returns `this` instance.
    */
-  as(another: SupplyReceiver & Supplier): this {
+  as(another: SupplyReceiver<TResult> & Supplier<TResult>): this {
     return this.needs(another).alsoOff(another);
   }
 
@@ -278,20 +309,22 @@ export class Supply extends SupplyOut implements SupplyIn {
  * Receiving side of {@link Supply supply}.
  *
  * It is informed on supply cut off.
+ *
+ * @typeParam TResult - Supply result type.
  */
-export interface SupplyIn extends SupplyReceiver {
+export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult> {
 
   /**
    * Indicates whether this supply is {@link off cut off} already.
    *
    * `null` initially. Set once supply {@link off cut off}. Once set, nothing will be supplied anymore.
    */
-  get isOff(): SupplyIsOff | null;
+  get isOff(): SupplyIsOff<TResult> | null;
 
   /**
    * Receiving side of this supply.
    */
-  get supplyIn(): SupplyIn;
+  get supplyIn(): SupplyIn<TResult>;
 
   /**
    * Cuts off this supply.
@@ -305,7 +338,18 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * @returns `this` instance.
    */
-  cutOff(reason: SupplyIsOff): this;
+  cutOff(reason: SupplyIsOff<TResult>): this;
+
+  /**
+   * Completes this supply with the given result.
+   *
+   * Calling this method is the same as calling `this.cutOff(new SupplyIsOff({ result }))`.
+   *
+   * @param result - Supply result.
+   *
+   * @returns `this` instance.
+   */
+  done(result: TResult): this;
 
   /**
    * Cuts off this supply with arbitrary reason.
@@ -318,7 +362,11 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * @returns `this` instance.
    */
-  off(reason?: unknown): this;
+  off(
+      ...reason: undefined extends TResult
+          ? [reason?: unknown]
+          : [reason: unknown]
+  ): this;
 
   /**
    * Makes this supply depend on another supplier.
@@ -332,14 +380,14 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * @returns `this` instance.
    */
-  needs(supplier: Supplier): this;
+  needs(supplier: Supplier<TResult>): this;
 
   /**
    * Creates required supply this one depends on.
    *
    * @returns New required supply instance.
    */
-  require(required?: undefined): Supply;
+  require(required?: undefined): Supply<TResult>;
 
   /**
    * Makes this supplier depend on another supplier.
@@ -351,7 +399,7 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier>(required: TSupplier): TSupplier;
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier): TSupplier;
 
   /**
    * Creates required supply this one depends on.
@@ -365,7 +413,7 @@ export interface SupplyIn extends SupplyReceiver {
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier>(required: TSupplier | undefined): TSupplier | Supply;
+  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
 
 }
 
@@ -373,13 +421,15 @@ export interface SupplyIn extends SupplyReceiver {
  * Sending side of {@link Supply supply}.
  *
  * It informs on supply cut off.
+ *
+ * @typeParam TResult - Supply result type.
  */
-export interface SupplyOut extends Supplier {
+export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
 
   /**
    * Sending side of this supply.
    */
-  get supplyOut(): SupplyOut;
+  get supplyOut(): SupplyOut<TResult>;
 
   /**
    * Registers a receiver of this supply.
@@ -393,7 +443,7 @@ export interface SupplyOut extends Supplier {
    *
    * @returns `this` instance.
    */
-  alsoOff(receiver: SupplyReceiver): this;
+  alsoOff(receiver: SupplyReceiver<TResult>): this;
 
   /**
    * Registers a supply receiver function that will be called as soon as this supply {@link Supply.off cut off}.
@@ -404,7 +454,7 @@ export interface SupplyOut extends Supplier {
    *
    * @returns `this` instance.
    */
-  whenOff(receiver: SupplyReceiverFn): this;
+  whenOff(receiver: SupplyReceiverFn<TResult>): this;
 
   /**
    * Builds a promise that will be resolved once this supply is {@link Supply.off done}. This callback will be called
@@ -413,14 +463,14 @@ export interface SupplyOut extends Supplier {
    * @returns A promise that will be successfully resolved once this supply completes {@link SupplyIsOff.Successfully
    * successfully}, or rejected with failure {@link SupplyIsOff.Faultily.error reason}.
    */
-  whenDone(): Promise<void>;
+  whenDone(): Promise<TResult>;
 
   /**
    * Creates derived supply depending on this one.
    *
    * @returns New derived supply instance.
    */
-  derive(derived?: undefined): Supply;
+  derive(derived?: undefined): Supply<TResult>;
 
   /**
    * Makes supply receiver depend on this supply.
@@ -432,7 +482,7 @@ export interface SupplyOut extends Supplier {
    *
    * @returns Derived supply receiver.
    */
-  derive<TReceiver extends SupplyReceiver>(derived: TReceiver): TReceiver;
+  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver): TReceiver;
 
   /**
    * Creates derived supply depending on this supply.
@@ -446,6 +496,6 @@ export interface SupplyOut extends Supplier {
    *
    * @returns Derived supply receiver.
    */
-  derive<TReceiver extends SupplyReceiver>(derived: TReceiver | undefined): TReceiver | Supply;
+  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver | undefined): TReceiver | Supply<TResult>;
 
 }

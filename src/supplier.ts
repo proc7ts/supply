@@ -4,8 +4,10 @@ import { SupplyReceiver } from './supply-receiver.js';
  * Supplier informs the receivers when supply is cut off.
  *
  * Note that any {@link Supply} may act as a supplier.
+ *
+ * @typeParam TResult - Supply result type.
  */
-export interface Supplier {
+export interface Supplier<in TResult = void> {
 
   /**
    * Registers a receiver of the supply.
@@ -17,6 +19,6 @@ export interface Supplier {
    *
    * @param receiver - Supply receiver to register.
    */
-  alsoOff(receiver: SupplyReceiver): void;
+  alsoOff(receiver: SupplyReceiver<TResult>): void;
 
 }
