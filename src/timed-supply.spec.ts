@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { SupplyIsOff } from './supply-is-off.js';
+import { Supply } from './supply.js';
 import { timedSupply } from './timed-supply.js';
 
 describe('timedSupply', () => {
@@ -14,6 +15,15 @@ describe('timedSupply', () => {
 
     const supply = timedSupply(10_000);
 
+    jest.advanceTimersByTime(10_000);
+
+    expect(supply.isOff?.error).toEqual(new Error('Timed out after 10000 ms'));
+  });
+  it('accepts custom supply instance', () => {
+
+    const supply = new Supply();
+
+    timedSupply(10_000, { supply });
     jest.advanceTimersByTime(10_000);
 
     expect(supply.isOff?.error).toEqual(new Error('Timed out after 10000 ms'));
