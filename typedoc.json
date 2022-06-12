@@ -1,5 +1,6 @@
 {
   "entryPoints": ["src/mod.ts"],
+  "excludePrivate": true,
   "name": "Supply",
   "out": "./target/typedoc",
   "tsconfig": "tsconfig.main.json"
