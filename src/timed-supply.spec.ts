@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { SupplyIsOff } from './supply-is-off.js';
 import { timedSupply } from './timed-supply.js';
 
 describe('timedSupply', () => {
@@ -17,13 +18,15 @@ describe('timedSupply', () => {
 
     expect(supply.isOff?.error).toEqual(new Error('Timed out after 10000 ms'));
   });
-  it('cuts off the supply with custom reason after timeout', () => {
+  it('cuts off the supply with custom cut off indicator after timeout', () => {
 
-    const supply = timedSupply(10_000, { createReason: timeout => `Test timeout: ${timeout}` });
+    const supply = timedSupply(10_000, {
+      onTimeout: timeout => new SupplyIsOff({ result: `Test timeout: ${timeout}` }),
+    });
 
     jest.advanceTimersByTime(10_000);
 
-    expect(supply.isOff?.error).toBe('Test timeout: 10000');
+    expect(supply.isOff?.result).toBe('Test timeout: 10000');
   });
   it('can be cut off before the timeout', () => {
 
