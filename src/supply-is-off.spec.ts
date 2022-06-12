@@ -20,10 +20,36 @@ describe('SupplyIsOff', () => {
   });
   it('ignores error if successful', () => {
 
-    const isOff = new SupplyIsOff({ failed: false, error: 'error' } as SupplyIsOff.AnyInit as SupplyIsOff.SuccessInit);
+    const isOff = new SupplyIsOff({
+      failed: false,
+      error: 'error',
+    } as SupplyIsOff.AnyInit as SupplyIsOff.SuccessInit);
 
     expect(isOff.failed).toBe(false);
     expect(isOff.error).toBeUndefined();
+    expect(isOff.result).toBeUndefined();
+  });
+  it('ignores result if faulty', () => {
+
+    const isOff = new SupplyIsOff({
+      failed: true,
+      result: 1,
+    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.FailureInit);
+
+    expect(isOff.failed).toBe(true);
+    expect(isOff.error).toBeUndefined();
+    expect(isOff.result).toBeUndefined();
+  });
+  it('ignores result if error present', () => {
+
+    const isOff = new SupplyIsOff({
+      error: 'error',
+      result: 1,
+    } as SupplyIsOff.AnyInit<number> as SupplyIsOff.FailureInit);
+
+    expect(isOff.failed).toBe(true);
+    expect(isOff.error).toBe('error');
+    expect(isOff.result).toBeUndefined();
   });
   it('is faulty if error specified', () => {
 
