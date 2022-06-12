@@ -12,7 +12,7 @@ export class SupplyState$Off implements SupplyState {
   }
 
   alsoOff(_update: unknown, receiver: SupplyReceiver): void {
-    receiver.off(this.isOff);
+    receiver.cutOff(this.isOff);
   }
 
 }

@@ -1,3 +1,4 @@
+import { FnSupplyReceiver } from './impl/fn-supply-receiver.js';
 import type { SupplyState } from './impl/mod.js';
 import { Supply$unexpectedFailure$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
 import { Supplier } from './supplier.js';
@@ -32,10 +33,14 @@ class SupplyIn$ implements SupplyIn {
     return this;
   }
 
-  off(reason?: unknown): this {
-    this.#state.off(this.#update, SupplyIsOff.becauseOf(reason));
+  cutOff(reason: SupplyIsOff): this {
+    this.#state.off(this.#update, reason);
 
     return this;
+  }
+
+  off(reason?: unknown): this {
+    return this.cutOff(SupplyIsOff.becauseOf(reason));
   }
 
   needs(supplier: Supplier): this {
@@ -87,7 +92,7 @@ class SupplyOut$ implements SupplyOut {
   }
 
   whenOff(receiver: SupplyReceiverFn): this {
-    return this.alsoOff(SupplyReceiver(receiver));
+    return this.alsoOff(new FnSupplyReceiver(receiver));
   }
 
   whenDone(): Promise<void> {
@@ -188,6 +193,12 @@ export class Supply extends SupplyOut implements SupplyIn {
     return this.#out ??= new SupplyOut(this.alsoOff.bind(this));
   }
 
+  cutOff(reason: SupplyIsOff): this {
+    this.#in.cutOff(reason);
+
+    return this;
+  }
+
   off(reason?: unknown): this {
     this.#in.off(reason);
 
@@ -285,12 +296,25 @@ export interface SupplyIn extends SupplyReceiver {
   /**
    * Cuts off this supply.
    *
+   * When called for the first time, all registered supply receivers informed with the given `reason`, and {@link isOff}
+   * property value becomes equal to it. Calling this method for the second time has no effect.
+   *
    * After this method call nothing would be supplied anymore.
    *
-   * Calling this method for the second time has no effect.
+   * @param reason - A reason indicating why the supply has been cut off, and when.
    *
-   * @param reason - An optional reason why the supply is cut off. This reason will be {@link SupplyIsOff.becauseOf
-   * converted} to supply cut off {@link isOff indicator}.
+   * @returns `this` instance.
+   */
+  cutOff(reason: SupplyIsOff): this;
+
+  /**
+   * Cuts off this supply with arbitrary reason.
+   *
+   * Calling this method is the same as calling `this.cutOff(SupplyIsOff.becauseOf(reason))`.
+   *
+   * @param reason - An optional reason why the supply is cut off. This reason {@link SupplyIsOff.becauseOf converted}
+   * to supply cut off {@link isOff indicator}. By convenience, `undefined` or missing `reason` means successful supply
+   * completion.
    *
    * @returns `this` instance.
    */

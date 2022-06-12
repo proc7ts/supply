@@ -41,7 +41,7 @@ export class SupplyState$Receiving extends SupplyState$On {
 
       if (!isOff) {
         received = true;
-        receiver.off(reason);
+        receiver.cutOff(reason);
       } else if (reason.sameTimeAs(isOff)) {
         received = true;
       }
