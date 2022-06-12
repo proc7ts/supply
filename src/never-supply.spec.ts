@@ -83,10 +83,10 @@ describe('neverSupply', () => {
       supply.whenOff(whenOff);
       expect(neverSupply().as(supply)).toBe(neverSupply());
       expect(supply.isOff?.failed).toBe(false);
-      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ failed: false }));
+      expect(whenOff).toHaveBeenCalledWith(neverSupply().isOff);
       expect(whenOff).toHaveBeenCalledTimes(1);
     });
-    it('does not cut the unavailable receiver', () => {
+    it('does not cut unavailable receiver', () => {
 
       const receiver: Supplier & SupplyReceiver = {
         isOff: new SupplyIsOff(),
