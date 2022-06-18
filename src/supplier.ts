@@ -7,7 +7,7 @@ import { SupplyReceiver } from './supply-receiver.js';
  *
  * @typeParam TResult - Supply result type.
  */
-export interface Supplier<in TResult = void> {
+export interface Supplier<out TResult = void> {
 
   /**
    * Registers a receiver of the supply.

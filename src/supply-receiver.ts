@@ -54,7 +54,7 @@ export interface SupplyReceiver<out TResult = void> {
  * @typeParam TResult - Supply result type.
  * @param reason - A reason indicating why the supply has been cut off, and when.
  */
-export type SupplyReceiverFn<in TResult = void> = (this: void, reason: SupplyIsOff<TResult>) => void;
+export type SupplyReceiverFn<out TResult = void> = <T extends TResult>(this: void, reason: SupplyIsOff<T>) => void;
 
 /**
  * Converts a supply receiver function to supply receiver object.
