@@ -94,6 +94,66 @@ describe('Supply', () => {
     });
   });
 
+  describe('fail', () => {
+
+    let whenOff: Mock<SupplyReceiverFn<number>>;
+    let supply: Supply<number>;
+
+    beforeEach(() => {
+      whenOff = jest.fn();
+      supply = new Supply(whenOff);
+    });
+
+    it('informs initial supply receiver', () => {
+
+      const error = new Error('test');
+
+      expect(supply.fail(error)).toBe(supply);
+      expect(supply.isOff?.error).toBe(error);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error }));
+    });
+    it('reuses supply failure indicator', () => {
+
+      const error = SupplyIsOff.faultily('error');
+
+      expect(supply.fail(error)).toBe(supply);
+      expect(supply.isOff?.error).toBe('error');
+      expect(whenOff).toHaveBeenCalledWith(error);
+    });
+    it('uses supply success indicator as failure reason', () => {
+
+      const error = SupplyIsOff.successfully('ok');
+
+      expect(supply.fail(error)).toBe(supply);
+      expect(supply.isOff?.error).toBe(error);
+      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error }));
+    });
+    it('informs registered receiver', () => {
+
+      const receiver: SupplyReceiverFn<number> = jest.fn();
+
+      supply.whenOff(receiver);
+
+      const error = new Error('test');
+
+      supply.fail(error);
+
+      expect(receiver).toHaveBeenCalledWith(expect.objectContaining({ error }));
+    });
+    it('informs receiver registered after completion', () => {
+
+      const error = new Error('test');
+
+      supply.fail(error);
+
+      const receiver: SupplyReceiverFn<number> = jest.fn();
+
+      supply.whenOff(receiver);
+
+      expect(receiver).toHaveBeenCalledWith(expect.objectContaining({ error }));
+    });
+  });
+
   describe('off', () => {
     it('informs initial supply receiver', () => {
 

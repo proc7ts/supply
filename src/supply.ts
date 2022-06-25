@@ -44,7 +44,11 @@ class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
   }
 
   done(result: TResult): this {
-    return this.cutOff(new SupplyIsOff({ result }));
+    return this.cutOff(SupplyIsOff.successfully(result));
+  }
+
+  fail(reason: unknown): this {
+    return this.cutOff(SupplyIsOff.faultily(reason));
   }
 
   off<TReason>(...reason: SupplyIsOff.ReasonArgs<TResult, TReason>): this {
@@ -222,6 +226,12 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
     return this;
   }
 
+  fail(reason: unknown): this {
+    this.#in.fail(reason);
+
+    return this;
+  }
+
   off<TReason>(...reason: SupplyIsOff.ReasonArgs<TResult, TReason>): this {
     this.#in.off(...reason);
 
@@ -333,15 +343,26 @@ export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult>
   cutOff(reason: SupplyIsOff<TResult>): this;
 
   /**
-   * Completes this supply with the given result.
+   * Completes this supply successfully with the given result.
    *
-   * Calling this method is the same as calling `this.cutOff(new SupplyIsOff({ result }))`.
+   * Calling this method is the same as calling `this.cutOff(SupplyIsOff.successfully(result))`.
    *
    * @param result - Supply result.
    *
    * @returns `this` instance.
    */
   done(result: TResult): this;
+
+  /**
+   * Terminates this supply faultily.
+   *
+   * Calling this method is the same as calling `this.cutOff(SupplyIsOff.faultily(reason))`.
+   *
+   * @param reason - Supply failure reason.
+   *
+   * @returns `this` instance.
+   */
+  fail(reason: unknown): this;
 
   /**
    * Cuts off this supply with arbitrary reason.

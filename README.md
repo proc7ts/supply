@@ -73,9 +73,15 @@ After this method call nothing would be supplied anymore.
 
 ### `done(result)`
 
-Completes this supply with the given result.
+Completes this supply successfully with the given result.
 
-Calling this method is the same as calling `this.cutOff(new SupplyIsOff({ result }))`.
+Calling this method is the same as calling `this.cutOff(SupplyIsOff.successfully(result))`.
+
+### `fail(result)`
+
+Terminates this supply faultily.
+
+Calling this method is the same as calling `this.cutOff(SupplyIsOff.faultily(reason))`.
 
 ### `off(reason?: unknown)`
 
