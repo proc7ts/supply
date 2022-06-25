@@ -183,12 +183,12 @@ If the given `promise` resolves, the supply will be completed {@link Supply.done
 
 If the given `promise` rejects, the supply will be terminated {@link SupplyIn.fail faultily} with rejection reason.
 
-## `timedSupply(timeout: number, { createReason: (timeout: number) => unknown })`
+## `timedSupply(timeout: number, { onTimeout: (timeout: number) => SupplyIsOff })`
 
 Creates supply, that is automatically cut off after specified `timeout`.
 
-Optional `createReason` function creates a custom reason why the supply cut off after timeout. A timeout error used
-as reason when omitted.
+Optional `onTimeout` function creates a custom indicator of supply cut off after timeout. A timeout error used as a
+failure reason when omitted.
 
 # Unexpected Failures
 
