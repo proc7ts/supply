@@ -165,23 +165,27 @@ Calling this method is the same as calling `this.needs(another).alsoOff(another)
 
 # Predefined Supply Implementations
 
-## `neverSupply()`
-
-Builds a never-supply instance.
-
-Returns a supply instance that is already cut off without any particular reason.
-
 ## `alwaysSupply()`
 
-Builds an always-supply instance.
+Returns an always-supply instance that can not be cut off.
 
 The `cutOff()` method of the returned supply does nothing.
 
-Returns a supply instance that can not be cut off.
+## `neverSupply()`
+
+Returns never-supply instance, that is already cut off without any particular reason.
+
+## `supplyWhile(promise: Promise)`
+
+Creates supply that will be cut off upon give `promise` fulfillment.
+
+If the given `promise` resolves, the supply will be completed {@link Supply.done successfully} with resolved value.
+
+If the given `promise` rejects, the supply will be terminated {@link SupplyIn.fail faultily} with rejection reason.
 
 ## `timedSupply(timeout: number, { createReason: (timeout: number) => unknown })`
 
-Creates a supply, that is automatically cut off after specified `timeout`.
+Creates supply, that is automatically cut off after specified `timeout`.
 
 Optional `createReason` function creates a custom reason why the supply cut off after timeout. A timeout error used
 as reason when omitted.

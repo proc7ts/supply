@@ -42,7 +42,7 @@ class NeverSupply extends Supply {
 const neverSupply$ = (/*#__PURE__*/ new NeverSupply());
 
 /**
- * Builds a never-supply instance.
+ * Returns never-supply instance.
  *
  * @returns A supply instance that is already cut off without any particular reason.
  */

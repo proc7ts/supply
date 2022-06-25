@@ -2,7 +2,7 @@ import { SupplyIsOff } from './supply-is-off.js';
 import { Supply } from './supply.js';
 
 /**
- * Creates a supply, that is automatically cut off after specified `timeout`.
+ * Creates supply, that is automatically cut off after specified `timeout`.
  *
  * @typeParam TResult - Supply result type.
  * @param supply - Custom timed supply instance. A new one will be constructed when omitted,
