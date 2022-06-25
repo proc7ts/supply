@@ -338,7 +338,7 @@ export namespace SupplyIsOff {
   /**
    * An indicator of failed supply {@link Supply.isOff cut off}.
    */
-  export interface Faultily extends SupplyIsOff<never> {
+  export interface Faultily extends SupplyIsOff<undefined> {
 
     get failed(): true;
 
