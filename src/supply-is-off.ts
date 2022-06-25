@@ -21,6 +21,7 @@ export class SupplyIsOff<out TResult = void> {
    * @returns Supply cut off indicator cause by `reason`.
    */
   static becauseOf<TReason, TResult = void>(
+      this: void,
       ...[reason]: SupplyIsOff.ReasonArgs<TResult, TReason>
   ): SupplyIsOff<TResult> {
     return isSupplyIsOff<TResult>(reason)
@@ -28,6 +29,37 @@ export class SupplyIsOff<out TResult = void> {
         : reason === undefined
             ? new SupplyIsOff(undefined!)
             : new SupplyIsOff({ error: reason });
+  }
+
+  /**
+   * Creates indicator of successfully completed supply.
+   *
+   * @param result - Supply result.
+   *
+   * @returns Success indicator.
+   */
+  static successfully<TResult = void>(this: void, result: TResult): SupplyIsOff.Successfully<TResult> {
+    return new SupplyIsOff({ failed: false, result }) as SupplyIsOff.Successfully<TResult>;
+  }
+
+  /**
+   * Creates indicator of faultily terminates supply.
+   *
+   * When `error` is a supply failure indicator, then returns this supply. Otherwise, it is used as an {@link error}
+   * value.
+   *
+   * @param error - Supply failure reason.
+   *
+   * @returns Failure indicator
+   */
+  static faultily(this: void, error?: unknown): SupplyIsOff.Faultily {
+    return isSupplyIsOff(error) && error.failed
+        ? error as SupplyIsOff.Faultily
+        : new SupplyIsOff({
+          failed: true,
+          error,
+        }) as SupplyIsOff.Faultily;
+
   }
 
   readonly #failed: boolean;
@@ -85,7 +117,7 @@ export class SupplyIsOff<out TResult = void> {
             : result !== undefined
                 ? false
                 : (base?.failed || false),
-        } = init;
+      } = init;
 
       this.#failed = failed;
       this.#error = failed
@@ -306,7 +338,7 @@ export namespace SupplyIsOff {
   /**
    * An indicator of failed supply {@link Supply.isOff cut off}.
    */
-  export interface Faultily extends SupplyIsOff {
+  export interface Faultily extends SupplyIsOff<never> {
 
     get failed(): true;
 
