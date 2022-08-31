@@ -16,7 +16,11 @@ export class SupplyAbortError extends Error {
       return;
     }
 
-    const { reason = new SupplyAbortError } = signal;
+    const reason: unknown = signal.reason;
+
+    if (reason == null || (reason as object).constructor.name === 'DOMException') {
+      return new SupplyAbortError();
+    }
 
     return reason;
   }
