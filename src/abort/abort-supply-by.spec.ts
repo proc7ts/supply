@@ -4,7 +4,6 @@ import { abortSupplyBy } from './abort-supply-by.js';
 import { SupplyAbortError } from './supply-abort.error.js';
 
 describe('abortSupplyBy', () => {
-
   let abortCtl: AbortController;
   let signal: AbortSignal;
 
@@ -14,7 +13,6 @@ describe('abortSupplyBy', () => {
   });
 
   it('cuts off supply immediately by aborted signal', () => {
-
     const reason = new Error('Aborted');
 
     abortCtl.abort(reason);
@@ -32,10 +30,11 @@ describe('abortSupplyBy', () => {
 
     abortSupplyBy(signal, whenOff);
 
-    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: new SupplyAbortError() }));
+    expect(whenOff).toHaveBeenCalledWith(
+      expect.objectContaining({ error: new SupplyAbortError() }),
+    );
   });
   it('cuts off supply when abort signal received', () => {
-
     const supply = new Supply().needs(abortSupplyBy(signal));
     const whenOff = jest.fn();
 
@@ -49,7 +48,6 @@ describe('abortSupplyBy', () => {
     expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
   });
   it('cuts off supply when abort signal without explicit reason received', () => {
-
     const supply = new Supply().needs(abortSupplyBy(signal));
     const whenOff = jest.fn();
 
@@ -58,6 +56,8 @@ describe('abortSupplyBy', () => {
 
     abortCtl.abort();
     expect(supply.isOff).toMatchObject({ failed: true, error: new SupplyAbortError() });
-    expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: new SupplyAbortError() }));
+    expect(whenOff).toHaveBeenCalledWith(
+      expect.objectContaining({ error: new SupplyAbortError() }),
+    );
   });
 });

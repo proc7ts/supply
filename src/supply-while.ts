@@ -14,14 +14,14 @@ import { Supply, SupplyOut } from './supply.js';
  * @returns Sending side of created supply.
  */
 export function supplyWhile<T = void>(
-    promise: Promise<T>,
-    receiver?: SupplyReceiver<T> | SupplyReceiverFn<T>,
+  promise: Promise<T>,
+  receiver?: SupplyReceiver<T> | SupplyReceiverFn<T>,
 ): SupplyOut<T> {
   const [supplyIn, supplyOut] = Supply.split(receiver);
 
   promise.then(
-      value => supplyIn.done(value),
-      error => supplyIn.fail(error),
+    value => supplyIn.done(value),
+    error => supplyIn.fail(error),
   );
 
   return supplyOut;

@@ -9,7 +9,6 @@ describe('SupplyAbortError', () => {
   });
 
   describe('reasonOf', () => {
-
     let abortCtl: AbortController;
     let signal: AbortSignal;
 

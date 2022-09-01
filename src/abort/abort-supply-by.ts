@@ -15,14 +15,15 @@ import { SupplyAbortError } from './supply-abort.error.js';
  *
  * @returns New supplier instance cut off once the `signal` aborted.
  */
-export function abortSupplyBy(signal: AbortSignal, receiver?: SupplyReceiver | SupplyReceiverFn): SupplyOut {
-
+export function abortSupplyBy(
+  signal: AbortSignal,
+  receiver?: SupplyReceiver | SupplyReceiverFn,
+): SupplyOut {
   const [supplyIn, supplyOut] = Supply.split(receiver);
 
   if (signal.aborted) {
     supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));
   } else {
-
     const onAbort = (): void => {
       signal.removeEventListener('abort', onAbort);
       supplyIn.off(SupplyIsOff.becauseOf(SupplyAbortError.reasonOf(signal)));

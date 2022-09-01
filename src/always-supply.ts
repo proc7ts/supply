@@ -35,7 +35,7 @@ class AlwaysSupply extends Supply {
 
 }
 
-const alwaysSupply$ = (/*#__PURE__*/ new AlwaysSupply());
+const alwaysSupply$ = /*#__PURE__*/ new AlwaysSupply();
 
 /**
  * Returns always-supply instance.

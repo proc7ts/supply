@@ -12,17 +12,21 @@ export class SupplyState$Receiving<out TResult> extends SupplyState$On<TResult> 
     this.#receivers = [receiver];
   }
 
-  override alsoOff(_update: (state: SupplyState<TResult>) => void, receiver: SupplyReceiver<TResult>): void {
+  override alsoOff(
+    _update: (state: SupplyState<TResult>) => void,
+    receiver: SupplyReceiver<TResult>,
+  ): void {
     this.#compact();
     this.#receivers.push(receiver);
   }
 
   #compact(): void {
-
     const length = this.#receivers.length;
     let i = length;
 
-    while (--i >= 0 && this.#receivers[i].isOff) {/**/}
+    while (--i >= 0 && this.#receivers[i].isOff) {
+      /**/
+    }
 
     const newLength = i + 1;
 
@@ -32,11 +36,9 @@ export class SupplyState$Receiving<out TResult> extends SupplyState$On<TResult> 
   }
 
   protected override _off(reason: SupplyIsOff<TResult>): boolean {
-
     let received = false;
 
     for (const receiver of this.#receivers) {
-
       const { isOff } = receiver;
 
       if (!isOff) {

@@ -5,7 +5,6 @@ import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 import { Supply, SupplyIn, SupplyOut } from './supply.js';
 
 describe('Supply', () => {
-
   let whenOff: Mock<SupplyReceiverFn>;
   let supply: Supply;
 
@@ -18,7 +17,6 @@ describe('Supply', () => {
   });
 
   describe('split', () => {
-
     let supplyIn: SupplyIn;
     let supplyOut: SupplyOut;
 
@@ -27,7 +25,6 @@ describe('Supply', () => {
     });
 
     it('creates connected sides of supply', () => {
-
       const whenOff = jest.fn();
 
       supplyOut.whenOff(whenOff);
@@ -51,7 +48,6 @@ describe('Supply', () => {
   });
 
   describe('done', () => {
-
     let whenOff: Mock<SupplyReceiverFn<number>>;
     let supply: Supply<number>;
 
@@ -61,7 +57,6 @@ describe('Supply', () => {
     });
 
     it('informs initial supply receiver', () => {
-
       const result = 1;
 
       expect(supply.done(result)).toBe(supply);
@@ -69,7 +64,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ result }));
     });
     it('informs registered receiver', () => {
-
       const receiver: SupplyReceiverFn<number> = jest.fn();
 
       supply.whenOff(receiver);
@@ -81,7 +75,6 @@ describe('Supply', () => {
       expect(receiver).toHaveBeenCalledWith(expect.objectContaining({ result }));
     });
     it('informs receiver registered after completion', () => {
-
       const result = 1;
 
       supply.done(result);
@@ -95,7 +88,6 @@ describe('Supply', () => {
   });
 
   describe('fail', () => {
-
     let whenOff: Mock<SupplyReceiverFn<number>>;
     let supply: Supply<number>;
 
@@ -105,7 +97,6 @@ describe('Supply', () => {
     });
 
     it('informs initial supply receiver', () => {
-
       const error = new Error('test');
 
       expect(supply.fail(error)).toBe(supply);
@@ -113,7 +104,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error }));
     });
     it('reuses supply failure indicator', () => {
-
       const error = SupplyIsOff.faultily('error');
 
       expect(supply.fail(error)).toBe(supply);
@@ -121,7 +111,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(error);
     });
     it('uses supply success indicator as failure reason', () => {
-
       const error = SupplyIsOff.successfully('ok');
 
       expect(supply.fail(error)).toBe(supply);
@@ -129,7 +118,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error }));
     });
     it('informs registered receiver', () => {
-
       const receiver: SupplyReceiverFn<number> = jest.fn();
 
       supply.whenOff(receiver);
@@ -141,7 +129,6 @@ describe('Supply', () => {
       expect(receiver).toHaveBeenCalledWith(expect.objectContaining({ error }));
     });
     it('informs receiver registered after completion', () => {
-
       const error = new Error('test');
 
       supply.fail(error);
@@ -156,7 +143,6 @@ describe('Supply', () => {
 
   describe('off', () => {
     it('informs initial supply receiver', () => {
-
       const reason = 'some reason';
 
       expect(supply.off(reason)).toBe(supply);
@@ -164,7 +150,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('(with callback) does not call unexpected failure handler', () => {
-
       const onFailure = jest.fn();
 
       Supply.onUnexpectedFailure(onFailure);
@@ -173,7 +158,6 @@ describe('Supply', () => {
       expect(onFailure).not.toHaveBeenCalled();
     });
     it('(without callback) calls unexpected failure handler', () => {
-
       const onFailure = jest.fn();
 
       supply = new Supply();
@@ -184,7 +168,6 @@ describe('Supply', () => {
       expect(onFailure).toHaveBeenCalledTimes(1);
     });
     it('(without callback and reason) does not call unexpected failure handler', () => {
-
       const onFailure = jest.fn();
 
       supply = new Supply();
@@ -240,7 +223,6 @@ describe('Supply', () => {
       expect(supply.supplyOut).toBeInstanceOf(SupplyOut);
     });
     it('depends on supply', () => {
-
       const whenOff = jest.fn();
 
       supply.supplyOut.whenOff(whenOff);
@@ -255,7 +237,6 @@ describe('Supply', () => {
       expect(supply.alsoOff(SupplyReceiver(() => void 0))).toBe(supply);
     });
     it('calls receiver', () => {
-
       const receiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -268,7 +249,6 @@ describe('Supply', () => {
       expect(receiver.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls receiver without `isOff` implemented', () => {
-
       const receiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -295,7 +275,6 @@ describe('Supply', () => {
       expect(receiver.cutOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('does not call initially unavailable receiver', () => {
-
       const receiver = {
         isOff: new SupplyIsOff(),
         cutOff: jest.fn(),
@@ -307,7 +286,6 @@ describe('Supply', () => {
       expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('does not call the receiver the became unavailable', () => {
-
       const receiver: TestSupplyReceiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -334,7 +312,6 @@ describe('Supply', () => {
       expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('does not call preceding receiver that became unavailable', () => {
-
       const receiver1: TestSupplyReceiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -406,10 +383,13 @@ describe('Supply', () => {
 
   describe('whenOff', () => {
     it('returns `this` instance', () => {
-      expect(supply.whenOff(() => {/* noop */})).toBe(supply);
+      expect(
+        supply.whenOff(() => {
+          /* noop */
+        }),
+      ).toBe(supply);
     });
     it('calls registered callback', () => {
-
       const whenOff = jest.fn();
       const reason = 'reason';
 
@@ -418,7 +398,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('calls registered callback only once', () => {
-
       const whenOff = jest.fn();
       const reason1 = 'reason1';
       const reason2 = 'reason2';
@@ -432,7 +411,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledTimes(1);
     });
     it('calls registered callback when supply is cut off without reason', () => {
-
       const whenOff = jest.fn();
 
       supply.whenOff(whenOff);
@@ -441,7 +419,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ failed: false }));
     });
     it('calls registered callback immediately if supply is cut off already', () => {
-
       const reason = 'reason';
 
       supply.off(reason);
@@ -459,7 +436,6 @@ describe('Supply', () => {
       await expect(supply.off().whenDone()).resolves.toBeUndefined();
     });
     it('rejects when supply is cut off with reason', async () => {
-
       const reason = 'test';
 
       await expect(supply.off(reason).whenDone()).rejects.toBe(reason);
@@ -468,7 +444,6 @@ describe('Supply', () => {
       await expect(supply.off(null).whenDone()).rejects.toBeNull();
     });
     it('resolves to supply result', async () => {
-
       const supply = new Supply<number>();
 
       await expect(supply.done(13).whenDone()).resolves.toBe(13);
@@ -477,7 +452,6 @@ describe('Supply', () => {
 
   describe('needs', () => {
     it('is cut off when supplier cut off', () => {
-
       const whenOff = jest.fn();
       const supplier = new Supply();
 
@@ -493,7 +467,6 @@ describe('Supply', () => {
 
   describe('require', () => {
     it('cuts off original supply when required one cut off', () => {
-
       const whenOff = jest.fn();
       const requiredSupply = new Supply();
 
@@ -506,7 +479,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('creates new required supply when omitted', () => {
-
       const whenOff = jest.fn();
       const requiredSupply = supply.require();
 
@@ -522,7 +494,6 @@ describe('Supply', () => {
 
   describe('derive', () => {
     it('cuts off another supply when cutting this one off', () => {
-
       const whenDerivedOff = jest.fn();
       const derivedSupply = new Supply(whenDerivedOff);
 
@@ -534,7 +505,6 @@ describe('Supply', () => {
       expect(whenDerivedOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('creates new derived supply when omitted', () => {
-
       const whenDerivedOff = jest.fn();
       const derivedSupply = supply.derive().whenOff(whenDerivedOff);
 
@@ -549,7 +519,6 @@ describe('Supply', () => {
 
   describe('as', () => {
     it('is cut off when required supply is cut off', () => {
-
       const whenOff = jest.fn();
       const anotherSupply = new Supply();
 
@@ -562,7 +531,6 @@ describe('Supply', () => {
       expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ error: reason }));
     });
     it('cuts off another supply when cutting this one off', () => {
-
       const whenAnotherOff = jest.fn();
       const anotherSupply = new Supply(whenAnotherOff);
 
@@ -576,11 +544,12 @@ describe('Supply', () => {
   });
 
   describe('onUnexpectedFailure', () => {
-
     let warnSpy: SpyInstance<(...args: unknown[]) => void>;
 
     beforeEach(() => {
-      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {/* noop */});
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {
+        /* noop */
+      });
     });
     afterEach(() => {
       warnSpy.mockRestore();
@@ -593,7 +562,6 @@ describe('Supply', () => {
       expect(warnSpy).toHaveBeenCalledTimes(1);
     });
     it('does not report unexpected failure when supply depends on itself', () => {
-
       const onFailure = jest.fn();
 
       Supply.onUnexpectedFailure(onFailure);
@@ -613,7 +581,6 @@ describe('Supply', () => {
       expect(onFailure).not.toHaveBeenCalled();
     });
     it('replaces unexpected failure handler', () => {
-
       const onFailure = jest.fn();
 
       Supply.onUnexpectedFailure(onFailure);
@@ -625,7 +592,6 @@ describe('Supply', () => {
       expect(warnSpy).not.toHaveBeenCalled();
     });
     it('reports failure reason only once', () => {
-
       const supply = new Supply().alsoOff(new Supply()).alsoOff(new Supply());
       const onFailure = jest.fn();
 

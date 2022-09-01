@@ -7,7 +7,6 @@ import { Supply } from './supply.js';
 describe('SupplyReceiver', () => {
   describe('for object', () => {
     it('returns unconverted receiver', () => {
-
       const receiver = {
         isOff: null,
         cutOff: (_reason: SupplyIsOff) => void 0,
@@ -18,7 +17,6 @@ describe('SupplyReceiver', () => {
   });
 
   describe('for function', () => {
-
     let supply: Supply;
 
     beforeEach(() => {
@@ -36,7 +34,9 @@ describe('SupplyReceiver', () => {
 
     it('calls receiver function on cut off', () => {
       supply.off('reason');
-      expect(whenOff).toHaveBeenCalledWith(expect.objectContaining({ failed: true, error: 'reason' }));
+      expect(whenOff).toHaveBeenCalledWith(
+        expect.objectContaining({ failed: true, error: 'reason' }),
+      );
     });
     it('makes receiver unavailable when cut off', () => {
       supply.off('reason');
@@ -44,7 +44,6 @@ describe('SupplyReceiver', () => {
       expect(receiver.isOff).toMatchObject({ failed: true, error: 'reason' });
     });
     it('calls receiver function at most once', () => {
-
       const reason = new SupplyIsOff({ error: 'test' });
 
       receiver.cutOff(reason);

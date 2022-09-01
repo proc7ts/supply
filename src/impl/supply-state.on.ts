@@ -28,7 +28,10 @@ export abstract class SupplyState$On<out TResult> implements SupplyState<TResult
     }
   }
 
-  abstract alsoOff(update: (state: SupplyState<TResult>) => void, receiver: SupplyReceiver<TResult>): void;
+  abstract alsoOff(
+    update: (state: SupplyState<TResult>) => void,
+    receiver: SupplyReceiver<TResult>,
+  ): void;
 
   protected abstract _off(reason: SupplyIsOff<TResult>): boolean;
 
@@ -50,7 +53,6 @@ function Supply$off$unexpected(reason: SupplyIsOff<unknown>): void {
 }
 
 function Supply$off$unexpected$report(): void {
-
   const reasons = Supply$off$unexpected$reasons;
 
   if (reasons) {

@@ -26,7 +26,6 @@ describe('neverSupply', () => {
 
   describe('whenOff', () => {
     it('calls back immediately', () => {
-
       const whenOff = jest.fn();
       const supply = neverSupply();
 
@@ -43,7 +42,6 @@ describe('neverSupply', () => {
 
   describe('alsoOff', () => {
     it('informs the receiver immediately', () => {
-
       const receiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -60,7 +58,6 @@ describe('neverSupply', () => {
       expect(receiver.cutOff).toHaveBeenCalledTimes(1);
     });
     it('does not inform the unavailable receiver', () => {
-
       const receiver = {
         isOff: new SupplyIsOff(),
         cutOff: jest.fn(),
@@ -76,7 +73,6 @@ describe('neverSupply', () => {
 
   describe('as', () => {
     it('cuts off another supply immediately', () => {
-
       const supply = new Supply();
       const whenOff = jest.fn();
 
@@ -87,7 +83,6 @@ describe('neverSupply', () => {
       expect(whenOff).toHaveBeenCalledTimes(1);
     });
     it('does not cut unavailable receiver', () => {
-
       const receiver: Supplier & SupplyReceiver = {
         isOff: new SupplyIsOff(),
         cutOff: jest.fn(),
@@ -104,7 +99,6 @@ describe('neverSupply', () => {
 
   describe('needs', () => {
     it('does not cut off required supply', () => {
-
       const supply = new Supply();
 
       expect(neverSupply().needs(supply)).toBe(neverSupply());

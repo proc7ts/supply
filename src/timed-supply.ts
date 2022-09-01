@@ -13,16 +13,15 @@ import { Supply } from './supply.js';
  * @returns Timed supply instance. The timer will be stopped once this supply cut off.
  */
 export function timedSupply<TResult = void>(
-    timeout: number,
-    {
-      supply = new Supply<TResult>(),
-      onTimeout = timedSupply$defaultOnTimeout,
-    }: {
-      readonly supply?: Supply<TResult>;
-      readonly onTimeout?: ((this: void, timeout: number) => SupplyIsOff<TResult>) | undefined;
-    } = {},
+  timeout: number,
+  {
+    supply = new Supply<TResult>(),
+    onTimeout = timedSupply$defaultOnTimeout,
+  }: {
+    readonly supply?: Supply<TResult>;
+    readonly onTimeout?: ((this: void, timeout: number) => SupplyIsOff<TResult>) | undefined;
+  } = {},
 ): Supply<TResult> {
-
   const handle = setTimeout(() => supply.cutOff(onTimeout(timeout)), timeout);
 
   return supply.whenOff(() => clearTimeout(handle));

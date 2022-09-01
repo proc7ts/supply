@@ -1,6 +1,10 @@
 import { FnSupplyReceiver } from './impl/fn-supply-receiver.js';
 import type { SupplyState } from './impl/mod.js';
-import { Supply$unexpectedFailure$handle, SupplyState$NonReceiving, SupplyState$Receiving } from './impl/mod.js';
+import {
+  Supply$unexpectedFailure$handle,
+  SupplyState$NonReceiving,
+  SupplyState$Receiving,
+} from './impl/mod.js';
 import { Supplier } from './supplier.js';
 import { SupplyIsOff } from './supply-is-off.js';
 import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
@@ -20,12 +24,12 @@ class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
   };
 
   constructor(
-      setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
-      receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+    setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
+    receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
   ) {
     this.#state = receiver
-        ? new SupplyState$Receiving(SupplyReceiver(receiver))
-        : SupplyState$NonReceiving;
+      ? new SupplyState$Receiving(SupplyReceiver(receiver))
+      : SupplyState$NonReceiving;
     setup?.(receiver => this.#state.alsoOff(this.#update, receiver));
   }
 
@@ -63,9 +67,12 @@ class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
 
   require(required?: undefined): Supply;
   require<TSupplier extends Supplier<TResult>>(required: TSupplier): TSupplier;
-  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
   require<TSupplier extends Supplier<TResult>>(
-      required: TSupplier | Supply<TResult> = new Supply(),
+    required: TSupplier | undefined,
+  ): TSupplier | Supply<TResult>;
+
+  require<TSupplier extends Supplier<TResult>>(
+    required: TSupplier | Supply<TResult> = new Supply(),
   ): TSupplier | Supply<TResult> {
     required.alsoOff(this);
 
@@ -81,8 +88,8 @@ class SupplyIn$<in out TResult> implements SupplyIn<TResult> {
  * @param receiver - Optional supply receiver. Can be either an object, or a function.
  */
 export const SupplyIn: new <TResult = void>(
-    setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
-    receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+  setup?: (alsoOff: (receiver: SupplyReceiver<TResult>) => void) => void,
+  receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
 ) => SupplyIn<TResult> = SupplyIn$;
 
 class SupplyOut$<in out TResult> implements SupplyOut<TResult> {
@@ -110,16 +117,25 @@ class SupplyOut$<in out TResult> implements SupplyOut<TResult> {
   }
 
   whenDone(): Promise<TResult> {
-    return new Promise((resolve, reject) => this.whenOff(
-        reason => reason.failed ? reject(reason.error) : resolve(reason.result!),
-    ));
+    return new Promise((resolve, reject) => {
+      this.whenOff(reason => {
+        if (reason.failed) {
+          reject(reason.error);
+        } else {
+          resolve(reason.result!);
+        }
+      });
+    });
   }
 
   derive(derived?: undefined): Supply<TResult>;
   derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver): TReceiver;
-  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver | undefined): TReceiver | Supply<TResult>;
   derive<TReceiver extends SupplyReceiver<TResult>>(
-      derived: TReceiver | Supply<TResult> = new Supply(),
+    derived: TReceiver | undefined,
+  ): TReceiver | Supply<TResult>;
+
+  derive<TReceiver extends SupplyReceiver<TResult>>(
+    derived: TReceiver | Supply<TResult> = new Supply(),
   ): TReceiver | Supply<TResult> {
     this.alsoOff(derived);
 
@@ -136,7 +152,7 @@ class SupplyOut$<in out TResult> implements SupplyOut<TResult> {
  * implementation.
  */
 export const SupplyOut: new <TResult = void>(
-    alsoOff: (receiver: SupplyReceiver<TResult>) => void,
+  alsoOff: (receiver: SupplyReceiver<TResult>) => void,
 ) => SupplyOut<TResult> = SupplyOut$;
 
 /**
@@ -157,13 +173,14 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
    * each other.
    */
   static split<TResult>(
-      receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+    receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
   ): [supplyIn: SupplyIn<TResult>, supplyOut: SupplyOut<TResult>] {
-
     let alsoOff!: (receiver: SupplyReceiver<TResult>) => void;
 
     return [
-      new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver),
+      new SupplyIn(newAlsoOff => {
+        alsoOff = newAlsoOff;
+      }, receiver),
       new SupplyOut(alsoOff),
     ];
   }
@@ -192,10 +209,11 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
    * @param receiver - Optional supply receiver.
    */
   constructor(receiver?: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>) {
-
     let alsoOff!: (receiver: SupplyReceiver<TResult>) => void;
 
-    const supplyIn = new SupplyIn(newAlsoOff => { alsoOff = newAlsoOff; }, receiver);
+    const supplyIn = new SupplyIn(newAlsoOff => {
+      alsoOff = newAlsoOff;
+    }, receiver);
 
     super(alsoOff);
 
@@ -211,7 +229,7 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
   }
 
   override get supplyOut(): SupplyOut<TResult> {
-    return this.#out ??= new SupplyOut(this.alsoOff.bind(this));
+    return (this.#out ??= new SupplyOut(this.alsoOff.bind(this)));
   }
 
   cutOff(reason: SupplyIsOff<TResult>): this {
@@ -286,9 +304,13 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
+  require<TSupplier extends Supplier<TResult>>(
+    required: TSupplier | undefined,
+  ): TSupplier | Supply<TResult>;
 
-  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult> {
+  require<TSupplier extends Supplier<TResult>>(
+    required: TSupplier | undefined,
+  ): TSupplier | Supply<TResult> {
     return this.#in.require(required);
   }
 
@@ -315,7 +337,6 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
  * @typeParam TResult - Supply result type.
  */
 export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult> {
-
   /**
    * Indicates whether this supply is {@link off cut off} already.
    *
@@ -423,8 +444,9 @@ export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult>
    *
    * @returns Required supplier.
    */
-  require<TSupplier extends Supplier<TResult>>(required: TSupplier | undefined): TSupplier | Supply<TResult>;
-
+  require<TSupplier extends Supplier<TResult>>(
+    required: TSupplier | undefined,
+  ): TSupplier | Supply<TResult>;
 }
 
 /**
@@ -435,7 +457,6 @@ export interface SupplyIn<in out TResult = void> extends SupplyReceiver<TResult>
  * @typeParam TResult - Supply result type.
  */
 export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
-
   /**
    * Sending side of this supply.
    */
@@ -506,6 +527,7 @@ export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
    *
    * @returns Derived supply receiver.
    */
-  derive<TReceiver extends SupplyReceiver<TResult>>(derived: TReceiver | undefined): TReceiver | Supply<TResult>;
-
+  derive<TReceiver extends SupplyReceiver<TResult>>(
+    derived: TReceiver | undefined,
+  ): TReceiver | Supply<TResult>;
 }

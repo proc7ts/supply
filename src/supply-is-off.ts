@@ -21,14 +21,14 @@ export class SupplyIsOff<out TResult = void> {
    * @returns Supply cut off indicator cause by `reason`.
    */
   static becauseOf<TReason, TResult = void>(
-      this: void,
-      ...[reason]: SupplyIsOff.ReasonArgs<TResult, TReason>
+    this: void,
+    ...[reason]: SupplyIsOff.ReasonArgs<TResult, TReason>
   ): SupplyIsOff<TResult> {
     return isSupplyIsOff<TResult>(reason)
-        ? reason
-        : reason === undefined
-            ? new SupplyIsOff(undefined!)
-            : new SupplyIsOff({ error: reason });
+      ? reason
+      : reason === undefined
+      ? new SupplyIsOff(undefined!)
+      : new SupplyIsOff({ error: reason });
   }
 
   /**
@@ -38,7 +38,10 @@ export class SupplyIsOff<out TResult = void> {
    *
    * @returns Success indicator.
    */
-  static successfully<TResult = void>(this: void, result: TResult): SupplyIsOff.Successfully<TResult> {
+  static successfully<TResult = void>(
+    this: void,
+    result: TResult,
+  ): SupplyIsOff.Successfully<TResult> {
     return new SupplyIsOff({ failed: false, result }) as SupplyIsOff.Successfully<TResult>;
   }
 
@@ -54,12 +57,11 @@ export class SupplyIsOff<out TResult = void> {
    */
   static faultily(this: void, error?: unknown): SupplyIsOff.Faultily {
     return isSupplyIsOff(error) && error.failed
-        ? error as SupplyIsOff.Faultily
-        : new SupplyIsOff({
+      ? (error as SupplyIsOff.Faultily)
+      : (new SupplyIsOff({
           failed: true,
           error,
-        }) as SupplyIsOff.Faultily;
-
+        }) as SupplyIsOff.Faultily);
   }
 
   readonly #failed: boolean;
@@ -73,9 +75,9 @@ export class SupplyIsOff<out TResult = void> {
    * @param init - Initialization parameters. Successful supply completion indicator
    */
   constructor(
-      ...init: undefined extends TResult
-          ? [init?: SupplyIsOff.Init<TResult>]
-          : [init: SupplyIsOff.Init<TResult>]
+    ...init: undefined extends TResult
+      ? [init?: SupplyIsOff.Init<TResult>]
+      : [init: SupplyIsOff.Init<TResult>]
   );
 
   /**
@@ -89,14 +91,13 @@ export class SupplyIsOff<out TResult = void> {
   constructor(base: SupplyIsOff<TResult>, init: SupplyIsOff.AnyInit<TResult>);
 
   constructor(
-      initOrBase?: SupplyIsOff<TResult> | SupplyIsOff.Init<TResult>,
-      optionalInit?: SupplyIsOff.AnyInit<TResult>,
+    initOrBase?: SupplyIsOff<TResult> | SupplyIsOff.Init<TResult>,
+    optionalInit?: SupplyIsOff.AnyInit<TResult>,
   ) {
     if (!initOrBase) {
       this.#failed = false;
       this.#whenOff = ++SupplyIsOff$rev;
     } else {
-
       let base: SupplyIsOff<TResult> | undefined;
       let init: SupplyIsOff.AnyInit<TResult>;
 
@@ -112,24 +113,12 @@ export class SupplyIsOff<out TResult = void> {
       const {
         error,
         result,
-        failed = error !== undefined
-            ? true
-            : result !== undefined
-                ? false
-                : (base?.failed || false),
+        failed = error !== undefined ? true : result !== undefined ? false : base?.failed || false,
       } = init;
 
       this.#failed = failed;
-      this.#error = failed
-          ? error !== undefined
-              ? error
-              : base?.error
-          : undefined;
-      this.#result = failed
-          ? undefined
-          : result !== undefined
-              ? result
-              : base?.result;
+      this.#error = failed ? (error !== undefined ? error : base?.error) : undefined;
+      this.#result = failed ? undefined : result !== undefined ? result : base?.result;
     }
   }
 
@@ -199,11 +188,12 @@ export class SupplyIsOff<out TResult = void> {
 }
 
 function isSupplyIsOff<TResult>(reason: unknown): reason is SupplyIsOff<TResult> {
-  return typeof reason === 'object' && !!reason && (reason as Partial<SupplyIsOff>).isOff === reason;
+  return (
+    typeof reason === 'object' && !!reason && (reason as Partial<SupplyIsOff>).isOff === reason
+  );
 }
 
 export namespace SupplyIsOff {
-
   /**
    * Initialization parameters of supply cut off {@link SupplyIsOff indicator}.
    *
@@ -212,8 +202,8 @@ export namespace SupplyIsOff {
    * @typeParam TResult - Supply result type.
    */
   export type Init<TResult = void> = undefined extends TResult
-      ? FailureInit | ErrorInit | SuccessInit | ResultInit<TResult>
-      : FailureInit | ErrorInit | ResultInit<TResult>;
+    ? FailureInit | ErrorInit | SuccessInit | ResultInit<TResult>
+    : FailureInit | ErrorInit | ResultInit<TResult>;
 
   /**
    * Initialization parameters of arbitrary supply cut off {@link SupplyIsOff indicator}.
@@ -221,7 +211,6 @@ export namespace SupplyIsOff {
    * @typeParam TResult - Supply result type.
    */
   export interface AnyInit<out TResult = void> {
-
     /**
      * Whether supply failed.
      *
@@ -242,14 +231,12 @@ export namespace SupplyIsOff {
      * Ignored when {@link failed} flag set to `false`, or {@link error} is present.
      */
     readonly result?: TResult | undefined;
-
   }
 
   /**
    * Initialization parameters of failed supply cut off {@link SupplyIsOff indicator} with or without error.
    */
   export interface FailureInit extends AnyInit {
-
     /**
      * Either `true` or `undefined`, which means the supply failed.
      */
@@ -264,14 +251,12 @@ export namespace SupplyIsOff {
      * Always ignored.
      */
     readonly result?: undefined;
-
   }
 
   /**
    * Initialization parameters of failed supply cut off {@link SupplyIsOff indicator} with error.
    */
   export interface ErrorInit extends AnyInit {
-
     /**
      * Either `true` or `undefined`, which means the supply failed.
      */
@@ -286,14 +271,12 @@ export namespace SupplyIsOff {
      * Always ignored.
      */
     readonly result?: undefined;
-
   }
 
   /**
    * Initialization parameters of successful supply cut off {@link SupplyIsOff indicator}.
    */
   export interface SuccessInit extends AnyInit {
-
     /**
      * Always `false`, which means the supply succeed.
      */
@@ -308,7 +291,6 @@ export namespace SupplyIsOff {
      *  A result of successfully completed supply.
      */
     readonly result?: undefined;
-
   }
 
   /**
@@ -317,7 +299,6 @@ export namespace SupplyIsOff {
    * @typeParam TResult - Supply result type.
    */
   export interface ResultInit<out TResult = void> extends AnyInit<TResult> {
-
     /**
      * Always `false`, which means the supply succeed.
      */
@@ -332,20 +313,17 @@ export namespace SupplyIsOff {
      *  A result of successfully completed supply.
      */
     readonly result: TResult;
-
   }
 
   /**
    * An indicator of failed supply {@link Supply.isOff cut off}.
    */
   export interface Faultily extends SupplyIsOff<undefined> {
-
     get failed(): true;
 
     get error(): unknown;
 
     get result(): undefined;
-
   }
 
   /**
@@ -354,23 +332,20 @@ export namespace SupplyIsOff {
    * @typeParam TResult - Supply result type.
    */
   export interface Successfully<out TResult = void> extends SupplyIsOff<TResult> {
-
     get failed(): false;
 
     get error(): undefined;
 
     get result(): TResult;
-
   }
 
   export type Reason<TResult, TReason> = TReason extends SupplyIsOff<TResult>
-      ? TReason
-      : TReason extends SupplyIsOff<unknown>
-          ? never
-          : TReason;
+    ? TReason
+    : TReason extends SupplyIsOff<unknown>
+    ? never
+    : TReason;
 
   export type ReasonArgs<TResult, TReason> = undefined extends TResult
-      ? [reason?: Reason<TResult, TReason>]
-      : [reason: Reason<TResult, TReason>];
-
+    ? [reason?: Reason<TResult, TReason>]
+    : [reason: Reason<TResult, TReason>];
 }

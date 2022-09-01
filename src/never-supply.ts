@@ -39,7 +39,7 @@ class NeverSupply extends Supply {
 
 }
 
-const neverSupply$ = (/*#__PURE__*/ new NeverSupply());
+const neverSupply$ = /*#__PURE__*/ new NeverSupply();
 
 /**
  * Returns never-supply instance.

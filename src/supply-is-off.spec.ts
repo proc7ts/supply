@@ -3,7 +3,6 @@ import { SupplyIsOff } from './supply-is-off.js';
 
 describe('SupplyIsOff', () => {
   it('is successful by default', () => {
-
     const isOff = new SupplyIsOff();
 
     expect(isOff.failed).toBe(false);
@@ -11,7 +10,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('is successful when error is not specified', () => {
-
     const isOff = new SupplyIsOff({});
 
     expect(isOff.failed).toBe(false);
@@ -19,7 +17,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('ignores error if successful', () => {
-
     const isOff = new SupplyIsOff({
       failed: false,
       error: 'error',
@@ -30,7 +27,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('ignores result if faulty', () => {
-
     const isOff = new SupplyIsOff({
       failed: true,
       result: 1,
@@ -41,7 +37,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('ignores result if error present', () => {
-
     const isOff = new SupplyIsOff({
       error: 'error',
       result: 1,
@@ -52,7 +47,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('is faulty if error specified', () => {
-
     const isOff = new SupplyIsOff({ error: 'error' });
 
     expect(isOff.failed).toBe(true);
@@ -60,7 +54,6 @@ describe('SupplyIsOff', () => {
     expect(isOff.result).toBeUndefined();
   });
   it('is faulty if explicitly set and error omitted', () => {
-
     const isOff = new SupplyIsOff({ failed: true, error: undefined });
 
     expect(isOff.failed).toBe(true);
@@ -70,7 +63,6 @@ describe('SupplyIsOff', () => {
 
   describe('derivation', () => {
     it('derives faulty state and error', () => {
-
       const base = new SupplyIsOff({ error: 'test error' });
       const derived = new SupplyIsOff(base, {});
 
@@ -79,7 +71,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBeUndefined();
     });
     it('derives successful state', () => {
-
       const base = new SupplyIsOff({});
       const derived = new SupplyIsOff(base, {});
 
@@ -88,7 +79,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBeUndefined();
     });
     it('derives result', () => {
-
       const base = new SupplyIsOff({ result: 1 });
       const derived = new SupplyIsOff(base, {});
 
@@ -97,7 +87,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBe(1);
     });
     it('overrides faulty state', () => {
-
       const base = new SupplyIsOff({ error: 'test error' });
       const derived = new SupplyIsOff(base, { failed: false });
 
@@ -106,7 +95,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBeUndefined();
     });
     it('overrides successful state explicitly', () => {
-
       const base = new SupplyIsOff({});
       const derived = new SupplyIsOff(base, { failed: true });
 
@@ -115,7 +103,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBeUndefined();
     });
     it('overrides result', () => {
-
       const base = new SupplyIsOff<number>({ result: 1 });
       const derived = new SupplyIsOff(base, { result: 13 });
 
@@ -132,7 +119,6 @@ describe('SupplyIsOff', () => {
       expect(derived.result).toBe(13);
     });
     it('overrides failure error', () => {
-
       const base = new SupplyIsOff({ error: 'test error' });
       const derived = new SupplyIsOff(base, { error: 'other error' });
 
@@ -140,7 +126,6 @@ describe('SupplyIsOff', () => {
       expect(derived.error).toBe('other error');
     });
     it('overrides successful state by error', () => {
-
       const base = new SupplyIsOff({});
       const derived = new SupplyIsOff(base, { error: 'test error' });
 
@@ -151,7 +136,6 @@ describe('SupplyIsOff', () => {
 
   describe('sameTimeAs', () => {
     it('returns `false` for independent indicators', () => {
-
       const isOff1 = new SupplyIsOff();
       const isOff2 = new SupplyIsOff();
 
@@ -159,13 +143,11 @@ describe('SupplyIsOff', () => {
       expect(isOff2.sameTimeAs(isOff1)).toBe(false);
     });
     it('returns `true` for the same indicator', () => {
-
       const isOff = new SupplyIsOff();
 
       expect(isOff.sameTimeAs(isOff)).toBe(true);
     });
     it('returns `true` for derived indicator', () => {
-
       const isOff1 = new SupplyIsOff();
       const isOff2 = new SupplyIsOff(isOff1, {});
 
@@ -176,20 +158,20 @@ describe('SupplyIsOff', () => {
 
   describe('toString', () => {
     it('indicates failure', () => {
-      expect(String(new SupplyIsOff({ error: 'test error' })))
-          .toMatch(/^SupplyIsOff\.Faultily#\d+\(error: test error\)$/);
+      expect(String(new SupplyIsOff({ error: 'test error' }))).toMatch(
+        /^SupplyIsOff\.Faultily#\d+\(error: test error\)$/,
+      );
     });
     it('indicates failure without error', () => {
-      expect(String(new SupplyIsOff({ failed: true })))
-          .toMatch(/^SupplyIsOff\.Faultily#\d+$/);
+      expect(String(new SupplyIsOff({ failed: true }))).toMatch(/^SupplyIsOff\.Faultily#\d+$/);
     });
     it('indicates success', () => {
-      expect(String(new SupplyIsOff({})))
-          .toMatch(/^SupplyIsOff\.Successfully#\d+$/);
+      expect(String(new SupplyIsOff({}))).toMatch(/^SupplyIsOff\.Successfully#\d+$/);
     });
     it('indicates result', () => {
-      expect(String(new SupplyIsOff({ result: 123 })))
-          .toMatch(/^SupplyIsOff\.Successfully#\d+\(result: 123\)$/);
+      expect(String(new SupplyIsOff({ result: 123 }))).toMatch(
+        /^SupplyIsOff\.Successfully#\d+\(result: 123\)$/,
+      );
     });
   });
 });

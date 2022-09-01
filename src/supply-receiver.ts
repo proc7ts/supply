@@ -16,7 +16,6 @@ import { SupplyIsOff } from './supply-is-off.js';
  * @typeParam TResult - Supply result type.
  */
 export interface SupplyReceiver<out TResult = void> {
-
   /**
    * Indicates whether this receiver is unavailable.
    *
@@ -41,7 +40,6 @@ export interface SupplyReceiver<out TResult = void> {
    * @param reason - A reason indicating why the supply has been cut off, and when.
    */
   cutOff(reason: SupplyIsOff<TResult>): void;
-
 }
 
 /**
@@ -54,7 +52,10 @@ export interface SupplyReceiver<out TResult = void> {
  * @typeParam TResult - Supply result type.
  * @param reason - A reason indicating why the supply has been cut off, and when.
  */
-export type SupplyReceiverFn<out TResult = void> = <T extends TResult>(this: void, reason: SupplyIsOff<T>) => void;
+export type SupplyReceiverFn<out TResult = void> = <T extends TResult>(
+  this: void,
+  reason: SupplyIsOff<T>,
+) => void;
 
 /**
  * Converts a supply receiver function to supply receiver object.
@@ -67,7 +68,7 @@ export type SupplyReceiverFn<out TResult = void> = <T extends TResult>(this: voi
  * @returns Supply receiver object that calls the given function when supply cut off at most once.
  */
 export function SupplyReceiver<TResult = void>(
-    receiver: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
+  receiver: SupplyReceiver<TResult> | SupplyReceiverFn<TResult>,
 ): SupplyReceiver<TResult> {
   return typeof receiver === 'function' ? new FnSupplyReceiver(receiver) : receiver;
 }

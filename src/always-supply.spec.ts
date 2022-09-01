@@ -17,7 +17,6 @@ describe('alwaysSupply', () => {
 
   describe('cutOff', () => {
     it('is no-op', () => {
-
       const supply = alwaysSupply();
 
       expect(supply.cutOff(new SupplyIsOff())).toBe(alwaysSupply());
@@ -27,7 +26,6 @@ describe('alwaysSupply', () => {
 
   describe('off', () => {
     it('is no-op', () => {
-
       const supply = alwaysSupply();
 
       expect(supply.off()).toBe(alwaysSupply());
@@ -37,7 +35,6 @@ describe('alwaysSupply', () => {
 
   describe('whenOff', () => {
     it('does nothing', () => {
-
       const whenOff = jest.fn();
       const supply = alwaysSupply();
 
@@ -49,7 +46,6 @@ describe('alwaysSupply', () => {
 
   describe('alsoOff', () => {
     it('does nothing', () => {
-
       const receiver = {
         isOff: null,
         cutOff: jest.fn(),
@@ -61,7 +57,6 @@ describe('alwaysSupply', () => {
       expect(receiver.cutOff).not.toHaveBeenCalled();
     });
     it('never cuts dependent supply', () => {
-
       const supply = alwaysSupply();
       const receiver = new Supply();
       const whenOff = jest.fn();
@@ -77,7 +72,6 @@ describe('alwaysSupply', () => {
 
   describe('needs', () => {
     it('never cuts off the always-supply', () => {
-
       const onAbort = jest.fn();
 
       Supply.onUnexpectedFailure(onAbort);
@@ -96,7 +90,6 @@ describe('alwaysSupply', () => {
 
   describe('as', () => {
     it('never cuts dependent supply', () => {
-
       const supply = alwaysSupply();
       const otherSupply = new Supply();
       const whenOff = jest.fn();
@@ -109,7 +102,6 @@ describe('alwaysSupply', () => {
       expect(whenOff).not.toHaveBeenCalled();
     });
     it('never cuts off the always-supply', () => {
-
       const onAbort = jest.fn();
 
       Supply.onUnexpectedFailure(onAbort);
