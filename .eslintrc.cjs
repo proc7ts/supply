@@ -19,9 +19,6 @@ module.exports = {
       },
     },
     {
-
-
-      
       files: ['*.spec.ts'],
       extends: ['@run-z/eslint-config/jest'],
       parserOptions: {
