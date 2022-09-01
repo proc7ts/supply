@@ -2,5 +2,5 @@
 engines:
   duplication:
     exclude_paths:
-    - "src/**/*.spec.ts"
-    - "src/spec/**"
+      - 'src/**/*.spec.ts'
+      - 'src/spec/**'
