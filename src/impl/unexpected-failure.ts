@@ -1,7 +1,7 @@
 import { SupplyIsOff } from '../supply-is-off.js';
 
-export let Supply$unexpectedFailure: (reason: SupplyIsOff.Faultily) => void
-  = Supply$unexpectedFailure$byDefault;
+export let Supply$unexpectedFailure: (reason: SupplyIsOff.Faultily) => void =
+  Supply$unexpectedFailure$byDefault;
 
 export function Supply$unexpectedFailure$handle(
   handler = Supply$unexpectedFailure$byDefault,
