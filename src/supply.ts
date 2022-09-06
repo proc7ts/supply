@@ -148,8 +148,8 @@ class SupplyOut$<in out TResult> implements SupplyOut<TResult> {
  * Constructs sending side of supply.
  *
  * @constructor
- * @param alsoOff - A function that registers a receiver of this supply. It will be used as a {@link alsoOff} method
- * implementation.
+ * @param alsoOff - A function that registers a receiver of this supply. It will be used as a
+ * {@link SupplyOut:interface#alsoOff} method implementation.
  */
 export const SupplyOut: new <TResult = void>(
   alsoOff: (receiver: SupplyReceiver<TResult>) => void,
@@ -160,7 +160,7 @@ export const SupplyOut: new <TResult = void>(
  *
  * Represents a supply of something.
  *
- * The supply can be {@link off cut off}, and can {@link alsoOff inform} on cutting off.
+ * The supply can be {@link Supply#off cut off}, and can {@link Supply#alsoOff inform} on cutting off.
  */
 export class Supply<in out TResult = void> extends SupplyOut<TResult> implements SupplyIn<TResult> {
 
@@ -259,7 +259,7 @@ export class Supply<in out TResult = void> extends SupplyOut<TResult> implements
   /**
    * Makes this supply depend on another supplier.
    *
-   * Once the `supplier` {@link Supplier.alsoOff cuts off} the supply, this supply will be cut off with the same reason.
+   * Once the `supplier` {@link Supplier#alsoOff cuts off} the supply, this supply will be cut off with the same reason.
    *
    * Calling this method has the same effect as calling `supplier.alsoOff(this)`.
    *
@@ -465,10 +465,10 @@ export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
   /**
    * Registers a receiver of this supply.
    *
-   * Once this supply {@link Supply.off cut off}, the `receiver` will be {@link SupplyReceiver.off informed} on that,
-   * unless it is {@link SupplyReceiver.isOff unavailable} already.
+   * Once this supply {@link Supply#off cut off}, the `receiver` will be {@link SupplyReceiver#cutOff informed}
+   * on that, unless it is {@link SupplyReceiver#isOff unavailable} already.
    *
-   * Does nothing if the given `receiver` is {@link SupplyReceiver.isOff unavailable} already.
+   * Does nothing if the given `receiver` is {@link SupplyReceiver#isOff unavailable} already.
    *
    * @param receiver - Supply receiver to register.
    *
@@ -477,7 +477,7 @@ export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
   alsoOff(receiver: SupplyReceiver<TResult>): this;
 
   /**
-   * Registers a supply receiver function that will be called as soon as this supply {@link Supply.off cut off}.
+   * Registers a supply receiver function that will be called as soon as this supply {@link Supply#off cut off}.
    *
    * Calling this method is the same as calling `this.alsoOff(SupplyReceiver(receiver))`
    *
@@ -488,11 +488,11 @@ export interface SupplyOut<in out TResult = void> extends Supplier<TResult> {
   whenOff(receiver: SupplyReceiverFn<TResult>): this;
 
   /**
-   * Builds a promise that will be resolved once this supply is {@link Supply.off done}. This callback will be called
-   * immediately if supply is {@link Supply.isOff cut off} already.
+   * Builds a promise that will be resolved once this supply is {@link Supply#off done}. This callback will be called
+   * immediately if supply is {@link Supply#isOff cut off} already.
    *
    * @returns A promise that will be successfully resolved once this supply completes {@link SupplyIsOff.Successfully
-   * successfully}, or rejected with failure {@link SupplyIsOff.Faultily.error reason}.
+   * successfully}, or rejected with failure {@link SupplyIsOff.Faultily#error reason}.
    */
   whenDone(): Promise<TResult>;
 

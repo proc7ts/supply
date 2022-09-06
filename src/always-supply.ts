@@ -49,7 +49,7 @@ export function alwaysSupply(): Supply {
 }
 
 /**
- * Checks whether the given supply is an {@link AlwaysSupply | always-supply} instance.
+ * Checks whether the given supply is an {@link alwaysSupply always-supply} instance.
  *
  * @param supply - A supply to check.
  *

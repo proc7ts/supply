@@ -11,10 +11,10 @@ export interface Supplier<out TResult = void> {
   /**
    * Registers a receiver of the supply.
    *
-   * Once the supply {@link Supply.off cut off}, the `receiver` will be {@link SupplyReceiver.off informed} on that,
-   * unless it is {@link SupplyReceiver.isOff unavailable} already.
+   * Once the supply {@link Supply#off cut off}, the `receiver` will be {@link SupplyReceiver#cutOff informed} on that,
+   * unless it is {@link SupplyReceiver#isOff unavailable} already.
    *
-   * Does nothing if the given `receiver` is {@link SupplyReceiver.isOff unavailable} already.
+   * Does nothing if the given `receiver` is {@link SupplyReceiver#isOff unavailable} already.
    *
    * @param receiver - Supply receiver to register.
    */

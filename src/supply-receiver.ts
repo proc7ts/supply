@@ -4,12 +4,12 @@ import { SupplyIsOff } from './supply-is-off.js';
 /**
  * Supply receiver is informed when supply {@link Supply.off cut off}.
  *
- * When {@link Supplier.alsoOff registered} in supplier, the latter calls the {@link off} method once cut off,
- * unless the receiver is {@link isOff not available} anymore.
+ * When {@link Supplier#alsoOff registered} in supplier, the latter calls the {@link SupplyReceiver#cutOff} method
+ * once cut off, unless the receiver is {@link SupplyReceiver#isOff not available} anymore.
  *
  * Supply receivers may be used as a passive alternative to `removeEventListener` approach. While the latter can be used
- * to remove the listener in order to stop receiving events, the supply receiver may set itself {@link isOff
- * unavailable}, so that the supplier would be able to remove it occasionally.
+ * to remove the listener in order to stop receiving events, the supply receiver may set itself
+ * {@link SupplyReceiver#isOff unavailable}, so that the supplier would be able to remove it occasionally.
  *
  * Note that any {@link Supply} may act as a supply receiver.
  *
@@ -23,7 +23,7 @@ export interface SupplyReceiver<out TResult = void> {
    *
    * The supply would never call the {@link cutOff} method of this receiver, once this indicator set.
    *
-   * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier.alsoOff register} it.
+   * The receiver with this indicator set will be ignored by supplier when trying {@link Supplier#alsoOff register} it.
    * Moreover, if this indicator set after the registration, the supplier may wish to remove it at any time.
    */
   readonly isOff: SupplyIsOff<TResult> | null;
@@ -45,7 +45,7 @@ export interface SupplyReceiver<out TResult = void> {
 /**
  * Supply receiver function signature.
  *
- * Can be passed to {@link Supply} constructor, or as a {@link Supply.whenOff} method parameter.
+ * Can be passed to {@link Supply} constructor, or as a {@link Supply#whenOff} method parameter.
  *
  * Can be converted to {@link SupplyReceiver}.
  *
