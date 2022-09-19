@@ -2,7 +2,7 @@ import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';
 import { Supply, SupplyOut } from './supply.js';
 
 /**
- * Creates supply that will be cut off upon give `promise` fulfillment.
+ * Creates supply that will be cut off upon given `promise` fulfillment.
  *
  * If the given `promise` resolves, the supply will be completed {@link Supply.done successfully} with resolved value.
  *
