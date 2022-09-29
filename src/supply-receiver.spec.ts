@@ -23,11 +23,11 @@ describe('SupplyReceiver', () => {
       supply = new Supply();
     });
 
-    let whenOff: Mock<SupplyReceiverFn>;
+    let whenOff: Mock<SupplyReceiverFn> & SupplyReceiver;
     let receiver: SupplyReceiver;
 
     beforeEach(() => {
-      whenOff = jest.fn();
+      whenOff = jest.fn() as typeof whenOff;
       receiver = SupplyReceiver(whenOff);
       supply.alsoOff(receiver);
     });
@@ -35,7 +35,7 @@ describe('SupplyReceiver', () => {
     it('calls receiver function on cut off', () => {
       supply.off('reason');
       expect(whenOff).toHaveBeenCalledWith(
-        expect.objectContaining({ failed: true, error: 'reason' }),
+        expect.objectContaining({ failed: true, error: 'reason' }) as unknown as SupplyIsOff,
       );
     });
     it('makes receiver unavailable when cut off', () => {
