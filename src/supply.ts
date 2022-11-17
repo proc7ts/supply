@@ -1,10 +1,8 @@
 import { FnSupplyReceiver } from './impl/fn-supply-receiver.js';
-import type { SupplyState } from './impl/mod.js';
-import {
-  Supply$unexpectedFailure$handle,
-  SupplyState$NonReceiving,
-  SupplyState$Receiving,
-} from './impl/mod.js';
+import { type SupplyState } from './impl/supply-state.js';
+import { SupplyState$NonReceiving } from './impl/supply-state.non-receiving.js';
+import { SupplyState$Receiving } from './impl/supply-state.receiving.js';
+import { Supply$unexpectedFailure$handle } from './impl/unexpected-failure.js';
 import { Supplier } from './supplier.js';
 import { SupplyIsOff } from './supply-is-off.js';
 import { SupplyReceiver, SupplyReceiverFn } from './supply-receiver.js';

@@ -1,4 +1,4 @@
-import { FnSupplyReceiver } from './impl/mod.js';
+import { FnSupplyReceiver } from './impl/fn-supply-receiver.js';
 import { SupplyIsOff } from './supply-is-off.js';
 
 /**

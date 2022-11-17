@@ -34,3 +34,8 @@ export class SupplyController extends AbortController {
   }
 
 }
+
+export interface SupplyController {
+  readonly signal: AbortSignal;
+  abort(reason?: unknown): void;
+}
