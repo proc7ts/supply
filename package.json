@@ -21,6 +21,7 @@
     "types": "./dist/supply.d.ts",
     "default": "./dist/supply.js"
   },
+  "sideEffects": false,
   "devDependencies": {
     "@jest/globals": "^29.5.0",
     "@run-z/eslint-config": "^3.3.1",
